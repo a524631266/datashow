@@ -9,6 +9,7 @@
     "experimentalDecorators": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
+    "strictFunctionTypes": false,// 防止报错
     "sourceMap": true,
     "baseUrl": ".",
     "types": [
