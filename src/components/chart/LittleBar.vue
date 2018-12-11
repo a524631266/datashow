@@ -1,5 +1,7 @@
 <template>
-    <div class="upper" v-show="show"></div>
+    <div class="upper" v-show="show">
+        <button>点击</button>
+    </div>
 </template>
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator';

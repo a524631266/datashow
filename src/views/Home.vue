@@ -5,7 +5,8 @@
         :positionClass="one.positionClass" 
         :key="index" 
         :id="one.id" 
-        @ajaxFunc="ajaxFunc" />
+        @ajaxFunc="ajaxFunc"
+        :data="one" />
   </div>
 </template>
 
@@ -71,7 +72,7 @@ export default class Home extends Vue {
 <style>
 body {
     /* background-color: gray; */
-    background-image: url("/html/xinjiang/img/background4.jpg") ;
+    background-image: url("/xinjiang/img/background4.jpg") ;
     /* background-repeat: no-repeat; */
     /* background-size: cover; */
     background-attachment: fixed; 
