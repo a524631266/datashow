@@ -1,0 +1,329 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<link href="/css/style.css" rel="stylesheet" type="text/css" />
+<link href="/css/xinjiangcss/index.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript" src="/js/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="/js/timeStamp.js"></script>
+<script type="text/javascript" src="/js/jquery-2.1.4.min.js"></script>
+<link href="/css/bootstrap3.7/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="/css/bootstrap3.7/css/bootstrap-theme.min.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/css/bootstrap3.7/js/bootstrap.min.js"></script>
+	
+	
+<script type="text/javascript" src="/js/search_box.js"></script>
+<script type="text/javascript" src="/js/common.js"></script>
+<!-- <script type="text/javascript" src="/js/casejs/doubleclickchart.js"></script> -->
+<script src="/js/echartspower.js"></script>
+<script type="text/JavaScript" src="/js/dataTool.js"></script>
+<style type="text/css">
+.box-danger {
+	position: absolute;
+	right: 5px;
+	top: 90px;
+	width: 180px;
+	box-shadow: 0 0 2px 4px #daebff;
+	border-radius: 5px;
+	padding: 10px;
+}
+#info-dynamic{
+	background:radial-gradient(circle at center,#000066 0%,#000000 200%);
+	color: white;
+}
+.mark{
+	position:fixed;
+	left:0;
+	top:0;
+	opacity:.5;
+	width:100%;
+	height:100%;
+	background:#000;
+	z-index:1002;
+}
+
+/*右侧列表*/
+.box-danger {
+	position: absolute;
+	right: 5px;
+	top: 90px;
+	width: 180px;
+	box-shadow: 0 0 2px 4px #daebff;
+	border-radius: 5px;
+	padding: 10px;
+}
+
+.box-danger h2 {
+	margin: 0 0 5px 0;
+	color: rgb(102, 102, 102);
+	font-size: 14px;
+}
+
+.box-danger .txt {
+	font-size: 12px;
+	color: rgb(102, 102, 102);
+	margin-bottom: 20px;
+}
+
+.box-danger .danger {
+	list-style: none;
+	margin: 0px;
+	padding: 0px;
+}
+
+.box-danger .danger li {
+	line-height: 30px;
+	vertical-align: middle;
+	font-size: 14px;
+	margin-bottom: 10px;
+}
+
+.box-danger .danger .danger-name {
+	background-color: #eea4a4;
+	width: auto;
+	border-radius: 4px;
+	color: rgb(155, 67, 68);
+	max-width: 6em;
+	padding: 0 1em;
+	box-sizing: content-box;
+	cursor: pointer;
+}
+
+.box-danger .danger .day {
+	color: rgb(102, 102, 102);
+	font-size: 14px;
+	text-indent: 1em;
+	display: inherit;
+}
+
+.ul-table ul{list-style:none;float:left};
+.ul-table ul li{width:50px;white-space:nowrap;overflow: hidden;};
+</style>
+<script>
+	$(function() {
+		init();
+		$('#btn-query').click(listElecNumLineData);
+		//$('#btn-query').click(testopen)
+		 Highcharts.setOptions({
+	            global: {
+	                useUTC: false
+	            }
+	        });
+	});
+	
+	function init(){
+		 $('#t-entity').val("959325");
+         $('#t-start').val('2018-11-06 00:00:01');
+         $('#t-end').val('2018-11-09 00:00:01');
+         
+        // initDoubleClick(["left-top","left-middle","left-bottom","center","right-top","right-middle","right-bottom"],"center");
+	}
+/* 	var lefttopchart = null;
+	var leftmiddlechart = null;
+	var leftbottomchart = null;
+	var centerchart = null;
+	var righttopchart = null;
+	var rightmiddlechart = null;
+	var rightbottomchart = null; */
+	var dict = {"left-top":null,"left-middle":null,"left-bottom":null,
+			"center":null,"right-top":null,"right-middle":null,"right-bottom":null};
+	// 在加载完全之后添加删除按钮以及页面
+	var beforeid = ""
+	var openinfoCallBack = function(entity,path_name){
+		// $("#info-dynamic").append("<button onclick='hiddeninfo()' style='position:absolute;right:0px;top:0px;'>删除</button>")
+		$("#info-dynamic").find("#box-name").text(path_name);//设置标题名值
+		$("#info-dynamic").find("#box-entityid").val(entity);//设置表单 entityid值
+		if(!$("#info-dynamic").find("#address").val()){$("#info-dynamic").find("#address").val(path_name.replace(/( )\d*-$/g,""))}
+	}
+	var openinfo = function(entityid){
+		var entity = entityid===undefined?$('#t-entity').val():entityid;
+		var infourl = '/html/elecnum-fill.html?load=1';
+		if (beforeid != entity){
+			var path_name = ""
+			get_id_path && (path_name = get_id_path(entity,path_name));
+			beforeid = entity
+			var $info = $("#info-dynamic").load(infourl,function(){openinfoCallBack(entity,path_name)});
+		}
+		
+		$("#info-dynamic").show()
+		$(".mark").show()
+		// console.log($info)
+		// console.log(path_name)
+	}
+	var hiddeninfo = function(){
+		// $("#info-dynamic").empty()
+		$("#info-dynamic").hide()
+		$(".mark").hide()
+	}
+	var listElecNumLineData = function(entityid){
+		emptyEntityChart && emptyEntityChart() // 情况数据
+		var data = {
+				entity : entityid===undefined?$('#t-entity').val():entityid,
+				start : $('#t-start').val(),
+				end : $('#t-end').val(),
+				divide:$('#timeDivide').val(),
+				timebefore:$('#timebefore').val()
+		}
+		// console.log("dict 加载的第十三步",dict)
+		$.ajax({
+			type : 'POST',
+			url : "/elecnum/getElecNum",
+			data : data,
+			dataType : 'json',
+			success : function(result) {
+				if(result.status==200){
+					// if (chartdict===undefined){// 解决callback无法找到dict的缘故
+					dict["left-middle"] = darwLineChart(result.linechart,"chart-single-linechart",data.entity+"节点趋势");
+					dict["left-top"] = drawQuotaBoxChart(result.boxchart,"chart-single-boxchart",data.entity+"节点统计");
+					// }else{
+					// 	chartdict["left-middle"] = darwLineChart(result.linechart,"chart-single-linechart",data.entity+"节点趋势");
+					// 	chartdict["left-top"] = drawQuotaBoxChart(result.boxchart,"chart-single-boxchart",data.entity+"节点统计");
+					// }
+				}
+				//drawBaseBoxChart(data.boxchart);
+			}
+		});
+	}
+	
+	/**
+	*线图
+	* @data 图的数据
+	* @cid 加载图形的div的id
+	*/
+	function darwLineChart(data,cid,title){    	
+		return Highcharts.chart(cid,drawLineOptions(data,title));
+	}
+	
+	
+	
+	 /**
+	 * 箱形图 
+	 * @chartbox里的xAxis表示x轴 boxs表示y轴数据  用echarts的箱形图转换功能转换成箱形图数据
+	 * @id 加载图形的div的id
+	 */
+	 function drawQuotaBoxChart(chartbox,divid,title){    	
+	    	var xAxisList = chartbox.xAxis;
+			var boxList = chartbox.boxs;
+			
+			var data = [];
+			{
+				var ydata = echarts.dataTool.prepareBoxplotData(boxList);
+				data = [{
+						name: "电流",
+			           	data: ydata.boxData
+					},{
+						name: '异常值',
+			            color: Highcharts.getOptions().colors[0],
+			            type: 'scatter',
+			            data: ydata.outliers,
+			            marker: {
+			                fillColor: 'white',
+			                lineWidth: 1,
+			                radius:1,
+			                lineColor: Highcharts.getOptions().colors[0]
+			            },
+			            tooltip: {
+			                pointFormat: 'Observation: {point.y}'
+			            }
+					}];
+			}
+			//console.log(data);
+	        //$('#container').highcharts({
+	        return Highcharts.chart(divid, drawBoxOptions(data,xAxisList,title));
+		}
+		
+	    function drawheatmap(para,divid,title){	    	
+	    	return  Highcharts.chart(divid, drawHeatmapOptions(para,title,listElecNumLineData,openinfo));
+	    }
+	    
+	    function drawtopmap(para,divid,title){	    	
+	    	return  Highcharts.chart(divid, drawTopOptions(para,title,listElecNumLineData,openinfo));
+	    }
+	    
+	    function drawactionmap(para,divid,title){	    	
+	    	return  Highcharts.chart(divid, drawActionOptions(para,title));
+	    }
+	        
+	    var testopen = function(){
+	    	$.ajax({
+				type : 'POST',
+				url : "/elecnum/testopen",
+				data : data,
+				dataType : 'json',
+				success : function(data) {
+					console.log(data);
+					
+				}
+			});
+	    }
+	    
+</script>
+
+
+</head>
+
+
+<body>
+	<div class="search">
+		<span class="menu"></span> 
+		<input type="text" id="t-entity" class="ipt" placeholder="配电柜号码">
+		<!--<span class="tit">日期</span> 
+		<input type="text" id="t-start" class="Wdate date" placeholder="开始时间" 
+			onclick="var min=minVDate;WdatePicker({readOnly : true, dateFmt : 'yyyy-MM-dd HH:mm:ss',minDate:min, maxDate : '#F{$dp.$D(\'t-end\')}',onpicked:function() {javascript:bathePlanShowMp();}})">
+		<span class="tit">-</span> 
+		<input type="text" id="t-end"  class="Wdate date" placeholder="结束时间" 
+			onclick="var max=maxVDate;WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'#F{$dp.$D(\'t-start\')}',maxDate:max})">-->
+		箱形图
+		<select id="timeDivide" name="timeDivide">	        
+	        <option value="1">1</option>
+	        <option value="2">2</option>
+	        <option value="3" selected="selected">3</option>
+	        <option value="4">4</option>
+	        <option value="24">24</option>
+	    </select>
+	    小时&nbsp;
+	    时间
+	    <select id="timebefore" name="timeDivide">	        
+	        <option value="1">1</option>
+	        <option value="2">2</option>
+	        <option value="3" selected="selected">3</option>
+	        <option value="7">4</option>
+	    </select>
+	    天
+	    <input id="entitynum" placeholder="配电柜数目" value="5"/>
+		<button id="btn-query" class="btn" style="display:none">查询</button>	
+		<label id="errortip" class="lab" style="color: red;display: none;position: absolute;left: 88px;top: 18px;"></label>		
+	</div>
+	<div id="left-title">
+		<span>区域</span>
+	</div>
+	<div id="right-title">
+		<span>节点</span>
+	</div>
+	<div id="chart-single-linechart" class="left-middle" ></div>
+	<div id="chart-single-boxchart" class="left-top"></div>
+	<div id="chart-single-action"  class="left-bottom" >
+<!-- 		<div>迁入 08:00:00</div>
+		<div>迁出 09:00:00</div>
+		<div>迁入 10:00:00</div>
+		<div>迁出 15:00:00</div> -->
+	</div>
+	<div id="chart-region-linechart" class="right-middle"></div>
+	<div id="chart-region-boxchart"  class="right-top"></div>
+	<div id="chart-heatmap" class = "ul-table center" ></div>
+	<div id="chart-top" class = "ul-table right-bottom" ></div>
+	<div class="mark" style="display: none;">
+	</div>
+	<div id="info-dynamic" class = "" style="display:none;position: fixed;z-index: 1003;min-width: 750px;width: 750px;top:0vh;height: 100vh;max-height: 100vh;margin-left:-350px;left: 50%;overflow-y: auto;overflow-x:hidden">
+	</div>
+	
+	
+
+</body>
+<script type="text/javascript">	
+	
+    initDoubleClick(dict,"center");
+</script>
+</html>
+
+

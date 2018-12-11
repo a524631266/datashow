@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html style="height: 100%;">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>紫电智能情报分析系统</title>
+	<link rel="stylesheet" href="/css/casecss/zTreeStyle.css"/>
+	<link href="/css/bootstrap3.7/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+	<link href="/css/bootstrap3.7/css/bootstrap-theme.min.css" rel="stylesheet" type="text/css" />
+	<link href="/assets/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+	<script type="text/javascript" src="/js/jquery-2.1.4.min.js"></script>
+	<script type="text/javascript" src="/css/bootstrap3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/js/common.js"></script>
+	<script type="text/javascript" src="/js/casejs/jquery.ztree.core.js"></script>
+	
+	<script type="text/javascript" src="/js/xinjiangdraw/highcharts6_2.js"></script>
+	<script type="text/javascript" src="/js/highcharts-more.js"></script>
+	<script type="text/javascript" src="/js/xinjiangdraw/data.js"></script>
+	<script type="text/javascript" src="/js/xinjiangdraw/map.js"></script>
+	<script type="text/javascript" src="/js/xinjiangdraw/changewithcenter.js"></script>
+	<script type="text/javascript" src="/js/xinjiangdraw/highchart_options.js"></script>
+	<script type="text/JavaScript" src="/js/xinjiangdraw/xrange_zll.js"></script>
+	<script type="text/JavaScript" src="/js/xinjiangdraw/oldie_zll.js"></script>
+    <style>
+        html body{
+            margin: 0;
+        }
+		
+        
+    </style>
+    <script type="text/javascript">
+		var contenturl = 'http://localhost:3000/d/9N9rFAfmz/elecnum?orgId=1&from=1542312938699&to=1542312953787';
+		var elecurl = '/html/elecnum.html?load=1';
+        var zTreeObj;
+        var alreadList = [];
+        // zTree 的参数配置，深入使用请参考 API 文档（setting 配置详解）
+        //var setting = {};
+        var setting = {
+            view: {
+                dblClickExpand: false,
+                showLine: false,
+                selectedMulti: false
+            },
+            /* async: {
+             enable:true, //表示异步加载生效
+             url: getAsyncUrl,// 异步加载时访问的页面
+             type:'get'
+             }, */
+            data: {
+                simpleData: {
+                    enable: true,
+                    idKey: "id",
+                    pIdKey: "pId",
+                    rootPId: ""
+                }
+            },
+            callback: {
+                onClick: function (event, treeId, treeNode) {
+                    if (treeNode.font.color == 'blue') {
+                        loadhtml(treeNode.id, treeNode.name);
+                    } else {
+                        var expandId = treeNode.tId + '_ul';
+                        if ($("#" + expandId).length > 0) {
+                            //$('#'+expandId).toggle();
+                            zTreeObj.expandNode(zTreeObj.getNodeByParam("id", treeNode.id, null));
+                        } else {
+                            loadZTree(treeNode, 2);
+                        }
+                    }
+                },
+                onExpand: function (event, treeId, treeNode) {
+                    //loadChildrenNodes(treeNode);
+                }
+            }
+        };
+
+		var basenode = 99999998;
+	
+        $(document).ready(function () {
+        	basenode = 99998999;        	            
+            loadZTree(basenode, 1);
+			getChartEventFirst("99454214")
+           $('#btn-filldatabox').click(function(){
+        	   $('#pop-filldatabox').css('display','block');
+           })
+        });
+
+        function loadZTree(treeNode, mode) {
+            var str = '';
+            var tId;
+            if (mode == 1) {//根节点展开
+                tId = treeNode;
+                str = "?id=" + treeNode;
+            } else if (mode == 2 && treeNode.font.color != 'blue') {//非叶子节点展开
+                tId = treeNode.tId;
+                str = "?id=" + treeNode.id;
+            } else {
+                tId = treeNode.tId;
+                str = "?id=" + treeNode.id + "&mode=3";
+            }
+
+            if ($('#' + tId + '_ul').length > 0 && $('#' + tId + '_ul').children().length > 0) {
+                var vvvv = $('#' + tId + '_ul');
+                return;
+            }
+
+            $.getJSON("/case/entity" + str, function (data) {
+                var zNodes = [];
+                $.each(data, function (i, entity) {
+                    var ele = null;
+                    if (!entity.isEntity) {
+                        ele = {
+                            id: entity.id,
+                            pId: entity.pid,
+                            name: entity.name + ' '/*  + (99999999 - entity.id) */ + '(' + entity.entityNum + ')',
+                            title:'haha',
+                            para: (99999999 - entity.id),
+                            font: {'color': 'red'},
+                            isParent: true,
+                            icon: '/css/casecss/img/diy/building.png'
+                        };
+                    } else {
+                        ele = {
+                            id: entity.id,
+                            pId: entity.pid,
+                            name: entity.name + ' ' + entity.id,
+                            title:'haha',
+                            para:'lala',
+                            font: {'color': 'blue'},
+                            icon: '/css/casecss/img/diy/3.png'
+                        };
+                    }
+                    zNodes.push(ele);
+                });
+                if (mode == 1) {
+
+                    zNodes.push({
+                        id: basenode,
+                        pId: -1,
+                        name: "智慧用电安全管理系统",
+                        icon: '/css/casecss/img/diy/building.png',
+                        font: {'color': 'red'},
+                        open: true
+                    });
+                    zTreeObj = $.fn.zTree.init($("#treeDemo"), setting, zNodes);
+                    //$('#triangleImg').click();
+
+                    //$("#contain").load(contenturl);
+                    $("#contain").load(elecurl);
+                    $('#loadCotain').val(1);
+                    
+                } else {
+                    zTreeObj.addNodes(treeNode, zNodes, true);
+                }
+
+                zTreeObj.expandNode(zTreeObj.getNodeByParam("id", treeNode.id, null));
+                popbutton();
+            });
+
+        }
+
+        function loadhtml(id, start) {
+            //$('#loadEntityId').val(id);
+            //$('#loadEntityStart').val(start+' 00:00:00');
+            $('#t-entity').val(id);
+            if ($('#loadCotain').val() == -1) {
+                $("#contain").load(elecurl);
+                $('#loadCotain').val(1);
+				
+            } else {
+                $("#nodata").val("");
+                loadEntity(id);
+            }
+           
+        }
+
+        function initFromLoad(){
+            setTimeout("loadScript('/js/custom-events/js/customEvents.js')",3000);
+            setTimeout("Highcharts.setOptions({ global: { useUTC: false } });",3000);
+            $('#h-recallprecise').val(1);
+			
+        }
+
+        function loadEntity(id) {
+            $("#btn-query").click();
+            $('#basedata-body').empty();
+            /* 
+        	var data = {
+					entity : id,
+					divide : 3,
+					timebefore:$('#timebefore').val()
+			}
+			$.ajax({
+				type : 'POST',
+				url : "/elecnum/getElecNum",
+				//url :'/elecnum/testElecNum',
+				data : data,
+				dataType : 'json',
+				success : function(data) {
+					//console.log(data);
+					darwLineChart(data.linechart,"chart-region-linechart");
+					//alert('OK');
+				}
+			});
+             */
+        }
+
+        function zTreeExpandAll(flag) {
+            zTreeObj.expandAll(flag);
+        }
+        
+		function popbutton(){
+			/* $('ul>li>a').on('mouseover',function(){
+				console.log($(this).id);
+			}); */
+			//$(”a[@ id ^='S_']“)
+			$("a[id ^='treeDemo']").on('mouseover',function(){
+				if($(this).parent().children('a').length==1){
+					var thisid = $(this).attr('id');
+					if(thisid!='treeDemo_1_a'){
+						$('#regin-chart').remove();
+						$('#regin-info').remove();
+						var title = $(this).attr('title');
+						var toid = title.substring(title.indexOf(' ')+1,title.indexOf('('));
+						var strChart = '<a id="regin-chart"  href="javascript:void(0);"   data-para="'+toid+'" style="margin-left:5px;">图表</a>';
+						var strInfo = '<a id="regin-info"  href="javascript:void(0);"   data-para="'+toid+'" style="margin-left:5px;" >用户信息</a>';
+						$(this).after(strInfo);
+						$(this).after(strChart);
+						// $("#tree").scrollLeft(10000);
+						aEvent();	
+					}
+				}
+			});
+		}
+		function emptyAllChart(){
+			$("#chart-single-linechart").empty()
+			$("#chart-single-boxchart").empty()
+			$("#chart-single-action").empty()
+			$("#chart-region-linechart").empty()
+			$("#chart-region-boxchart").empty()
+			$("#chart-heatmap").empty()
+			$("#chart-top").empty()
+			
+		}
+		function emptyEntityChart(){
+			$("#chart-single-linechart").empty()
+			$("#chart-single-boxchart").empty()
+		}
+		function aEvent(nodeid1){
+			$('#regin-chart').on('click',function(){
+				getChartEventFirst(nodeid1)
+			});
+			
+			$('#regin-info').on('click',function(){// 触发info事件
+				var nodeid = getNodeId();
+				openinfo(nodeid)
+				// alert(nodeid);
+			});
+		}
+
+		var getChartEventFirst = function(nodeid1){
+				emptyAllChart()
+				var nodeid = nodeid1===undefined?getNodeId():nodeid1;				
+				$('#box-entityid').val(nodeid);
+				
+				var data = {
+						entity : nodeid,
+						start : $('#t-start').val(),
+						end : $('#t-end').val(),
+						divide:$('#timeDivide').val(),
+						timebefore:$('#timebefore').val(),
+						entitynum:$('#entitynum').val()
+				}
+				
+				if(true){
+					$.ajax({
+						type : 'POST',
+						url : "/elecnum/regionElecNum",
+						//url :'/elecnum/testElecNum',
+						data : data,
+						dataType : 'json',
+						success : function(data) {
+							//console.log(data);
+							if(data.status==200){
+								dict["right-top"] = drawQuotaBoxChart(data.region.boxchart,"chart-region-boxchart","区域统计");
+								dict["right-middle"] = darwLineChart(data.region.linechart,"chart-region-linechart","区域趋势");
+								
+								dict["left-top"] = drawQuotaBoxChart(data.single.boxchart,"chart-single-boxchart","节点统计");
+								dict["left-middle"] = darwLineChart(data.single.linechart,"chart-single-linechart","节点趋势");
+								var testdata = [
+								{starttime:1542681155000,endtime:1542695555000,id:'881675',type:'减少',value:-16},
+								{starttime:1542798935000,endtime:1542807515000,id:'881675',type:'减少',value:-21},
+								{starttime:1542856235000,endtime:1542863435000,id:'881675',type:'增加',value:39},
+								{starttime:1542874235000,endtime:1542880805000,id:'881675',type:'增加',value:15},
+								{starttime:1542962716000,endtime:1542970568000,id:'881675',type:'增加',value:32},
+								{starttime:1543024800000,endtime:1543034760000,id:'881675',type:'增加',value:8},
+								{starttime:1543058580000,endtime:1543067460000,id:'881675',type:'增加',value:47},
+								{starttime:1543140000000,endtime:1543154400000,id:'881675',type:'减少',value:-18},
+								{starttime:1543201200000,endtime:1543212000000,id:'881675',type:'增加',value:10},
+								{starttime:1543302000000,endtime:1543323600000,id:'881675',type:'减少',value:-26},
+								{starttime:1543374000000,endtime:1543392000000,id:'881675',type:'增加',value:13},
+								{starttime:1543460400000,endtime:1543474800000,id:'881675',type:'增加',value:29}
+								]
+								if (data.action===undefined ||data.action.length==0){
+									dict["left-bottom"] = drawactionmap(testdata,"chart-single-action","异常");
+								}else{
+									dict["left-bottom"] = drawactionmap(data.action,"chart-single-action","异常");
+								}
+							
+							}else{
+								alert("no data");
+							}
+						}
+					});
+					
+				}
+				
+				if(true){
+					$.ajax({
+						type : 'POST',
+						url : "/elecnum/regionTotalElecNum",
+						//url :'/elecnum/testElecNum',
+						data : data,
+						dataType : 'json',
+						success : function(obj) {
+							if(obj.status==200){
+								// console.log(obj);
+								dict["center"] = drawheatmap(obj.table,'chart-heatmap',"热力图");
+								dict["right-bottom"] = drawtopmap(obj.top,'chart-top',"重点");
+							}else{
+								alert("no data");
+							}
+						}
+					});
+				}
+		}
+
+		function electotal(data,id){
+			$('#'+id).empty();
+			var str = '';
+			var para = null;
+			for(var i=0;i<data.length;i++){				
+				para = data[i];
+				str = '';
+				for(var j=0;j<para.length;j++){
+					str += '<li>'+para[j]+'</li>'
+				}
+				str = '<ul>' +str +'</ul>';
+				$('#'+id).append(str);
+			}			
+		}
+		
+		function chartdisplay(){
+			$('#chart-base'),css('display','none');
+			$('#contain'),css('display','none');
+			$('#chart-region-linechart'),css('display','none');
+			
+			$('#'+id),css('display','none');
+		}
+		
+		 function getNodeId(){
+			 var nodetid = $('#regin-chart').prev().attr('id');
+			 var nodeid = zTreeObj.getNodeByTId(nodetid.substring(0,nodetid.length-2)).id;
+			 return nodeid;
+		 }
+		 function get_id_path(id,name){
+			if(!zTreeObj.getNodeByParam("id",parseInt(id))){
+				return id
+			}
+			//获取节点的上级路径名称
+			var pid = zTreeObj.getNodeByParam("id",parseInt(id)).pId;
+			if(pid===""){
+				return name
+			}else{
+				return get_id_path(pid,zTreeObj.getNodeByParam("id",id).name.replace(/ \(.*?\)/,"") +"-"  + name.replace(/ \(.*?\)/,""))
+			}
+		 }
+
+    </script>
+</head>
+
+<body style="height: 100%;">
+	<a id="option" class=" btn btn-primary " style="position: fixed;left:0;top:0;z-index: 9999;background: rgba(0,0,0,0);border:0px;" href="#"><i id="icontoggletreee" class="fa fa-chevron-left"></i> </a>
+	<!-- <a id="option" class=" btn btn-primary " style="position: fixed;left:0;top:0;z-index: 9999" href="#"><i class="fa fa-bars"></i> </a> -->
+	<div id="tree" style="float: left;width: 20%;height: 100%;overflow:auto;background-color: #2f4050;position: fixed;z-index: 9998">
+	    <p style="text-align: center;" class="btn">
+	        <!-- <a href='javascript: zTreeExpandAll(true);'><font color="#f5f5f5">open all</font></a>
+	        <font color="#f5f5f5">|</font>
+	        <a href='javascript: zTreeExpandAll(false);'><font color="#FFFFFF">close all</font></a>
+	        <font color="#f5f5f5">|</font>  -->
+	        <!--<a href="/html/index_v2.html"><font color="#FFFFFF">Analysis Platform</font></a>-->
+	    </p>
+	  <!--   <select id="timebefore" name="timeDivide" style="width: 50px;background: white;border: 0px;margin-left:5px;">	        
+	        <option value="1">1</option>
+	        <option value="2">2</option>
+	        <option value="3" selected="selected">3</option>
+	        <option value="7">4</option>
+	    </select> -->
+	    <ul id="treeDemo" class="ztree"></ul>
+	    <input type="hidden" id="loadEntityId"/>
+	    <input type="hidden" id="loadEntityStart"/>
+	    <input type="hidden" id="loadCotain" value="-1"/>
+	    <input type="hidden" id="h-analysis" value="-1"/>    
+	</div>
+	<!-- <div id="contain" style="overflow-y: auto; overflow-x: hidden; width: 80%;height: 60%;float: left;background-color: white;">
+		<iframe width="100%" height="600px" src="http://localhost:3000/d/9N9rFAfmz/elecnum?orgId=1" frameborder="0" scrolling="no"></iframe>
+		
+	</div> -->
+	<div id="contain" style="overflow-y: auto; overflow-x: hidden; width: 100%;height: 100%;float: left;position:relative;"></div>
+	
+	<div id="pop-filldatabox" style="width:500px;height:600px;display:none;"></div>
+	<script>
+		var show =true
+		$("#option").on("click",function(){
+			show = !show
+			// console.log("11111111")
+			// slideToggle垂直动画
+			// $("#tree").toggle(show)
+			$("#tree").animate({width:'toggle'},350);
+			$("#icontoggletreee").attr("class",!show?"fa fa-chevron-right":"fa fa-chevron-left")
+		})
+	</script>
+</body>
+
+
+</html>

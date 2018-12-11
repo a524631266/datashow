@@ -1,0 +1,399 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title> 用户信息采集表</title>
+<link href="/css/style.css" rel="stylesheet" type="text/css" />
+
+
+
+<script type="text/javascript" src="/js/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="/js/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="/js/search.js"></script>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/search_box.js"></script>
+<link href="/css/bootstrap3.7/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="/css/bootstrap3.7/css/bootstrap-theme.min.css" rel="stylesheet" type="text/css" />
+<link href="/assets/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/css/bootstrap3.7/js/bootstrap.min.js"></script>
+
+<style type="text/css">
+.logo {
+    width: 160px;
+    height: 50px;
+    background: url("/css/casecss/img/diy/7.png") no-repeat;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}
+/* #fill{
+	background: rgba(0,0,0,0)
+} */
+.hr{
+	margin-top: 0px;
+	margin-bottom: 10px;
+	border-top-color: #465c71;
+}
+/* .divider{
+	border-bottom: 5px;
+} */
+.dropdown-toggle::after{
+	content: "\e252";
+}
+.dropdown-menu,input{
+	color: black;
+}
+
+.dropdown-menu li:hover{
+	cursor: pointer;
+	background-color: rgb(228, 125, 248);
+	color: #f8f8f9;
+}
+.tableinfo {
+	position: relative;
+	top:20px;
+	margin: 0 auto; 
+	width: 100%; 
+	min-width: 600px;
+	/* height: 600px; */
+}
+#ul-content td{
+	height: 50%;
+}
+.table{
+	table-layout: fixed;
+}
+table {border-collapse:collapse;}
+table,th,td {border: 1px solid rgba(0,0,0,0);}
+td input{
+	width: 100%;
+}
+.desc{
+    font-size: 18px;
+    line-height: 50px;
+    border-left: 1px solid #ccc;
+    position: relative;
+    left: 50px;
+    top: 0px;
+    padding-left: 20px;
+	font-weight: bold;
+	float: left;
+	padding-right: 20px;
+}
+
+.hidden-btn{
+	position: relative;
+	top: 0px;
+	right:18px;
+	line-height: 50px;
+	float: right;
+	height: 50px;
+	z-index: 1003;
+}
+.hidden-btn:hover{
+	cursor: pointer;
+	content: "隐藏";
+}
+/* .table div{
+	margin: 0 auto; 
+} */
+
+.listen_kw,.listen_n {
+text-align: right;
+}
+header {
+    width: 100%;
+    height: 50px;
+    box-shadow: 10px 10px 10px rgba(111,111,111,.5);
+	position: relative;
+}
+* {
+    margin: 0;
+    padding: 0;
+}
+#fillForm{
+	padding: 18px;
+}
+/* .deviceid{
+
+} */
+div.menu ul {
+	list-style: none; /* 去掉ul前面的符号 */
+	margin: 0px; /* 与外界元素的距离为0 */
+	padding: 0px; /* 与内部元素的距离为0 */
+	width: auto; /* 宽度根据元素内容调整 */
+	clear:both;
+}
+/* 所有class为menu的div中的ul中的li样式 */
+div.menu ul li {
+	float: left; /* 向左漂移，将竖排变为横排 */
+	text-align:center;
+	width:60px;
+	height:30px;
+}
+/* 所有class为menu的div中的ul中的a样式(包括尚未点击的和点击过的样式) */
+div.menu ul li a, div.menu ul li a:visited {
+	background-color: #465c71; /* 背景色 */
+	border: 1px #4e667d solid; /* 边框 */
+	color: #dde4ec; /* 文字颜色 */
+	display: block; /* 此元素将显示为块级元素，此元素前后会带有换行符 */
+	line-height: 1.35em; /* 行高 */
+	padding: 4px 20px; /* 内部填充的距离 */
+	text-decoration: none; /* 不显示超链接下划线 */
+	white-space: nowrap; /* 对于文本内的空白处，不会换行，文本会在在同一行上继续，直到遇到 <br> 标签为止。 */
+}
+/* 所有class为menu的div中的ul中的a样式(鼠标移动到元素中的样式) */
+div.menu ul li a:hover {
+	background-color: #bfcbd6; /* 背景色 */
+	color: #465c71; /* 文字颜色 */
+	text-decoration: none; /* 不显示超链接下划线 */
+}
+/* 所有class为menu的div中的ul中的a样式(鼠标点击元素时的样式) */
+div.menu ul li a:active {
+	background-color: #465c71; /* 背景色 */
+	color: #cfdbe6; /* 文字颜色 */
+	text-decoration: none; /* 不显示超链接下划线 */
+	
+}
+
+div.menu ul .big{
+	width:160px;
+}
+
+/* input{width:100%;height:100%} */
+/* button{
+	margin-left:10px;
+	background:lightgrey;
+	border:1px solid #000;
+	border-radis:2px;
+} */
+</style>
+<script>
+	$(function() {
+		$('#box-add').on('click',additem);
+		$('#box-submit').on('click',fillsubmit);
+	});
+
+	function autoTextAreaHeight(o) {
+        o.style.height = o.scrollTop + o.scrollHeight + "px";
+    }
+    // $(function () {
+    //     var ele = document.getElementById("other");
+    //     autoTextAreaHeight(ele);
+    // })
+	var fillindex = 1;
+	var additem = function() {
+		var fillid = 'fillindex-'+fillindex;
+		var str = '<ul>'
+				+ '<li><input name="name" /></li>'
+				+ '<li><input name="volt" /></li>'
+				+ '<li class="big"><input name="info" /></li>'
+				+ '<li><input id='+fillid+' type="text" readonly="true" value="-" style="width:6px;margin-right:2px;border:0px;" onclick="removeSelf(\''+fillid+'\');"></li>'
+				+ '</ul>';
+
+		var str ='<tr>'
+				+ '<th scope="row" class="deviceid">'+ (fillindex+1) +'</th>'
+				+ '<td>'
+				+ '<div class="btn-group" style="width: 100%">'
+				+ '<input name="dename" class=" dropdown-toggle glyphicon glyphicon-triangle-bottom form-control" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" placeholder="设备" style="width: 99%;float: left;"/>'
+				+ '<span class="fa fa-caret-down" style="position:absolute;float:right;right:5%;top: 32%;color:black"></span>'
+				+ '<ul class="dropdown-menu">'
+				+ '<li onclick="insert2input(this)">电视</li>'
+				+ '<li onclick="insert2input(this)">电冰箱</li>'
+				+ '<li onclick="insert2input(this)">照明灯</li>'
+				+ '<li role="separator" class="divider"></li>'
+				+ '<li>其他手动输入</li>'
+				+ '</ul>'
+				+ '</div>'
+				+ '</td>'
+				+ '<td><input  oninput="onInputChange(event)" class="listen_kw form-control" name="devolt" placeholder="0"/></td>'
+				+ '<td><input  oninput="onInputChange(event)" class="listen_n form-control" name="denum" placeholder="0"/></td>'
+				+ '<td><input type="text" class="form-control" name="deinfo" placeholder="这个电视是"/></td>'
+				+ '<td><button  id='+fillid+'  class="btn btn-danger" readonly="true" value="-" style=";border:0px;" onclick="removeSelf(\''+fillid+'\');">del</button></td>'
+				+ '</tr>'
+		$('#ul-content').append(str);
+		$('#info-dynamic')[0] && $('#info-dynamic').scrollTop($('#info-dynamic')[0].scrollHeight);
+		fillindex++;
+	}
+	function onInputChange(event){
+		// console.log(this,event)
+		var numArr = new Array();
+		$('.listen_kw').each(function(){
+            numArr.push($(this).val());//添加至数组
+		});
+		var numn = new Array();
+		$('.listen_n').each(function(){
+            numn.push($(this).val());//添加至数组
+		});
+		var tot = 0
+		for (let i in numArr){
+			numArr[i] && numn[i]&& (tot+=parseFloat(numArr[i])*parseFloat(numn[i]))
+		}
+		$("#totvolt").val(tot)
+
+		var textlength = String(tot).length;
+		$("#totvolt").css("width",textlength+"em")
+	}
+	function removeSelf(id) {
+		$("#"+id).parent().parent().remove();
+		onInputChange()
+	}
+	function insert2input(event){
+		// console.log()
+		$(event).parent().parent().children("input").val($(event).text())
+	}
+	function addEvent() {
+		$('.filldel').on('click', function() {
+			$(this).parent().remove();
+		});
+	}
+
+	var fillsubmit = function() {
+		// console.log($('#fillForm').serialize())
+		// $('#fillForm').serialize()
+		$.ajax({
+			url : '/elecnum/filldata',//"/case/addAnnotation",
+			data : $('#fillForm').serialize(),
+			type : "post",
+			dataType : "json",
+			success : function(obj) {
+			}
+		});
+	}
+</script>
+</head>
+
+
+<body id="fill">
+		<header>
+				<a href="#" class="logo"></a>
+				<div class="desc">用户信息采集表</div>
+				<div class="desc" style="max-width:500px ;overflow: hidden;"><text id="box-name" class="label label-default">d</text></div>
+				<i class="hidden-btn fa fa-compress" aria-hidden="true" onclick="hiddeninfo()" ></i>
+		</header>
+		<div class="tableinfo" >
+			<form id="fillForm">
+				<input name="entityid" id="box-entityid" value="123456" style="display: none;"/>
+
+				<div class="divider">
+						<label >个人信息</label>
+				</div>
+				<hr class="hr"  width="100%" color="blue" size="2">
+				<div class="row">
+					<div class="col-xs-4 col-md-4">
+						<div class="form-group  input-group ">
+							<span for="inputname" class="input-group-addon">姓名: </span>
+							<input name="pname" type="text" class="form-control" id="inputname" placeholder="张三"/>
+						</div>
+					</div>
+					<div class="col-xs-4 col-md-4">
+						<div class="form-group  input-group">
+							<span for="sex"  class="input-group-addon">性别: </span>
+							<div class="form-control">
+								<input type="radio" id="sex"  value="male" name="sex" checked> 男
+								<input type="radio" id="sex" value="female" name="sex" > 女
+							</div>
+						</div>
+					</div>
+					<div class="col-xs-4 col-md-4">
+						<div class="form-group  input-group">
+							<span for="phone" class="input-group-addon">联系方式: </span>
+							<input name="phone" type="text" class="form-control" id="phone" placeholder="130********"/>
+						</div>
+					</div>
+				</div>
+
+				<div class="form-group  input-group">
+						<span for="address" class="input-group-addon">地址: </span>
+						<input name="address" type="text" class="form-control" id="address" placeholder="**省**市**镇**街道**幢"/>
+				</div>
+				<div class="form-group  input-group">
+						<span for="other" class="input-group-addon">其他: </span>
+						<textarea name="other" type="text" class="form-control" id="other" placeholder="***" oninput="autoTextAreaHeight(this)"></textarea>
+				</div>
+				
+				<div>
+				<table class="table" border="0">
+						<!-- <caption>家庭用电设备信息</caption> -->
+						<label>家庭用电设备信息</label>
+						<hr class="hr" width="100%" color="blue" size="2">
+						<thead>
+								<tr>
+								  <th style="width: 3em">id</th>
+								  <th>设备名</th>
+								  <th>功率(w)</th>
+								  <th>数量</th>
+								  <th>描述</th>
+								  <th style="width: 6em">操作</th>
+								</tr>
+						</thead>
+						<tbody id="ul-content">
+								<tr>
+								  <th scope="row" class="deviceid">1</th>
+								  <td>
+									  <div class="btn-group" style="width: 100%">
+
+										<input name="dename" class=" dropdown-toggle glyphicon glyphicon-triangle-bottom form-control"
+											 data-toggle="dropdown" aria-haspopup="true"
+											aria-expanded="false" 
+											placeholder="设备" style="width: 99%;float: left"/>
+											<span class="fa fa-caret-down" style="position:absolute;float:right;right:5%;top: 32%;color:black"></span>
+										<!-- <span class="caret" style="positon:relative;float:right;"></span> -->
+										
+										<ul class="dropdown-menu">
+											<li onclick="insert2input(this)">电视</li>
+											<li onclick="insert2input(this)">电冰箱</li>
+											<li onclick="insert2input(this)">照明灯</li>
+											<li role="separator" class="divider"></li>
+											<li>其他手动输入</li>
+										</ul>
+									  </div>
+									</td>
+								  <td><input type="text" oninput="onInputChange(event)" class="listen_kw form-control" name="devolt" placeholder="0"/></td>
+								  <td><input type="text" oninput="onInputChange(event)" class="listen_n form-control" name="denum" placeholder="0"/></td>
+								  <td><input type="text" class="form-control" name="deinfo" placeholder="这个电视是"/></td>
+								  <td><button  id='fillindex-1'  class="btn btn-danger" readonly="true" value="-" style="border:0px" onclick="removeSelf('fillindex-1');">del</button></td>
+								</tr>
+							  </tbody>
+				</table>
+				<hr class="hr" width="100%" color="blue" size="2">
+				<!-- <div class="form-group  input-group" style="position: relative;float: right;">
+						<span style="float: right;position: relative;">w</span><input id="totvolt" name="ndevolt" style="float: right;position: relative;min-width: 4em;max-width: 10em;text-align: right; "/><span style="float: right;position: relative;">总功率:</span>
+				</div> -->
+				<!-- col-md-offset-4 -->
+				<div class="row">
+					<div class="col-xs-3 col-md-3" style="right: 0px;position:absolute;">
+						<div class=" input-group " style="right: 18px;position:absolute;">
+								<span class="input-group-addon">总功率</span>
+								<!-- <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)"> -->
+								<input type="text" class="form-control" id="totvolt" name="ndevolt" style="min-width:6em;max-width: 6em;text-align: right; "/>
+								<span class="input-group-addon">w</span>	
+						</div>
+					</div>
+				</div>
+				</div>
+			</form>
+			<div class="form-group col-sm-offset-5 col-sm-6">
+				<div class="" style="display:block;margin:0 auto;">
+					<button id="box-submit" class="btn btn-default">保存</button>
+					<button id="box-add" class="btn btn-info">添加记录</button>
+				</div>
+			</div>
+		</div>
+	
+	<!-- <div class="menu">
+		<ul>
+			<li><a href="javascript:void(0);">主页</a></li>
+			<li><a href="javascript:void(0);">工作日志</a></li>
+			<li><a href="javascript:void(0);">设备运行记录</a></li>
+			<li><a href="javascript:void(0);">其他</a></li>
+		</ul>
+	</div> -->
+	<!-- <script>
+		$(".listen").bind("input propertychange",function(event){
+			console.log($(this).val())
+       		console.log($(".listen").val())
+		});
+	</script> -->
+</body>
+</html>
+
