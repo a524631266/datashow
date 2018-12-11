@@ -1,5 +1,5 @@
 <template>
-    <div :class="positionClass">
+    <div :class="positionClass" draggable="true" >
         <LittleBar :show="positionClass === 'center'?true:false" />
         <span>option: {{ option }}</span>
         <div class="innerChart" ref="id" :id="id">
