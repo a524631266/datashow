@@ -9,12 +9,24 @@
 </template>
 
 <style lang="scss">
+body{
+    /* background-color: gray; */
+    background-image: url("/html/xinjiang/img/background4.jpg") ;
+    /* background-repeat: no-repeat; */
+    /* background-size: cover; */
+    background-attachment: fixed; 
+    background-position: center center;
+    height:100vh;
+    width:100vw;
+    overflow: hidden;
+}
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  height: 100%;
 }
 #nav {
   padding: 30px;
