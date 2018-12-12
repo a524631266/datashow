@@ -36,13 +36,16 @@ import {listdata, drawHeatmapOptions } from "@/components/options/HeatMapOptions
     mounted() {
         (this as any).intervalid = setTimeout(() => {
             // Highcharts.chart((this as any).id, (this as any).option as Options);
-            // Highcharts.chart((this as any).id, drawActionOptions(inout, "1111"));
+            // 1.时间timeline配置
+            Highcharts.chart((this as any).id, drawActionOptions(inout, "1111"));
             // console.log((this as any).changedata(),"this.$props.");
+            // 2.箱线图配置
             // Highcharts.chart((this as any).id, drawBoxOptions(boxchart3, xAxis3 , "222") as Options);
             // (this as any).$emit("ajaxFunc", this.$props.urlparas);
-            Highcharts.chart((this as any).id,
-                drawHeatmapOptions(listdata, "HeatMap","" ,"") as any
-                );
+            // 3.中间热力图配置
+            // Highcharts.chart((this as any).id,
+            //     drawHeatmapOptions(listdata, "HeatMap","" ,"") as any
+            //     );
         }, (this as any).postInterval);
     },
     destroyed() {
