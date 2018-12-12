@@ -1,10 +1,10 @@
 import Vue from 'vue';
 import store from './store';
-import Home from './views/Home.vue';
+import LittleBar from './components/chart/LittleBar.vue';
 Vue.config.productionTip = false;
 new Vue({
     // router,
     store,
-    render: (h) => h(Home),
+    render: (h) => h(LittleBar),
 }).$mount('#app');
 //# sourceMappingURL=main.js.map
