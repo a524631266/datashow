@@ -8,14 +8,14 @@
                 <div class="input-group" >
                     <input class="form-control small" type="text"/>
                     <div class="input-group-addon">
-                        <button class="btn btn-outline-secondary" type="button"><i class="fa fa-calendar"></i></button>
+                        <button class="btn btn-outline-secondary btn-sm" type="button"><i class="fa fa-calendar"></i></button>
                     </div>
                 </div>
                 <label class="small">To:</label>
                 <div class="input-group" >
-                    <input class="form-control" type="text"/>
+                    <input class="form-contro" type="text"/>
                     <div class="input-group-addon">
-                        <button class="btn btn-outline-secondary" type="button" ><i class="fa fa-calendar"></i></button>
+                        <button class="btn btn-outline-secondary btn-sm" type="button" ><i class="fa fa-calendar"></i></button>
                     </div>
                 </div>
                 <label class="small">时间间隔:</label>
@@ -27,11 +27,11 @@
                         </select>
 
                     <div class="input-group-addon">
-                        <button class="btn btn-secondary" type="submit" @click.prevent="changeShow(true)">Apply</button>
+                        <button class="btn btn-secondary btn-sm" type="submit" @click.prevent="changeShow(true)">Apply</button>
                     </div>
                 </div>
             </form>
-            <div class="col-8  ">
+            <div class="col-8 timepicker-relative-section">
                 <h3 class="section-heading">快选</h3>
                 <div class="card-group">
                     <ul class="card list-group list-group-flush">
@@ -121,6 +121,7 @@ export default class LittleBar extends Vue {
   position: absolute;
   top: 0%;
   height: 20px;
+
 //   width: 100%;
   &:hover {
       cursor: pointer;
@@ -156,6 +157,12 @@ export default class LittleBar extends Vue {
 }
 .rangeselect{
     box-shadow: 0 0 30px 0 #000;
+    text-align: left;
+}
+
+.timepicker-relative-section{
+    min-height: 237px;
+    
 }
 </style>
 
