@@ -1,8 +1,7 @@
 <template>
     <div :class="positionClass" draggable="true" >
-        <LittleBar :show="positionClass === 'center'?true:false" />
-        <span>option: {{ option }}</span>
-        <div class="innerChart" ref="id" :id="id">
+        <LittleBar :show="positionClass === 'center'?false:true" :initshow="initshow" />
+        <div class="innerChart" ref="id" :id="id" style="absolute">
             <!-- <span>class:name {{positionClass}}</span>
             <span>url: {{ url }} </span>
             <span>option: {{ option }} </span> -->
@@ -14,7 +13,7 @@
 <script lang="ts">
 // import Vue from 'vue'
 // import Component from 'vue-class-component'
-import { Component, Vue, Prop } from 'vue-property-decorator';
+import { Component, Vue, Prop, Emit } from 'vue-property-decorator';
 import { PositionClass , PostParams } from '@/types/index';
 import LittleBar from "@/components/chart/LittleBar.vue";
 import Highcharts, { Options , HeatMapSeriesOptions} from 'highcharts';
@@ -25,48 +24,46 @@ import {listdata, drawHeatmapOptions } from "@/components/options/HeatMapOptions
 @Component({
     components: {
         LittleBar,
-    },
-    data() {
-        return {
-            postInterval: 200,
-            entity: "",
-            // urlparas: this.$props.urlparas,
-        };
-    },
-    mounted() {
-        (this as any).intervalid = setTimeout(() => {
-            // Highcharts.chart((this as any).id, (this as any).option as Options);
-            // 1.时间timeline配置
-            Highcharts.chart((this as any).id, drawActionOptions(inout, "1111"));
-            // console.log((this as any).changedata(),"this.$props.");
-            // 2.箱线图配置
-            // Highcharts.chart((this as any).id, drawBoxOptions(boxchart3, xAxis3 , "222") as Options);
-            // (this as any).$emit("ajaxFunc", this.$props.urlparas);
-            // 3.中间热力图配置
-            // Highcharts.chart((this as any).id,
-            //     drawHeatmapOptions(listdata, "HeatMap","" ,"") as any
-            //     );
-        }, (this as any).postInterval);
-    },
-    destroyed() {
-        // console.log("destory (this as any).intervalid", (this as any).intervalid);
-        clearInterval((this as any).intervalid);
-    },
-    methods: {
-        changedata() {
-            console.log(this.$props.data);
-            if (this.$props.data.id === "chart-top") {
-                this.$props.data.positionClass = PositionClass.Center;
-            }
-        },
-    },
+    }
 })
 export default class HighchartFactory extends Vue {
+    public postInterval =  200 ;
+    public entity =  "";
+    public initshow: boolean = this.$props.positionClass === "center"?true: false ;
     @Prop() private urlparas!: PostParams;
     @Prop() private id!: string;
     @Prop() private positionClass!: PositionClass;
     @Prop() private option!: object;
     @Prop() private data!: object;
+    @Emit()
+    public changedata() {
+            console.log(this.data);
+            if (this.id === "chart-top") {
+                this.positionClass = PositionClass.Center;
+            }
+    }
+    private mounted() {
+        (this as any).intervalid = setTimeout(
+            () => {
+                // Highcharts.chart((this as any).id, (this as any).option as Options);
+                // 1.时间timeline配置
+                Highcharts.chart(this.id, drawActionOptions(inout, "1111"));
+                // console.log((this as any).changedata(),"this.$props.");
+                // 2.箱线图配置
+                // Highcharts.chart((this as any).id, drawBoxOptions(boxchart3, xAxis3 , "222") as Options);
+                // (this as any).$emit("ajaxFunc", this.$props.urlparas);
+                // 3.中间热力图配置
+                // Highcharts.chart((this as any).id,
+                //     drawHeatmapOptions(listdata, "HeatMap","" ,"") as any
+                //     );
+            },
+            this.postInterval
+        );
+    }
+    private destroyed() {
+        // console.log("destory (this as any).intervalid", (this as any).intervalid);
+        clearInterval((this as any).intervalid);
+    }
     // @Prop() private ajaxFunc!: (paras: PostParams) => Options;
 }
 </script>

@@ -10,7 +10,7 @@ import "bootstrap/dist/js/bootstrap.min.js";
 import "font-awesome/css/font-awesome.min.css";
 Vue.config.productionTip = false;
 new Vue({
-  // router,
+  router,
   store,
-  render: (h) => h(LittleBar),
+  render: (h) => h(App),
 }).$mount('#app');

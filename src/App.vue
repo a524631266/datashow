@@ -2,9 +2,11 @@
   <div id="app">
     <div id="nav">
       <router-link to="/">Home</router-link> |
-      <!-- <router-link to="/about">About</router-link> -->
+      <router-link to="/about">About</router-link>
     </div>
-    <router-view/>
+    <keep-alive>
+      <router-view id="rrrrrrv" />
+    </keep-alive>
   </div>
 </template>
 
@@ -19,6 +21,7 @@ body{
     height:100vh;
     width:100vw;
     overflow: hidden;
+    font-size: 13px;
 }
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
@@ -27,9 +30,14 @@ body{
   text-align: center;
   color: #2c3e50;
   height: 100%;
+  position: relative;
+}
+#rrrrrrv{
+  position: relative;
 }
 #nav {
   padding: 30px;
+  position: relative;
   a {
     font-weight: bold;
     color: #2c3e50;
