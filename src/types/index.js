@@ -9,15 +9,16 @@ var PositionClass;
     PositionClass["RightBottom"] = "right-bottom";
     PositionClass["None"] = "None";
 })(PositionClass || (PositionClass = {}));
-export var Dimenssion;
-(function (Dimenssion) {
-    Dimenssion["box"] = "box";
-    Dimenssion["trend"] = "trend";
-    Dimenssion["top"] = "top";
-    Dimenssion["timeline"] = "timeline";
-    Dimenssion["heatmap"] = "heatmap";
-    Dimenssion["geomap"] = "geomap";
-})(Dimenssion || (Dimenssion = {}));
+var Dimension;
+(function (Dimension) {
+    Dimension["box"] = "box";
+    Dimension["trend"] = "trend";
+    Dimension["top"] = "top";
+    Dimension["timeline"] = "timeline";
+    Dimension["heatmap"] = "heatmap";
+    Dimension["geomap"] = "geomap";
+    Dimension["none"] = "none";
+})(Dimension || (Dimension = {}));
 // function Test (firstName:String, lastName:String) {
 //     let firstName2:String = firstName
 //     let lastName2:String = lastName
@@ -26,5 +27,5 @@ export var Dimenssion;
 //     console.log(a)
 // }
 // add(PositionClass.LeftBottom)
-export { PositionClass, };
+export { PositionClass, Dimension };
 //# sourceMappingURL=index.js.map

@@ -8,22 +8,24 @@ enum PositionClass {
     RightBottom = "right-bottom",
     None = "None",
 }
-export enum Dimenssion {
+enum Dimension {
     box = "box",
     trend = "trend",
     top = "top",
     timeline = "timeline",
     heatmap = "heatmap",
     geomap = "geomap",
+    none = "none"
 }
-export interface PostParams {
+interface PostParams {
     entity: string;
     starttime: string;
     endtime: string;
     entitynums: number;
     scale: number;
     winlen: number;
-    dimension: Dimenssion;
+    dimension: Dimension;
+    refreshfeq: number;
 }
 // function Test (firstName:String, lastName:String) {
 //     let firstName2:String = firstName
@@ -36,5 +38,5 @@ export interface PostParams {
 // add(PositionClass.LeftBottom)
 
 export {
-    PositionClass,
+    PositionClass,Dimension,PostParams
 };

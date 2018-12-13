@@ -1,35 +1,17 @@
 
 <template>
-  <HighchartFactory />
+  <BaseChartFactory />
 </template>
 
 <script lang='ts'>
-import { Component, Vue, Prop } from 'vue-property-decorator';
-import HighchartFactory from "@/components/HighchartFactory.vue";
-
-@Component({
-    components: {
-        HighchartFactory,
-    },
-    props: {
-        some: {
-            type: Boolean,
-            required: true,
-        },
-    },
-    data() {
-        return {
-            some: 'daa',
-        };
-    },
-    mounted() {
-        console.log('');
-    },
-    destroyed() {
-        console.log((this as any).some);
-    },
-})
-export default class BoxHighchart extends Vue {
+import BaseChartFactory from "@/components/chart/base/BaseChartFactory.vue";
+// import { Component } from "vue-property-decorator";
+// @Component({
+//     components:{
+//         BaseChartFactory
+//     },
+// })
+export default class BoxHighchart extends BaseChartFactory {
 
 }
 </script>

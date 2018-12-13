@@ -1,33 +1,33 @@
 <template>
-    <div class="container-fluid table-dark rangeselect" @mouseenter="changeShow(false)">
-        <div class="" v-show="initShow" >{{some}}</div>
+    <div class="container-fluid table-dark rangeselect" @mouseenter_back="changeShow(false)">
+        <div class="fa icondown" @click="changeShow" :class="showdownicon" v-show="initshow">{{some}}</div>
         <div class="row" v-show="!show">
-            <form class="col">
+            <form class="col-4">
                 <h3 class="section-heading">用户选项</h3>
                 <label class="small">From:</label>
-                <div class="input-group" >
-                    <input class="form-control small" type="text"/>
+                <div class="input-group input-group-sm" >
+                    <input class="form-control" :placeholder="data.starttime" v-model="data.starttime" type="text" />
                     <div class="input-group-addon">
                         <button class="btn btn-outline-secondary btn-sm" type="button"><i class="fa fa-calendar"></i></button>
                     </div>
                 </div>
                 <label class="small">To:</label>
-                <div class="input-group" >
-                    <input class="form-contro" type="text"/>
+                <div class="input-group input-group-sm" >
+                    <input class="form-control" :placeholder="data.endtime" v-model="data.endtime" type="text"/>
                     <div class="input-group-addon">
-                        <button class="btn btn-outline-secondary btn-sm" type="button" ><i class="fa fa-calendar"></i></button>
+                        <button class="btn btn-outline-secondary btn-sm" type="button"><i class="fa fa-calendar"></i></button>
                     </div>
                 </div>
                 <label class="small">时间间隔:</label>
-                <div class="input-group">
-                    <select class="form-control">
-                            <option label="15min" value="15" selected>15</option>
-                            <option label="1s" value="1">1</option>
-                            <option label="3s" value="3">3</option>
+                <div class="input-group input-group-sm">
+                    <select class="form-control" v-model="data.refreshfeq">
+                            <option label="1m" value="1"></option>
+                            <option label="15min" value="15" selected="true"></option>
+                            <option label="1h" value="60"></option>
                         </select>
 
                     <div class="input-group-addon">
-                        <button class="btn btn-secondary btn-sm" type="submit" @click.prevent="changeShow(true)">Apply</button>
+                        <button class="btn btn-secondary btn-sm" type="submit" @click.prevent="updatepostparams">Apply</button>
                     </div>
                 </div>
             </form>
@@ -84,18 +84,48 @@
 // import Vue from 'vue'
 // import Component from 'vue-class-component'
 import { Component, Vue, Prop, Watch, Emit, Model } from "vue-property-decorator";
+import { PostParams,Dimension } from "@/types/index.ts";
 @Component
 export default class LittleBar extends Vue {
-    @Prop({default: true}) public show!: boolean;
-    @Model('initShow', { type: Boolean }) public initshow!: boolean;
+    // @Prop({default: true}) public show!: boolean;
+    @Prop({default: "fa-sort-down"}) public showdownicon!: string;
+    @Prop({default: false }) public initshow!: boolean;
+    // @Model("changepostparams2") postparms2!: PostParams;
+    @Model("changepostparams") public postparms!: PostParams;
+
+    private show = true;
     private some = 1;
+    private data: PostParams = this.postparms;
+    // {
+    //     starttime: "",
+    //     entity: "",
+    //     endtime: "",
+    //     entitynums: 20,
+    //     scale: 1 * 60 * 60,
+    //     winlen: 30 * 24 * 60 * 60,
+    //     dimension: Dimension.none,
+    //     refreshfeq: 15 * 60 * 1000,
+    // };
     @Watch("show", {deep : true})
     public onHandleShow(val: boolean) {
         console.log("监听",this.show);
-        this.initshow = !this.initshow;
+        // this.initshow = !this.initshow;
+    }
+    // 一旦更新data 状态的任意一个值，就通知父组件 false会不监听对象子元素的变换
+    @Watch("data", {deep : true})
+    public starttimeupdate(val: boolean) {
+        console.log("监听starttime",this.show);
+        // this.initshow = !this.initshow;
+        this.talktofather();
     }
     @Emit()
-    public changeShow(show: boolean | any) {
+    public changeShow(showv: boolean | Event) {
+        this.show = showv instanceof Event ? !this.show : showv;
+        console.log(this.show,showv , showv instanceof Event);
+        this.some += 1;
+    }
+    @Emit()
+    public ShowRangeSelect(show: boolean | any) {
         this.show = show !== undefined ? show : !this.show;
         this.some += 1;
     }
@@ -112,6 +142,12 @@ export default class LittleBar extends Vue {
     }
     private destroyed() {
         console.log((this as any).some);
+    }
+    private updatepostparams(value: any) {
+        this.$emit("changepostparams", this.data);
+    }
+    private talktofather() {
+        this.$emit("changepostparams", this.data);
     }
 }
 </script>
@@ -159,9 +195,13 @@ export default class LittleBar extends Vue {
     box-shadow: 0 0 30px 0 #000;
     text-align: left;
 }
-
+.icondown{
+    left: 50%;
+    position: relative;
+    cursor: pointer;
+}
 .timepicker-relative-section{
-    min-height: 237px;
+    min-height: 270px;
     
 }
 </style>

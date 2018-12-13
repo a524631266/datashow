@@ -26,7 +26,7 @@ import {listdata, drawHeatmapOptions } from "@/components/options/HeatMapOptions
         LittleBar,
     }
 })
-export default class HighchartFactory extends Vue {
+export default class BaseChartFactory extends Vue {
     @Prop() public urlparas!: PostParams;
     @Prop() public id!: string;
     @Prop() public positionClass!: PositionClass;

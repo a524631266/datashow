@@ -1,12 +1,22 @@
 <template>
   <div class="home">
-    <HighchartFactory v-for="(one, index) in datalist" 
+    <BoxHighChart :urlparas="datalist[0].urlparas" :option="datalist[0].option" 
+        :positionClass="datalist[0].positionClass" 
+        :key="0" 
+        :id="datalist[0].id" 
+        @ajaxFunc="ajaxFunc"
+        :data="datalist[0]"
+        v-model="datalist[0].urlparas"
+    />
+    <!-- <HighchartFactory v-for="(one, index) in datalist" 
         :urlparas="one.urlparas" :option="one.option" 
         :positionClass="one.positionClass" 
         :key="index" 
         :id="one.id" 
         @ajaxFunc="ajaxFunc"
-        :data="one" />
+        :data="one"
+        v-model="one.urlparas"
+    /> -->
   </div>
 </template>
 
@@ -14,38 +24,40 @@
 import { Component, Vue } from 'vue-property-decorator';
 import HelloWorld from '@/components/HelloWorld.vue'; // @ is an alias to /src
 import HighchartFactory from "@/components/HighchartFactory.vue";
-import { PositionClass , PostParams , Dimenssion } from "@/types/index.ts";
+import BoxHighChart from "@/components/chart/BoxHighChart.vue";
+import { PositionClass , PostParams , Dimension } from "@/types/index.ts";
 import { Options } from 'highcharts';
-const initUrlProps: PostParams = {
-  entity: "99999998",
-  starttime: "2018-01-01 00:00:00",
-  endtime: "2018-01-02 00:00:00",
-  entitynums: 20,
-  scale: 60 * 60,
-  winlen: 30 * 24 * 60 * 60,
-  dimension: Dimenssion.box,
-};
+import { InitBoxUrlProps,InitHeatMapUrlProps,InitTimeLineUrlProps,
+        InitTopUrlProps,InitTrendUrlProps,InitGeomapUrlProps } from "@/actions/initOptions.ts";
+const orgbox = Object.assign({},InitBoxUrlProps);
+const entbox = Object.assign({},InitBoxUrlProps);
+const enttrend = Object.assign({},InitTrendUrlProps);
+const orgtrend = Object.assign({},InitTrendUrlProps);
+const orghp = Object.assign({},InitHeatMapUrlProps);
+const enttl = Object.assign({},InitTimeLineUrlProps);
+const orgtop = Object.assign({},InitTopUrlProps);
 
 @Component({
   components: {
     HighchartFactory,
+    BoxHighChart
   },
   data() {
     return {
       datalist: [
-        {id: "chart-single-boxchart", urlparas: initUrlProps,
+        {id: "chart-single-boxchart", urlparas: orgbox,
           option: {xAxis: "1"}, positionClass: PositionClass.LeftTop},
-        {id: "chart-region-boxchart", urlparas: initUrlProps,
+        {id: "chart-region-boxchart", urlparas: entbox,
           option: {xAxis: "2"}, positionClass: PositionClass.RightTop},
-        {id: "chart-heatmap", urlparas: initUrlProps,
+        {id: "chart-heatmap", urlparas: orghp,
           option: {xAxis: "4"}, positionClass: PositionClass.Center},
-        {id: "chart-single-action", urlparas: initUrlProps,
+        {id: "chart-single-action", urlparas: enttl,
           option: {xAxis: "1"}, positionClass: PositionClass.LeftBottom},
-        {id: "chart-region-linechart", urlparas: initUrlProps,
+        {id: "chart-region-linechart", urlparas: enttrend,
           option: {xAxis: "2"}, positionClass: PositionClass.RightMiddle},
-        {id: "chart-single-linechart", urlparas: initUrlProps,
+        {id: "chart-single-linechart", urlparas: orgtrend,
           option: {xAxis: "4"}, positionClass: PositionClass.LeftMiddle},
-        {id: "chart-top", urlparas: initUrlProps,
+        {id: "chart-top", urlparas: orgtop,
           option: {xAxis: "1"}, positionClass: PositionClass.RightBottom},
       ],
     };
