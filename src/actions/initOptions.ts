@@ -1,4 +1,4 @@
-import { PostParams ,Dimension} from "@/types/index";
+import { PostParams ,Dimension} from "@/types";
 const InitBoxUrlProps: PostParams = {
     entity: "99999998",
     starttime: "2018-01-01 00:00:00",

@@ -1,14 +1,33 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/home">Home</router-link> |
-      <router-link to="/about">About</router-link>
+  <div id="app" class="panel">
+    <div id="nav" class="panel-heading">
+      <SlotBar>
+        <h2 slot="leftbar">默默组织</h2>
+        <h2 slot="rightbar">默默配电柜</h2>
+      </SlotBar>
     </div>
     <keep-alive>
-      <router-view id="rrrrrrv" />
+      <router-view id="panel" class="panel-body" />
     </keep-alive>
   </div>
 </template>
+<script lang="ts">
+import { Component, Vue, Prop } from 'vue-property-decorator';
+import SlotBar from "@/components/SlotBar.vue";
+@Component({
+  components:{
+    SlotBar
+  }
+})
+export default class App extends Vue {
+    public mounted() {
+        console.log('');
+    }
+    public destroyed() {
+        console.log((this as any).some);
+    }
+}
+</script>
 
 <style lang="scss">
 body{
@@ -36,7 +55,7 @@ body{
   position: relative;
 }
 #nav {
-  padding: 30px;
+  // padding: 30px;
   position: relative;
   a {
     font-weight: bold;
@@ -45,5 +64,8 @@ body{
       color: #42b983;
     }
   }
+}
+.panel-heading{
+  z-index: 200;
 }
 </style>

@@ -3,8 +3,8 @@ import Router from 'vue-router';
 import Home from './views/Home.vue';
 import App from './App.vue';
 import HighchartFactory from './components/HighchartFactory.vue';
+import ChartPanel from '@/views/ChartPanel.vue';
 Vue.use(Router);
-
 export default new Router({
   mode: 'history',
   base: process.env.BASE_URL,
@@ -12,7 +12,7 @@ export default new Router({
     {
       path: '/',
       name: 'App',
-      component: App,
+      component: Home,
     },
     {
       path: '/about',
@@ -29,6 +29,13 @@ export default new Router({
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import(/* webpackChunkName: "about" */ './views/Home.vue'),
+      children: [
+        {
+          path: "/home/:entity",
+          name: "节点",
+          component: ChartPanel
+        }
+      ],
     },
   ],
 });

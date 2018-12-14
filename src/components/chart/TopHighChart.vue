@@ -11,21 +11,15 @@ import { Component, Vue, Prop, Emit, Model, Watch, Provide } from 'vue-property-
 import { PositionClass , PostParams } from '@/types/index';
 import BaseChartFactory from "@/components/chart/base/BaseChartFactory.vue";
 import LittleBar from "@/components/chart/LittleBar.vue";
-import Highcharts, { Options , HeatMapSeriesOptions} from 'highcharts';
-import {boxchart3, xAxis3,drawBoxOptions} from "@/components/options/BoxOptions.ts";
-// import { Component } from "vue-property-decorator";
-// @Component({
-//     components:{
-//         BaseChartFactory
-//     },
-// })
+import { Options , HeatMapSeriesOptions} from 'highcharts';
+import {objectlist, drawTopOptions } from "@/components/options/TopOptions.ts";
 @Component({
     components: {
         BaseChartFactory,
         LittleBar,
     }
 })
-export default class BoxHighChart extends Vue {
+export default class TopHighChart extends Vue {
     @Prop() public id!: string;
     @Prop() public urlparas!: PostParams;
     @Prop() public positionClass!: PositionClass;
@@ -47,17 +41,10 @@ export default class BoxHighChart extends Vue {
     private mounted() {
       this.intervalid = setTimeout(
         () => {
-            console.log("11111");
-            // Highcharts.chart((this as any).id, (this as any).option as Options);
-            // 1.时间timeline配置
-            //  drawActionOptions(inout, "1111"));
-            // console.log((this as any).changedata(),"this.$props.");
-            // 2.箱线图配置
-            const option2 =  drawBoxOptions(boxchart3, xAxis3 , this.id) as Options;
+            const option2 = drawTopOptions(objectlist,"趋势图","","") as any;
             (option2 as any).change = false;
             this.option = option2;
             console.log(this.option);
-            // (this as any).$emit("ajaxFunc", this.$props.urlparas);
         },
         this.postInterval
       );

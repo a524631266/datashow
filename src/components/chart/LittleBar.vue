@@ -194,6 +194,8 @@ export default class LittleBar extends Vue {
 .rangeselect{
     box-shadow: 0 0 30px 0 #000;
     text-align: left;
+    position: absolute;
+    z-index: 100;
 }
 .icondown{
     left: 50%;
