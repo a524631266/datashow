@@ -3,7 +3,7 @@
       <slot name="leftbar" class="leftslot">组织</slot> |
       <router-link to="/home">Home</router-link> |
       <router-link to="/about">About</router-link> |
-      <router-link to="/home/12346">12346配电柜</router-link> |
+      <router-link to="/home/entiydid">12346配电柜</router-link> |
       <slot name="rightbar" class="rightslot">配电柜</slot>
   </div>
 </template>

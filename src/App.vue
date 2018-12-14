@@ -6,9 +6,11 @@
         <h2 slot="rightbar">默默配电柜</h2>
       </SlotBar>
     </div>
+    <div>
     <keep-alive>
       <router-view id="panel" class="panel-body" />
     </keep-alive>
+    </div>
   </div>
 </template>
 <script lang="ts">

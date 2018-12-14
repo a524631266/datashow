@@ -1,8 +1,10 @@
 
 <template>
   <div :class="positionClass" draggable="true" >
-        <LittleBar :show="positionClass === 'center'?false:true" :initshow="initshow" v-model="postparms"/>
-        <BaseChartFactory :id="id" :option="option" />
+        <LittleBar :show="positionClass === 'center'?false:true" :initshow="initshow" v-model="postparms">
+            <BaseChartFactory :id="id" :option="option" slot="chart"/>
+        </LittleBar>
+        
   </div>
 </template>
 

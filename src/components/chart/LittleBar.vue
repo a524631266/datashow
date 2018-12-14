@@ -1,82 +1,86 @@
 <template>
-    <div class="container-fluid table-dark rangeselect" @mouseenter_back="changeShow(false)">
-        <div class="fa icondown" @click="changeShow" :class="showdownicon" v-show="initshow">{{some}}</div>
-        <div class="row" v-show="!show">
-            <form class="col-4">
-                <h3 class="section-heading">用户选项</h3>
-                <label class="small">From:</label>
-                <div class="input-group input-group-sm" >
-                    <input class="form-control" :placeholder="data.starttime" v-model="data.starttime" type="text" />
-                    <div class="input-group-addon">
-                        <button class="btn btn-outline-secondary btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+    <div class="container-fluid  rangeselect"  @mouseenter="showdownincon(true)" @mouseleave_1="showdownincon(false)">
+        <div class="littlebar" :class="highlightbarclass"   @click="changeShow" v-show="initshow" @mouseenter="highlightbar(true)" @mouseleave="highlightbar(false)">
+            <div class="fa icondown" :class="showdownicon" ></div>
+        <!-- </div> -->
+            <div class="row options1 table-dark" v-show="!show" @click.stop="donothing" >
+                <form class="col-4">
+                    <h3 class="section-heading">用户选项</h3>
+                    <label class="small">From:</label>
+                    <div class="input-group input-group-sm" >
+                        <input class="form-control" :placeholder="data.starttime" v-model="data.starttime" type="text" />
+                        <div class="input-group-addon">
+                            <button class="btn btn-outline-secondary btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                        </div>
                     </div>
-                </div>
-                <label class="small">To:</label>
-                <div class="input-group input-group-sm" >
-                    <input class="form-control" :placeholder="data.endtime" v-model="data.endtime" type="text"/>
-                    <div class="input-group-addon">
-                        <button class="btn btn-outline-secondary btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                    <label class="small">To:</label>
+                    <div class="input-group input-group-sm" >
+                        <input class="form-control" :placeholder="data.endtime" v-model="data.endtime" type="text"/>
+                        <div class="input-group-addon">
+                            <button class="btn btn-outline-secondary btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                        </div>
                     </div>
-                </div>
-                <label class="small">时间间隔:</label>
-                <div class="input-group input-group-sm">
-                    <select class="form-control" v-model="data.refreshfeq">
-                            <option label="1m" value="1"></option>
-                            <option label="15min" value="15" selected="true"></option>
-                            <option label="1h" value="60"></option>
-                        </select>
+                    <label class="small">时间间隔:</label>
+                    <div class="input-group input-group-sm">
+                        <select class="form-control" v-model="data.refreshfeq">
+                                <option label="1m" value="1"></option>
+                                <option label="15min" value="15" selected="true"></option>
+                                <option label="1h" value="60"></option>
+                            </select>
 
-                    <div class="input-group-addon">
-                        <button class="btn btn-secondary btn-sm" type="submit" @click.prevent="updatepostparams">Apply</button>
+                        <div class="input-group-addon">
+                            <button class="btn btn-secondary btn-sm" type="submit" @click.prevent="updatepostparams">Apply</button>
+                        </div>
                     </div>
-                </div>
-            </form>
-            <div class="col-8 timepicker-relative-section">
-                <h3 class="section-heading">快选</h3>
-                <div class="card-group">
-                    <ul class="card list-group list-group-flush">
-                        <li class="list-group-item small"> Last 2 days </li>
-                        <li class="list-group-item small"> Last 7 days </li>
-                        <li class="list-group-item small"> Last 30 days </li>
-                        <li class="list-group-item small"> Last 90 days </li>
-                        <li class="list-group-item small"> Last 6 months </li>
-                        <li class="list-group-item small"> Last 1 year </li>
-                        <li class="list-group-item small"> Last 2 years </li>
-                        <li class="list-group-item small"> Last 5 years </li>
-                    </ul>
-                    <ul class="card list-group list-group-flush">
-                        <li class="list-group-item small"> Yesterday </li>
-                        <li class="list-group-item small"> Day before yesterday </li>
-                        <li class="list-group-item small"> This day last week </li>
-                        <li class="list-group-item small"> Previous week </li>
-                        <li class="list-group-item small"> Previous month </li>
-                        <li class="list-group-item small"> Previous year </li>
+                </form>
+                <div class="col-8 timepicker-relative-section">
+                    <h3 class="section-heading">快选</h3>
+                    <div class="card-group">
+                        <ul class="card list-group list-group-flush">
+                            <li class="list-group-item small"> Last 2 days </li>
+                            <li class="list-group-item small"> Last 7 days </li>
+                            <li class="list-group-item small"> Last 30 days </li>
+                            <li class="list-group-item small"> Last 90 days </li>
+                            <li class="list-group-item small"> Last 6 months </li>
+                            <li class="list-group-item small"> Last 1 year </li>
+                            <li class="list-group-item small"> Last 2 years </li>
+                            <li class="list-group-item small"> Last 5 years </li>
+                        </ul>
+                        <ul class="card list-group list-group-flush">
+                            <li class="list-group-item small"> Yesterday </li>
+                            <li class="list-group-item small"> Day before yesterday </li>
+                            <li class="list-group-item small"> This day last week </li>
+                            <li class="list-group-item small"> Previous week </li>
+                            <li class="list-group-item small"> Previous month </li>
+                            <li class="list-group-item small"> Previous year </li>
 
-                    </ul>
-                    <ul class="card list-group list-group-flush">
-                        <li class="list-group-item small"> Today </li>
-                        <li class="list-group-item small"> Today so far </li>
-                        <li class="list-group-item small"> This week </li>
-                        <li class="list-group-item small"> This week so far </li>
-                        <li class="list-group-item small"> This month </li>
-                        <li class="list-group-item small"> This month so far </li>
-                        <li class="list-group-item small"> This year </li>
-                        <li class="list-group-item small"> This year so far </li>
-                    </ul>
-                    <ul class="card list-group list-group-flush">
-                        <li class="list-group-item small"> Last 5 minutes </li>
-                        <li class="list-group-item small"> Last 15 minutes </li>
-                        <li class="list-group-item small"> Last 30 minutes </li>
-                        <li class="list-group-item small"> Last 1 hour </li>
-                        <li class="list-group-item small"> Last 3 hours </li>
-                        <li class="list-group-item small"> Last 6 hours </li>
-                        <li class="list-group-item small"> Last 12 hours </li>
-                        <li class="list-group-item small"> Last 24 hours </li>
-                    </ul>
+                        </ul>
+                        <ul class="card list-group list-group-flush">
+                            <li class="list-group-item small"> Today </li>
+                            <li class="list-group-item small"> Today so far </li>
+                            <li class="list-group-item small"> This week </li>
+                            <li class="list-group-item small"> This week so far </li>
+                            <li class="list-group-item small"> This month </li>
+                            <li class="list-group-item small"> This month so far </li>
+                            <li class="list-group-item small"> This year </li>
+                            <li class="list-group-item small"> This year so far </li>
+                        </ul>
+                        <ul class="card list-group list-group-flush">
+                            <li class="list-group-item small"> Last 5 minutes </li>
+                            <li class="list-group-item small"> Last 15 minutes </li>
+                            <li class="list-group-item small"> Last 30 minutes </li>
+                            <li class="list-group-item small"> Last 1 hour </li>
+                            <li class="list-group-item small"> Last 3 hours </li>
+                            <li class="list-group-item small"> Last 6 hours </li>
+                            <li class="list-group-item small"> Last 12 hours </li>
+                            <li class="list-group-item small"> Last 24 hours </li>
+                        </ul>
+                    </div>
+                    
                 </div>
-                
             </div>
         </div>
+        <slot name="chart">无数据</slot>
     </div>
 </template>
 <script lang="ts">
@@ -92,7 +96,7 @@ export default class LittleBar extends Vue {
     @Prop({default: false }) public initshow!: boolean;
     // @Model("changepostparams2") postparms2!: PostParams;
     @Model("changepostparams") public postparms!: PostParams;
-
+    private highlightbarclass = "";
     private show = true;
     private some = 1;
     private data: PostParams = this.postparms;
@@ -133,7 +137,10 @@ export default class LittleBar extends Vue {
     public hide(show: boolean | any) {
         this.show = show !== undefined ? show : !this.show;
     }
-
+    @Emit()
+    public highlightbar(show: boolean | any) {
+        this.highlightbarclass = show ? "table-dark":"";
+    }
     public initShow() {
         console.log(this.initshow,111111);
     }
@@ -148,6 +155,10 @@ export default class LittleBar extends Vue {
     }
     private talktofather() {
         this.$emit("changepostparams", this.data);
+    }
+    // tslint:disable-next-line:no-empty
+    private donothing() {
+        console.log("1111111111");
     }
 }
 </script>
@@ -164,6 +175,18 @@ export default class LittleBar extends Vue {
       background: yellow;
   };
 }
+// .upper {
+//   position: fixed;
+//   top: 0%;
+//   height: 20px;
+//   width: 60%;
+//   z-index: 300;
+// //   width: 100%;
+//   &:hover {
+//       cursor: pointer;
+//       background: yellow;
+//   };
+// }
 .panel-title-container {
     min-height: 9px;
     // cursor: move;
@@ -194,8 +217,10 @@ export default class LittleBar extends Vue {
 .rangeselect{
     box-shadow: 0 0 30px 0 #000;
     text-align: left;
-    position: absolute;
-    z-index: 100;
+    position: relative;
+    z-index: 300;
+    height: 100%;
+    background: transparent;
 }
 .icondown{
     left: 50%;
@@ -206,5 +231,19 @@ export default class LittleBar extends Vue {
     min-height: 270px;
     
 }
+.options1{
+    position: absolute;
+    width: 100%;
+    z-index: 300;
+}
+.littlebar{
+    width: 100%;
+}
+.container-fluid,.row{
+    padding: 0px;
+    margin: 0px;
+}
+
+
 </style>
 

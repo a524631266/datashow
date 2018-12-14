@@ -1,18 +1,75 @@
 <template>
-  <div class="entity">
-    <TrendHighChart :urlparas="datalist[2].urlparas" 
+  <div class="home">
+    <HeatMapHighChart :urlparas="datalist[2].urlparas" 
         :positionClass="datalist[2].positionClass" 
         :key="2" 
         :id="datalist[2].id" 
+        @ajaxFunc="ajaxFunc"
         :data="datalist[2]"
         v-model="datalist[2].urlparas"
     />
+    <BoxHighChart :urlparas="datalist[0].urlparas" 
+        :positionClass="datalist[0].positionClass" 
+        :key="0" 
+        :id="datalist[0].id" 
+        @ajaxFunc="ajaxFunc"
+        :data="datalist[0]"
+        v-model="datalist[0].urlparas"
+    />
+    <BoxHighChart :urlparas="datalist[1].urlparas" 
+        :positionClass="datalist[1].positionClass" 
+        :key="1" 
+        :id="datalist[1].id" 
+        @ajaxFunc="ajaxFunc"
+        :data="datalist[1]"
+        v-model="datalist[1].urlparas"
+    />
+    <TrendHighChart :urlparas="datalist[4].urlparas" 
+        :positionClass="datalist[4].positionClass" 
+        :key="4" 
+        :id="datalist[4].id" 
+        @ajaxFunc="ajaxFunc"
+        :data="datalist[4]"
+        v-model="datalist[4].urlparas"
+    />
+    <TrendHighChart :urlparas="datalist[5].urlparas" 
+        :positionClass="datalist[5].positionClass" 
+        :key="5" 
+        :id="datalist[5].id" 
+        @ajaxFunc="ajaxFunc"
+        :data="datalist[5]"
+        v-model="datalist[5].urlparas"
+    />
+    <TopHighChart :urlparas="datalist[6].urlparas" 
+        :positionClass="datalist[6].positionClass" 
+        :key="6" 
+        :id="datalist[6].id" 
+        @ajaxFunc="ajaxFunc"
+        :data="datalist[6]"
+        v-model="datalist[6].urlparas"
+    />
+    <TimeLineHighChart :urlparas="datalist[3].urlparas" 
+        :positionClass="datalist[3].positionClass" 
+        :key="3" 
+        :id="datalist[3].id" 
+        @ajaxFunc="ajaxFunc"
+        :data="datalist[3]"
+        v-model="datalist[3].urlparas"
+    />
+    <!-- <HighchartFactory v-for="(one, index) in datalist" 
+        :urlparas="one.urlparas" :option="one.option" 
+        :positionClass="one.positionClass" 
+        :key="index" 
+        :id="one.id" 
+        @ajaxFunc="ajaxFunc"
+        :data="one"
+        v-model="one.urlparas"
+    /> -->
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Emit } from 'vue-property-decorator';
-import HelloWorld from '@/components/HelloWorld.vue'; // @ is an alias to /src
 import HighchartFactory from "@/components/HighchartFactory.vue";
 import BoxHighChart from "@/components/chart/BoxHighChart.vue";
 import TimeLineHighChart from "@/components/chart/TimeLineHighChart.vue";
@@ -62,15 +119,15 @@ export default class ChartPanel extends Vue {
     public beforeCreate() {
     // console.log("Home", PositionClass.LeftTop);
     }
-    // @Emit()
-    // public ajaxFunc(paras: PostParams): Options {
-    //     console.log("11111111", paras.entity, paras.starttime,
-    //               paras.endtime, paras.entitynums, paras.scale, paras.winlen, paras.dimension,
-    //               (this as any),
-    //               );
-    //     this.datalist[0].option.xAxis = "10000";
-    //     return {};
-    // }
+    @Emit()
+    public ajaxFunc(paras: PostParams) {
+        console.log("11111111", paras.entity, paras.starttime,
+                  paras.endtime, paras.entitynums, paras.scale, paras.winlen, paras.dimension,
+                  (this as any),
+                  );
+        this.datalist[0].option.xAxis = "10000";
+        return {};
+    }
 }
 </script>
 

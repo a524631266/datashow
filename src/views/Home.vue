@@ -115,7 +115,7 @@ export default class Home extends Vue {
           option: {xAxis: "4"}, positionClass: PositionClass.LeftMiddle},
         {id: "chart-top", urlparas: orgtop,
           option: {xAxis: "1"}, positionClass: PositionClass.RightBottom},
-      ];
+    ];
     public beforeCreate() {
     // console.log("Home", PositionClass.LeftTop);
     }

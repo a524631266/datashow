@@ -12,7 +12,7 @@ export default new Router({
     {
       path: '/',
       name: 'App',
-      component: Home,
+      component: App,
     },
     {
       path: '/about',
@@ -29,13 +29,18 @@ export default new Router({
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import(/* webpackChunkName: "about" */ './views/Home.vue'),
-      children: [
-        {
-          path: "/home/:entity",
-          name: "节点",
-          component: ChartPanel
-        }
-      ],
+      // children: [
+      //   {
+      //     path: ":entity",
+      //     name: "node",
+      //     component: () => import(/* webpackChunkName: "about" */ './views/ChartPanel.vue')
+      //   }
+      // ],
     },
+    {
+      path: "/home/:entity",
+      name: "node",
+      component: () => import(/* webpackChunkName: "about" */ './views/Home.vue')
+    }
   ],
 });
