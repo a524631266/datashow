@@ -7,9 +7,13 @@
       </SlotBar>
     </div>
     <div>
-    <keep-alive>
-      <router-view id="panel" class="panel-body" />
-    </keep-alive>
+    <transition name="slide-left">
+      <keep-alive>
+        
+          <router-view id="panel" class="panel-body" />
+        
+      </keep-alive>
+    </transition>
     </div>
   </div>
 </template>
@@ -68,6 +72,6 @@ body{
   }
 }
 .panel-heading{
-  z-index: 200;
+  z-index: 1000;
 }
 </style>
