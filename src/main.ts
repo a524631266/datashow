@@ -8,9 +8,13 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.min.js";
 import "bootstrap/dist/js/bootstrap.min.js";
 import "font-awesome/css/font-awesome.min.css";
+import Dynamic from "./testDynamic/Dynamic.vue";
+
 Vue.config.productionTip = false;
-new Vue({
+export const appVue = new Vue({
   router,
   store,
-  render: (h) => h(App),
+  render: (h) => h(Dynamic),
 }).$mount('#app');
+
+

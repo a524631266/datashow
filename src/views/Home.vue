@@ -65,10 +65,13 @@
         :data="one"
         v-model="one.urlparas"
     /> -->
+    <div id="testdiv" class="testdiv" @click="addcomponent">111</div>
   </div>
 </template>
 
 <script lang="ts">
+import { appVue } from "@/main.ts";
+
 import { Component, Vue, Emit } from 'vue-property-decorator';
 import HighchartFactory from "@/components/HighchartFactory.vue";
 import BoxHighChart from "@/components/chart/BoxHighChart.vue";
@@ -128,23 +131,16 @@ export default class Home extends Vue {
         this.datalist[0].option.xAxis = "10000";
         return {};
     }
+    @Emit()
+    // tslint:disable-next-line:no-empty
+    public addcomponent() {
+    }
 }
 </script>
 
 
 <style>
-body {
-    /* background-color: gray; */
-    background-image: url("/xinjiang/img/background4.jpg") ;
-    /* background-repeat: no-repeat; */
-    /* background-size: cover; */
-    background-attachment: fixed; 
-    background-position: center center;
-    height:100vh;
-    width:100vw;
-    overflow: hidden;
-    margin: 0;
-}
+
 .left-bottom,.left-middle,.left-top,.center,.right-bottom,.right-middle,.right-top{
     border-radius: 5px;
     background: radial-gradient(circle at center,#000066 0%,#000000 200%);
@@ -260,6 +256,14 @@ body {
     left:50%;
     position: absolute;
     margin-left: -25%;
+}
+.testdiv{
+    position: absolute;
+    width:200px;
+    height:200px;
+    top:100%;
+    background:red;
+    transform: translate(50px,50px)
 }
 </style>
 

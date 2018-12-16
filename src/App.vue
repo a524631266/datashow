@@ -45,7 +45,7 @@ body{
     background-position: center center;
     height:100vh;
     width:100vw;
-    overflow: hidden;
+    // overflow: hidden;
     font-size: 13px;
 }
 #app {
