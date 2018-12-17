@@ -1,5 +1,6 @@
 import { MeasureName } from '@/types';
-// import bmap from 'echarts/extension/bmap';
+// import 'echarts/extension/bmap/bmap.js';
+import 'echarts/dist/extension/bmap.min.js';
 export const cityMap = {
     北京市: "110100",
     天津市: "120100",
@@ -532,7 +533,7 @@ interface MapCenter {
     JD: number;// 代表经度
     WD: number;// 代表纬度
 }
-interface Points {
+export interface Points {
     0: number; // 经度
     1: number; // 纬度
     2: number; // value

@@ -257,6 +257,9 @@ $littlebarheight: 24px;
 .barBody{
     height:calc(100% - 24px);
 }
+.anchorBL{
+    display:none;
+}
 
 </style>
 

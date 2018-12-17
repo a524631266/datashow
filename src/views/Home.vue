@@ -65,13 +65,13 @@
         :data="one"
         v-model="one.urlparas"
     /> -->
-    <GeoMapEchart :urlparas="datalist[5].urlparas" 
+    <GeoMapEchart :urlparas="datalist[2].urlparas" 
             :positionClass="datalist[2].positionClass" 
             :key="2" 
-            :id="datalist[5].id" 
+            :id="datalist[2].id" 
             @ajaxFunc="ajaxFunc"
-            :data="datalist[5]"
-            v-model="datalist[5].urlparas">
+            :data="datalist[2]"
+            v-model="datalist[2].urlparas">
     </GeoMapEchart>
     <div id="testdiv" class="testdiv" @click="addcomponent">111
     </div>
