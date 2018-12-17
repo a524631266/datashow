@@ -9,12 +9,12 @@ import "bootstrap/dist/js/bootstrap.min.js";
 import "bootstrap/dist/js/bootstrap.min.js";
 import "font-awesome/css/font-awesome.min.css";
 import Dynamic from "./testDynamic/Dynamic.vue";
-
+console.log("是否为本地",process.env.NODE_ENV);
 Vue.config.productionTip = false;
 export const appVue = new Vue({
   router,
   store,
-  render: (h) => h(Dynamic),
+  render: (h) => h(Home),
 }).$mount('#app');
 
 

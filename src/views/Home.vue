@@ -1,13 +1,13 @@
 <template>
   <div class="home">
-    <HeatMapHighChart :urlparas="datalist[2].urlparas" 
+    <!-- <HeatMapHighChart :urlparas="datalist[2].urlparas" 
         :positionClass="datalist[2].positionClass" 
         :key="2" 
         :id="datalist[2].id" 
         @ajaxFunc="ajaxFunc"
         :data="datalist[2]"
         v-model="datalist[2].urlparas"
-    />
+    /> -->
     <BoxHighChart :urlparas="datalist[0].urlparas" 
         :positionClass="datalist[0].positionClass" 
         :key="0" 
@@ -65,7 +65,16 @@
         :data="one"
         v-model="one.urlparas"
     /> -->
-    <div id="testdiv" class="testdiv" @click="addcomponent">111</div>
+    <GeoMapEchart :urlparas="datalist[5].urlparas" 
+            :positionClass="datalist[2].positionClass" 
+            :key="2" 
+            :id="datalist[5].id" 
+            @ajaxFunc="ajaxFunc"
+            :data="datalist[5]"
+            v-model="datalist[5].urlparas">
+    </GeoMapEchart>
+    <div id="testdiv" class="testdiv" @click="addcomponent">111
+    </div>
   </div>
 </template>
 
@@ -79,6 +88,8 @@ import TimeLineHighChart from "@/components/chart/TimeLineHighChart.vue";
 import HeatMapHighChart from "@/components/chart/HeatMapHighChart.vue";
 import TrendHighChart from "@/components/chart/TrendHighChart.vue";
 import TopHighChart from "@/components/chart/TopHighChart.vue";
+import GeoMapEchart from "@/components/chart/GeoMapEchart.vue";
+
 
 import { PositionClass , PostParams , Dimension } from "@/types/index.ts";
 
@@ -99,7 +110,8 @@ const orgtop = Object.assign({},InitTopUrlProps);
     TimeLineHighChart,
     HeatMapHighChart,
     TrendHighChart,
-    TopHighChart
+    TopHighChart,
+    GeoMapEchart
   },
 })
 export default class Home extends Vue {

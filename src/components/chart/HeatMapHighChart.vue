@@ -2,7 +2,7 @@
 <template>
   <div :class="positionClass" draggable="true" >
         <LittleBar :show="positionClass === 'center'?false:true" :initshow="initshow" v-model="postparms">
-            <BaseChartFactory :id="id" :option="option" slot="chart"/>
+            <BaseChartFactory :id="id" :option="option" :chartType="chartType" slot="chart"/>
         </LittleBar>
         
   </div>
@@ -10,7 +10,7 @@
 
 <script lang='ts'>
 import { Component, Vue, Prop, Emit, Model, Watch, Provide } from 'vue-property-decorator';
-import { PositionClass , PostParams } from '@/types/index';
+import { PositionClass , PostParams, ChartType } from '@/types/index';
 import BaseChartFactory from "@/components/chart/base/BaseChartFactory.vue";
 import LittleBar from "@/components/chart/LittleBar.vue";
 import { Options , HeatMapSeriesOptions} from 'highcharts';
@@ -33,6 +33,7 @@ export default class HeatMapHighChart extends Vue {
     public entity =  "";
     public initshow: boolean = this.positionClass === "center"?true: false ;
     private intervalid = 0;
+    private chartType = ChartType.highchart;
     @Emit()
     public changedata() {
       console.log(this.data);
@@ -51,16 +52,16 @@ export default class HeatMapHighChart extends Vue {
         this.postInterval
       );
       // 通过change来获取定义属性的变化
-      setInterval(
-          () => {
-              console.log("第二次变化");
-              // boxchart3[1].data[0][1] = 133333000
-              (this.option as any).change = !(this.option as any).change ;
-              // this.option =  drawBoxOptions(boxchart3, xAxis3 , this.id) as Options;
-              console.log(this.option);
-          },
-          this.postInterval+3000
-      );
+    //   setInterval(
+    //       () => {
+    //           console.log("第二次变化");
+    //           // boxchart3[1].data[0][1] = 133333000
+    //           (this.option as any).change = !(this.option as any).change ;
+    //           // this.option =  drawBoxOptions(boxchart3, xAxis3 , this.id) as Options;
+    //           console.log(this.option);
+    //       },
+    //       this.postInterval+3000
+    //   );
     }
     @Watch("postparms",  {deep : true})
     private onHandleShow(val: boolean) {

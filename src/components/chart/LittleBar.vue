@@ -1,5 +1,5 @@
 <template>
-    <div class="container-fluid  rangeselect"  @mouseenter="showdownincon(true)" @mouseleave_1="showdownincon(false)">
+    <div class="container-fluid  rangeselect"  @mouseenter="showdownincon(true)" @mouseleave="showdownincon(false)">
         <div class="littlebar" :class="highlightbarclass"   @click="changeShow" v-show="initshow" @mouseenter="highlightbar(true)" @mouseleave="highlightbar(false)">
             <div class="fa icondown" :class="showdownicon" ></div>
         <!-- </div> -->
@@ -80,7 +80,10 @@
                 </div>
             </div>
         </div>
-        <slot name="chart">无数据</slot>
+        <div class="barBody">
+            <slot name="chart">无数据</slot>
+        </div>
+        
     </div>
 </template>
 <script lang="ts">
@@ -92,14 +95,16 @@ import { PostParams,Dimension } from "@/types/index.ts";
 @Component
 export default class LittleBar extends Vue {
     // @Prop({default: true}) public show!: boolean;
-    @Prop({default: "fa-sort-down"}) public showdownicon!: string;
-    @Prop({default: false }) public initshow!: boolean;
+    // @Prop({default: "fa-sort-down"}) public showdownicon!: string;
+    // @Prop({default: false }) public initshow!: boolean;
     // @Model("changepostparams2") postparms2!: PostParams;
     @Model("changepostparams") public postparms!: PostParams;
     private highlightbarclass = "";
     private show = true;
     private some = 1;
     private data: PostParams = this.postparms;
+    private showdownicon: string = "";
+    private initshow = true;
     // {
     //     starttime: "",
     //     entity: "",
@@ -160,10 +165,16 @@ export default class LittleBar extends Vue {
     private donothing() {
         console.log("1111111111");
     }
+    private showdownincon(show: boolean) {
+        // console.log("sssssssssssss");
+        this.showdownicon = show?"fa-sort-down":"";
+        // console.log("showdownicon",show,this.showdownicon,this.postparms.entity);
+    }
 }
 </script>
 
 <style lang="scss" scoped>
+$littlebarheight: 24px;
 .upper {
   position: absolute;
   top: 0%;
@@ -215,7 +226,7 @@ export default class LittleBar extends Vue {
     }
 }
 .rangeselect{
-    box-shadow: 0 0 30px 0 #000;
+    // box-shadow: 0 0 30px 0 #000;
     text-align: left;
     position: relative;
     z-index: 300;
@@ -243,7 +254,9 @@ export default class LittleBar extends Vue {
     padding: 0px;
     margin: 0px;
 }
-
+.barBody{
+    height:calc(100% - 24px);
+}
 
 </style>
 
