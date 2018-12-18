@@ -7,6 +7,7 @@ enum PositionClass {
     LeftBottom = "left-bottom",
     RightBottom = "right-bottom",
     None = "None",
+    Drawer = "drawer",
 }
 enum Dimension {
     box = "box",

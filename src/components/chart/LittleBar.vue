@@ -108,16 +108,6 @@ export default class LittleBar extends Vue {
     private data: PostParams = this.postparms;
     private showdownicon: string = "";
     private initshow = true;
-    // {
-    //     starttime: "",
-    //     entity: "",
-    //     endtime: "",
-    //     entitynums: 20,
-    //     scale: 1 * 60 * 60,
-    //     winlen: 30 * 24 * 60 * 60,
-    //     dimension: Dimension.none,
-    //     refreshfeq: 15 * 60 * 1000,
-    // };
     @Watch("show", {deep : true})
     public onHandleShow(val: boolean) {
         console.log("监听",this.show);

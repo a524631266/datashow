@@ -1,7 +1,7 @@
 <template>
-  <div :class="positionClass" draggable="true" >
+  <div :class="positionClass" draggable="true" @dblclick="handledoubleclick">
        <LittleBar :show="positionClass === 'center'?false:true" :initshow="initshow" v-model="postparms">
-            <BaseChartFactory :id="id" :option="option" :chartType="chartType" @updateData="updateData" slot="chart"/>
+            <BaseChartFactory :positionClass="positionClass" :id="id" :option="option" :chartType="chartType" @updateData="updateData" slot="chart"/>
         </LittleBar>
   </div>
 </template>
@@ -317,6 +317,13 @@ export default class GeoMapEchart extends Vue {
             data.push([91.165855+(Math.random()-1)*15,44.659313+(Math.random()-1)*6,Math.random()>0.5?1:1]);
         }
         return data;
+    }
+    @Emit()
+    private handledoubleclick() {
+    //   console.log("double click",this.id);
+      PubSub.publish("doubleclick2changecenter",this.id);
+      // this.resizeChart();
+      // (this.option as any).change = !(this.option as any).change;
     }
 }
 </script>

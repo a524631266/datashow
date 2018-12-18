@@ -14,6 +14,7 @@ import 'echarts/lib/chart/heatmap';
 })
 export default class BaseChartFactory extends Vue {
     @Prop() public id!: string;
+    @Prop() public positionClass!: string;
     @Prop() public chartType!: ChartType;
     // @Inject("option") public option!: object;
     @Prop() public option!: object;
@@ -26,12 +27,13 @@ export default class BaseChartFactory extends Vue {
     }
     @Watch("option.change",{deep: true})
     private redrawChart(newVal: object, oldVal: object) {
-    //    console.log("options变化",newVal, oldVal);
+       console.log("options变化",newVal, oldVal);
        if(newVal !== oldVal && this.chartType === ChartType.highchart) {
             if (this.chartInstance) {
                 console.log("1");
+                (this.chartInstance as any).reflow();
             } else {
-                Highcharts.chart(this.id, this.option);
+                this.chartInstance = Highcharts.chart(this.id, this.option) as any;
             }
        }
        if(newVal !== oldVal && this.chartType === ChartType.echart) {
@@ -47,6 +49,16 @@ export default class BaseChartFactory extends Vue {
                 (window as any).echart = mychart as any;
             }
        }
+    }
+    @Watch('positionClass',{deep: true})
+    private reflowChart(newVal: object, oldVal: object) {
+        console.log("posiontClass Change");
+        if (this.chartInstance && this.chartType === ChartType.highchart) {
+            (this.chartInstance as any).reflow();
+        }
+        if (this.chartInstance && this.chartType === ChartType.echart) {
+            (this.chartInstance as any).resize();
+        }
     }
 }
 </script>

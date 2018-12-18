@@ -1,8 +1,8 @@
 
 <template>
-  <div :class="positionClass" draggable="true" >
+  <div :class="positionClass" draggable="true" @dblclick="handledoubleclick">
         <LittleBar :show="positionClass === 'center'?false:true" :initshow="initshow" v-model="postparms">
-          <BaseChartFactory :id="id" :option="option" :chartType="chartType" slot="chart" />
+          <BaseChartFactory :positionClass="positionClass" :id="id" :option="option" :chartType="chartType" slot="chart" />
         </LittleBar>
   </div>
 </template>
@@ -14,6 +14,7 @@ import BaseChartFactory from "@/components/chart/base/BaseChartFactory.vue";
 import LittleBar from "@/components/chart/LittleBar.vue";
 import Highcharts, { Options , HeatMapSeriesOptions} from 'highcharts';
 import {boxchart3, xAxis3,drawBoxOptions} from "@/components/options/BoxOptions.ts";
+import PubSub from 'pubsub-js';
 // import { Component } from "vue-property-decorator";
 // @Component({
 //     components:{
@@ -84,6 +85,18 @@ export default class BoxHighChart extends Vue {
     private destroyed() {
       // console.log("destory (this as any).intervalid", (this as any).intervalid);
       clearInterval(this.intervalid);
+    }
+    @Emit()
+    private handledoubleclick() {
+      // console.log("double click",this.id);
+      PubSub.publish("doubleclick2changecenter",this.id);
+      // this.resizeChart();
+      // (this.option as any).change = !(this.option as any).change;
+    }
+    @Emit()
+    private resizeChart() {
+      const change = !(this.option as any).change;
+      (this.option as any).change = change;
     }
 }
 </script>

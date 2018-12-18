@@ -8,79 +8,86 @@
         :data="datalist[2]"
         v-model="datalist[2].urlparas"
     /> -->
-    <BoxHighChart :urlparas="datalist[0].urlparas" 
-        :positionClass="datalist[0].positionClass" 
-        :key="0" 
-        :id="datalist[0].id" 
-        @ajaxFunc="ajaxFunc"
-        :data="datalist[0]"
-        v-model="datalist[0].urlparas"
-    />
-    <BoxHighChart :urlparas="datalist[1].urlparas" 
-        :positionClass="datalist[1].positionClass" 
-        :key="1" 
-        :id="datalist[1].id" 
-        @ajaxFunc="ajaxFunc"
-        :data="datalist[1]"
-        v-model="datalist[1].urlparas"
-    />
-    <TrendHighChart :urlparas="datalist[4].urlparas" 
-        :positionClass="datalist[4].positionClass" 
-        :key="4" 
-        :id="datalist[4].id" 
-        @ajaxFunc="ajaxFunc"
-        :data="datalist[4]"
-        v-model="datalist[4].urlparas"
-    />
-    <TrendHighChart :urlparas="datalist[5].urlparas" 
-        :positionClass="datalist[5].positionClass" 
-        :key="5" 
-        :id="datalist[5].id" 
-        @ajaxFunc="ajaxFunc"
-        :data="datalist[5]"
-        v-model="datalist[5].urlparas"
-    />
-    <TopHighChart :urlparas="datalist[6].urlparas" 
-        :positionClass="datalist[6].positionClass" 
-        :key="6" 
-        :id="datalist[6].id" 
-        @ajaxFunc="ajaxFunc"
-        :data="datalist[6]"
-        v-model="datalist[6].urlparas"
-    />
-    <TimeLineHighChart :urlparas="datalist[3].urlparas" 
-        :positionClass="datalist[3].positionClass" 
-        :key="3" 
-        :id="datalist[3].id" 
-        @ajaxFunc="ajaxFunc"
-        :data="datalist[3]"
-        v-model="datalist[3].urlparas"
-    />
-    <!-- <HighchartFactory v-for="(one, index) in datalist" 
-        :urlparas="one.urlparas" :option="one.option" 
-        :positionClass="one.positionClass" 
-        :key="index" 
-        :id="one.id" 
-        @ajaxFunc="ajaxFunc"
-        :data="one"
-        v-model="one.urlparas"
-    /> -->
-    <GeoMapEchart :urlparas="datalist[7].urlparas" 
-            :positionClass="datalist[7].positionClass" 
-            :key="7" 
-            :id="datalist[7].id" 
+    <div class="container">
+        <BoxHighChart :urlparas="datalist[0].urlparas" 
+            :positionClass="datalist[0].positionClass" 
+            :key="0" 
+            :id="datalist[0].id" 
             @ajaxFunc="ajaxFunc"
-            :data="datalist[7]"
-            v-model="datalist[7].urlparas">
-    </GeoMapEchart>
-    <div id="testdiv" class="testdiv" @click="addcomponent">111
+            :data="datalist[0]"
+            v-model="datalist[0].urlparas"
+        />
+        <BoxHighChart :urlparas="datalist[1].urlparas" 
+            :positionClass="datalist[1].positionClass" 
+            :key="1" 
+            :id="datalist[1].id" 
+            @ajaxFunc="ajaxFunc"
+            :data="datalist[1]"
+            v-model="datalist[1].urlparas"
+        />
+        <TrendHighChart :urlparas="datalist[4].urlparas" 
+            :positionClass="datalist[4].positionClass" 
+            :key="4" 
+            :id="datalist[4].id" 
+            @ajaxFunc="ajaxFunc"
+            :data="datalist[4]"
+            v-model="datalist[4].urlparas"
+        />
+        <TrendHighChart :urlparas="datalist[5].urlparas" 
+            :positionClass="datalist[5].positionClass" 
+            :key="5" 
+            :id="datalist[5].id" 
+            @ajaxFunc="ajaxFunc"
+            :data="datalist[5]"
+            v-model="datalist[5].urlparas"
+        />
+        <TopHighChart :urlparas="datalist[6].urlparas" 
+            :positionClass="datalist[6].positionClass" 
+            :key="6" 
+            :id="datalist[6].id" 
+            @ajaxFunc="ajaxFunc"
+            :data="datalist[6]"
+            v-model="datalist[6].urlparas"
+        />
+        <TimeLineHighChart :urlparas="datalist[3].urlparas" 
+            :positionClass="datalist[3].positionClass" 
+            :key="3" 
+            :id="datalist[3].id" 
+            @ajaxFunc="ajaxFunc"
+            :data="datalist[3]"
+            v-model="datalist[3].urlparas"
+        />
+        <!-- <HighchartFactory v-for="(one, index) in datalist" 
+            :urlparas="one.urlparas" :option="one.option" 
+            :positionClass="one.positionClass" 
+            :key="index" 
+            :id="one.id" 
+            @ajaxFunc="ajaxFunc"
+            :data="one"
+            v-model="one.urlparas"
+        /> -->
+        <GeoMapEchart :urlparas="datalist[7].urlparas" 
+                :positionClass="datalist[7].positionClass" 
+                :key="7" 
+                :id="datalist[7].id" 
+                @ajaxFunc="ajaxFunc"
+                :data="datalist[7]"
+                v-model="datalist[7].urlparas">
+        </GeoMapEchart>
+    </div>
+    <div  class="draw" @click="addcomponent">
+        <div v-for="one in datalist" :key="one.id">
+            <div v-if="one.positionClass==='Drawer'">
+
+            </div>
+        </div>
+        
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { appVue } from "@/main.ts";
-
 import { Component, Vue, Emit } from 'vue-property-decorator';
 import HighchartFactory from "@/components/HighchartFactory.vue";
 import BoxHighChart from "@/components/chart/BoxHighChart.vue";
@@ -89,7 +96,7 @@ import HeatMapHighChart from "@/components/chart/HeatMapHighChart.vue";
 import TrendHighChart from "@/components/chart/TrendHighChart.vue";
 import TopHighChart from "@/components/chart/TopHighChart.vue";
 import GeoMapEchart from "@/components/chart/GeoMapEchart.vue";
-
+import PubSub from 'pubsub-js';
 
 import { PositionClass , PostParams , Dimension } from "@/types/index.ts";
 
@@ -122,7 +129,7 @@ export default class Home extends Vue {
         {id: "chart-region-boxchart", urlparas: entbox,
           option: {xAxis: "2"}, positionClass: PositionClass.RightTop},
         {id: "chart-heatmap", urlparas: orghp,
-          option: {xAxis: "4"}, positionClass: PositionClass.Center},
+          option: {xAxis: "4"}, positionClass: PositionClass.Drawer},
         {id: "chart-single-action", urlparas: enttl,
           option: {xAxis: "1"}, positionClass: PositionClass.LeftBottom},
         {id: "chart-region-linechart", urlparas: enttrend,
@@ -149,6 +156,57 @@ export default class Home extends Vue {
     @Emit()
     // tslint:disable-next-line:no-empty
     public addcomponent() {
+    }
+
+    private mounted() {
+        // home订阅交互的消息
+        PubSub.subscribe("doubleclick2changecenter",(mesg: any, id: string)=> {
+            let idindex= 0;
+            let beforepositionClass = "";
+            let geoIndex = 0;
+            let geopositionClass = "";
+            this.datalist.some(
+                (data: any,index: number) =>{
+                    // tslint:disable-next-line:no-unused-expression
+                    if (data.id === "chart-geomap") {
+                        geoIndex = index;
+                        geopositionClass = data.positionClass;
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            );
+            this.datalist.some(
+                (data: any,index: number) =>{
+                    // tslint:disable-next-line:no-unused-expression
+                    if (data.id === id) {
+                        idindex = index;
+                        beforepositionClass = this.datalist[index].positionClass;
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            );
+            if (beforepositionClass !== PositionClass.Center) {
+                this.datalist.forEach(
+                    ( data: any ,index: number) => {
+                        if(data.positionClass === PositionClass.Center) {
+                            debugger;
+                            if (id ==="chart-geomap" || data.id === "chart-geomap") {
+                                this.datalist[index].positionClass = beforepositionClass as any;
+                                this.datalist[idindex].positionClass = PositionClass.Center;
+                            } else {
+                                this.datalist[idindex].positionClass = PositionClass.Center;
+                                this.datalist[index].positionClass = geopositionClass as any;
+                                this.datalist[geoIndex].positionClass = beforepositionClass as any;
+                            }
+                        }
+                    }
+                );
+            }
+        });
     }
 }
 </script>
@@ -279,6 +337,10 @@ export default class Home extends Vue {
     top:100%;
     background:red;
     transform: translate(50px,50px)
+}
+.container {
+    height: 100%;
+    width: 100%;
 }
 </style>
 
