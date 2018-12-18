@@ -20,12 +20,15 @@
                             <button class="btn btn-outline-secondary btn-sm" type="button"><i class="fa fa-calendar"></i></button>
                         </div>
                     </div>
-                    <label class="small">时间间隔:</label>
+                    <label class="small">刷新频率:</label>
                     <div class="input-group input-group-sm">
-                        <select class="form-control" v-model="data.refreshfeq">
-                                <option label="1m" value="1"></option>
-                                <option label="15min" value="15" selected="true"></option>
-                                <option label="1h" value="60"></option>
+                        <select class="form-control" v-model="data.postInterval">
+                                <option label="200ms" value="200"></option>
+                                <option label="1s" value="1000"></option>
+                                <option label="2s" value="2000" selected="true"></option>
+                                <option label="4s" value="4000"></option>
+                                <option label="15min" value="15000"></option>
+                                <option label="1h" value="60000"></option>
                             </select>
 
                         <div class="input-group-addon">
@@ -121,12 +124,18 @@ export default class LittleBar extends Vue {
         // this.initshow = !this.initshow;
     }
     // 一旦更新data 状态的任意一个值，就通知父组件 false会不监听对象子元素的变换
-    @Watch("data", {deep : true})
-    public starttimeupdate(val: boolean) {
-        console.log("监听starttime",this.show);
+    @Watch("data.postInterval", {deep : true})
+    public intervalupdate(val: boolean) {
+        console.log("监听data",this.postparms,val);
         // this.initshow = !this.initshow;
         this.talktofather();
     }
+    // @Watch("data.postInterval", {deep : true})
+    // public starttimeupdate(val: boolean) {
+    //     console.log("监听data",this.postparms,val);
+    //     // this.initshow = !this.initshow;
+    //     this.talktofather();
+    // }
     @Emit()
     public changeShow(showv: boolean | Event) {
         this.show = showv instanceof Event ? !this.show : showv;
@@ -159,6 +168,7 @@ export default class LittleBar extends Vue {
         this.$emit("changepostparams", this.data);
     }
     private talktofather() {
+        console.log("talktofather");
         this.$emit("changepostparams", this.data);
     }
     // tslint:disable-next-line:no-empty

@@ -10,67 +10,20 @@
 import { Component, Vue, Prop, Emit, Watch, Model, Provide} from 'vue-property-decorator';
 import LittleBar from "@/components/chart/LittleBar.vue";
 import BaseChartFactory from "@/components/chart/base/BaseChartFactory.vue";
-import { PositionClass , PostParams ,ChartType, MeasureName} from '@/types/index';
-import { getGeoChinaProvinceOptionConfig,getGeoCityOptionConfig,GeoData,testPointsdata, cityMap} from '@/components/options/GeoOptions.ts';
+import { PositionClass , PostParams , ChartType, MeasureName} from '@/types/index';
+import { getGeoChinaProvinceOptionConfig, getGeoCityOptionConfig, GeoData, provinceMap,ProvinceMapData, Points, testPointsdata, cityMap,getCityMapIdByName, getProvinceMapIdByName, GeoTestData} from '@/components/options/GeoOptions.ts';
 import echarts,{ ECharts, EChartOption, EChartsOptionConfig } from "echarts";
-import { Points } from "@/components/options/GeoOptions.ts";
-import Axios from "axios";
-const prev = process.env.NODE_ENV === "development"? "": "";
-// export const loadMapData = (parentId,level,name,coord)=>{
-//     // let {name,id,[COORD]:coord} = params.data
-//     if(level ===0 ){// 全国地图
-//         // Axios({
-//         //     method:"get",
-//         //     url:`${prep}/js/china-main-city/${postCityId}.json`
-//         // })
-//         // console.log("000000000000")
-//         let promise = new Promise(
-//             async (resolve,reject)=>{
-//                 let loadmapapi = ()=>{import("echarts/map/js/china")}
-//                 await loadmapapi()
-//                 console.log("加载全国地图",name)
-//                 resolve("success loading map")
-//             }
-//         )
-//         return promise
-//     }else if(level === 1){ //省地图（各个市）
-//         // console.log("111111111111111")
-//         let newname = proviceChinese2PinYin[name]
-//         newname = newname===undefined?proviceChinese2PinYin[name.replace("省","").replace("市","")]:newname
-//         let loadmapapi = ()=>{import(`echarts/map/js/province/${newname}`)}
-//         let promise = new Promise(
-//             async (resolve,reject)=>{
-//                 if (newname !== undefined){
-//                     await loadmapapi()
-//                 }
-//                 resolve("success loading map")
-//             }
-//         )
-//         return promise
-//     }else if(level === 2){// 市地图（各个区）
-//         // console.log("222222222222222")
-//         let postCityId = cityMap[name]
-//         let promise2 = Axios({
-//             method:"get",
-//             url:`${prep2}/js/china-main-city/${postCityId}.json`
-//         }).then(async (result)=>{
-//             // console.log(result)
-//             await echarts.registerMap(name,result.data)
-//             return "success"
-//         })
-//         return promise2
-//     }else{//详细地图
-//         // console.log(">222222222222222")
-//         let promise3 = new Promise(
-//             (resolve,reject)=>{
-//                 resolve("leve3")
-//             }
-//         )
-//         return promise3
+import { provincedata} from '@/components/options/ProvinceOptions.ts';
+import Axios,{AxiosPromise} from "axios";
 
-//     }
-// }
-// import '@/components/options/dependentjs/mapapi.js';
+// import 'echarts/map/js/province/xinjiang.js';
+const prev = process.env.NODE_ENV === "development"? "": "";
+
+interface HeampTransData {
+    provinceArray: ProvinceMapData[];
+    points: Points[];
+}
+
 @Component({
     components: {
         LittleBar,
@@ -83,9 +36,9 @@ export default class GeoMapEchart extends Vue {
     @Prop() public positionClass!: PositionClass;
     @Prop() public data!: object;
     @Model("changepostparams") public postparms!: PostParams;
-    @Provide('option')
+    // @Provide('option')
     public option = {};
-    public postInterval =  2000 ;
+    // public postInterval =  1000 ;
     public entity =  "";
     public initshow: boolean = this.positionClass === "center"?true: false ;
     private intervalid = 0;
@@ -97,102 +50,270 @@ export default class GeoMapEchart extends Vue {
           this.positionClass = PositionClass.Center;
       }
     }
+    @Emit()
+    private setOption(option: any) {
+        // this.option = option;
+        // this.$set(this,"option",option);
+        this.option = option;
+        // console.log(this.option,"更改为啥不触发");
+    }
+    @Emit()
+    private level2post(count: number) { // 这选择省的时候
+        const {entity,starttime,endtime,entitynums,scale,winlen,name} = this.postparms;
+        const that = this;
+        // const provinceEnName = getProvinceMapIdByName(name);
+        // console.log(provinceEnName);
+        // const loadmapapi = ()=> { import(`echarts/map/js/province/${provinceEnName}`);};
+        // const promise = new Promise(
+        //     async (resolve,reject)=> {
+        //         if (provinceEnName !== undefined) {
+        //             await loadmapapi();
+        //         }
+        //         resolve("success loading map");
+        //     }
+        // )
+        const postprivinceId = (provinceMap as any)[name];
+        const promise = Axios({
+            method:"get",
+            url:`${prev}/js/china-main-city/${postprivinceId}.json`
+        }).then(
+            async (result)=> {
+            // console.log(result)
+            await echarts.registerMap(name,result.data);
+            return "success";
+        }).then(
+            (suc) => {
+                this.Connect2().then(
+                    (data: any) => {
+                        if( data !== "err") {
+                            const option2 = getGeoChinaProvinceOptionConfig(data.provinceArray,data.points,name,true) as any;
+                            count += 1;
+                            option2.change = count % 2;
+                            // that.option = option2;
+                            // this.setOption(option2);
+                            // (provincedata as any).change = count % 2;
+                            this.setOption(option2);
+                            // console.log("data",data);
+                            return option2;
+                        }
+                    }
+                );
+            }
+        );
+        // return promise;
+    }
+    private level3post = (count: number) => { // 市
+        const cityname = "杭州市";
+        // const option2 = getGeoChinaProvinceOptionConfig() as any;
+        const postCityId = cityMap[cityname];
+        const promise2 = Axios({
+            method:"get",
+            url:`${prev}/js/china-main-city/${postCityId}.json`
+        }).then(
+            async (result)=> {
+            // console.log(result)
+            await echarts.registerMap(name,result.data);
+            return "success";
+        }).then(
+            (suc) => {
+                const data: GeoData = {
+                    center:{JD: 120.1709,WD: 30.29},
+                    cityname,
+                    measurename: MeasureName.Elec,
+                    points:testPointsdata.map((data)=>[data[0],data[1],count%2?-data[2]:data[2]] as any),
+                };
+                const option2 = getGeoCityOptionConfig(data) as any;
+                count+=1;
+                option2.change = count % 2;
+                // this.option = option2;
+                // console.log("neizai",option2,this.option);
+            }
+        );
+        // (option2 as any).change = false;
+        console.log("geo",this.option);
+    }
+    private level4post = (count: number) => {
+        const cityname = "西湖区";
+        // const option2 = getGeoChinaProvinceOptionConfig() as any;
+        const postCityId = this.postparms.entity;
+        const {entity,starttime,endtime,entitynums,scale,winlen} = this.postparms;
+        const promise2 = Axios({
+            method:"get",
+            url:`${prev}/?entity=${entity}&starttime=${starttime}&endtime=${endtime}&entitynums=${entitynums}&scale=${scale}&winlen=${winlen}`
+        }).then(
+            (result) => {
+                const data: GeoData = {
+                    center:{JD: 120.1709,WD: 30.29},
+                    cityname,
+                    measurename: MeasureName.Elec,
+                    points:testPointsdata.map((data)=>[data[0],data[1],count%2?-data[2]:data[2]] as any),
+                };
+                // const data: GeoData = result.data
+                const option2 = getGeoCityOptionConfig(data) as any;
+                count+=1;
+                option2.change = count % 2;
+                this.option = option2;
+                console.log("neizai",option2,this.option);
+            }
+        );
+        // (option2 as any).change = false;
+        console.log("geo",this.option);
+    }
+    private Connect2(): Promise<string | HeampTransData> {
+        const {entity,starttime,endtime,entitynums,scale,winlen} = this.postparms;
+        const promise = Axios({
+            method:"get",
+            url:`${prev}/?entity=${entity}&starttime=${starttime}&endtime=${endtime}&entitynums=${entitynums}&scale=${scale}&winlen=${winlen}`,
+        }).then(
+            (result) => {
+                const data: HeampTransData = {
+                    provinceArray:[],
+                    points:[]
+                };
+                // 生成HeampTransData格式
+                const res = result.data.geomap;
+                const {childlabel,childid,point} = res;
+                childlabel.forEach(
+                    (name: string,index: number) => {
+                        data.provinceArray.push({id: childid[index],name,coord: [0,0],value:0});
+                    }
+                );
+                const {coord,value:pointvalue} = point;
+                coord.forEach(
+                    (value: [number,number],index: number) => {
+                        data.points.push([value[0],value[1],pointvalue[index]]);
+                    }
+                );
+                return data;
+            }
+        ).catch(
+            (err) => {
+                const data: HeampTransData = {
+                    provinceArray:[],
+                    points:[]
+                };
+                const result = GeoTestData;
+                const res = result.geomap;
+                const {childlabel,childid,point} = res;
+                childlabel.forEach(
+                    (name: string,index: number) => {
+                        data.provinceArray.push({id: childid[index],name,coord: [0,0],value:0});
+                    }
+                );
+                const {coord,value:pointvalue} = point;
+                coord.forEach(
+                    (value: [number,number],index: number) => {
+                        data.points.push([value[0],value[1],pointvalue[index]]);
+                    }
+                );
+                return data;
+                // console.log("err");
+                // return "err";
+            }
+        );
+        return promise;
+    }
+    private levelpostmap = (level: number) => { // 中间商
+        let newlevel = level;
+        // tslint:disable-next-line:no-unused-expression
+        level > 4 && (newlevel = 4);
+        // tslint:disable-next-line:no-unused-expression
+        level < 0 && (newlevel = 1);
+        const proxypost = {
+            1 : this.level2post,
+            2 : this.level2post,
+            3 : this.level3post,
+            4 : this.level4post};
+        return (proxypost as any)[newlevel];
+    }
+    @Emit()
+    private setInterval(count: number) {
+        count += 1;
+        this.level2post(count);
+        setTimeout(
+           () => (this.setInterval(count))
+        ,this.urlparas.postInterval);
+    }
     private mounted() {
       const that = this;
-      let count = 0 ;
-      this.intervalid = setInterval(
-        () => {
-            const cityname = "杭州市";
-            // const option2 = getGeoChinaProvinceOptionConfig() as any;
-            const postCityId = cityMap[cityname];
-            const promise2 = Axios({
-                method:"get",
-                url:`${prev}/js/china-main-city/${postCityId}.json`
-            }).then((result)=> {
-                // console.log(result)
-                // echarts.registerMap(name,result.data);
-                return "success";
-            }).then(
-                (suc) => {
-                    const data: GeoData = {
-                        center:{JD: 120.1709,WD: 30.29},
-                        cityname,
-                        measurename: MeasureName.Elec,
-                        points:testPointsdata.map((data)=>[data[0],data[1],count%2?-data[2]:data[2]] as any),
-                    };
-                    const option2 = getGeoCityOptionConfig(data) as any;
-                    count+=1;
-                    option2.change = count%2;
-                    this.option = option2;
-                    console.log("neizai",option2,this.option);
-                }
-            );
-            // (option2 as any).change = false;
-            console.log("geo",this.option);
-        },
-        this.postInterval * 3
-      );
-      // 通过change来获取定义属性的变化
-    //   setInterval(
+      const count = 0 ;
+      this.setInterval(count);
+    // //   this.level2post(count);
+    //   this.intervalid = setInterval(
     //       () => {
-    //           console.log("第二次变化");
-    //           (this.option as any).change = !(this.option as any).change ;
-    //           // this.option =  drawBoxOptions(boxchart3, xAxis3 , this.id) as Options;
-    //           console.log(this.option);
-    //       },
-    //       this.postInterval+3000
+    //         count += 1;
+    //         // console.log("this.option.before",(this.option as any).change,this.option);
+    //         // this.levelpostmap(this.postparms.level)(count);
+    //         this.level2post(count);
+    //         // console.log("this.option after",this.option);
+    //       }
+    //     ,
+    //     this.urlparas.postInterval * 1
     //   );
     }
-    @Watch("postparms",  {deep : true})
+    @Watch("postparms.postInterval",  {deep : true})
     private onHandleShow(val: boolean) {
-      console.log("监听",this.postparms,this.id);
+      console.log("监听间隔",this.postparms,this.id);
       // this.initshow = !this.initshow;
     }
     private destroyed() {
       // console.log("destory (this as any).intervalid", (this as any).intervalid);
       clearInterval(this.intervalid);
+      console.log("删除Geo组件");
     }
     // @Emit()
-    private updateData(chart: any,option: any) {
-        // (this.chartInstance as any).clear()
-        // 1.异步加载数据
-        // (((this.option as any).series as any)[0].data as any).forEach(
-        //     (value: any) => {
-        //         (this.chartInstance as any).appendData({
-        //         seriesIndex:0,data:[value]});
-        //         console.log(value);
-        //     }
-        // );
-        console.log("echart update start",chart.getOption());
-        const data: Points[]= (option.series[0].data as any);
-        // 1.1addData 队列插入
-        // 动态数据接口 addData
-        data.forEach(
-            (value: Points)=> {chart.addData([
-            [
-                0,        // 系列索引
-                value, // 新增数据
-                true,     // 新增数据是否从队列头部插入
-                false     // 是否增加队列长度，false则自定删除原有数据，队头插入删队尾，队尾插入删队头
-            ],
-            // [
-            //     1,        // 系列索引
-            //     lastData, // 新增数据
-            //     false,    // 新增数据是否从队列头部插入
-            //     false,    // 是否增加队列长度，false则自定删除原有数据，队头插入删队尾，队尾插入删队头
-            //     axisData  // 坐标轴标签
-            // ]
-            ]);}
-        );
-        // // 2.更新数据 逐渐变化
-        // const lastdata = chart.getOption().series[0].data;
-        // while(data.length > 0) {
-        //     const one = data.shift();
-        //     lastdata.pop();
-        //     lastdata.push(one);
-        //     (chart as any).setOption(chart.getOption());
-        // }
-        console.log("appendData","222222");
+    private async updateData(chart: any,oldoption: any) {
+        if(this.postparms.level >= 4 ) {// 也就是在点击市级别地图的时候
+            const data: Points[]= Array.from((oldoption.series[0].data as any));
+            // // 2.更新数据 逐渐变化
+            const newoption = chart.getOption();
+            const lastdata = newoption.series[0].data;
+            // console.log("是否更新数据");
+            // console.log("lastdata",lastdata);
+            const total = data.length;
+            let count = 0;
+            while(data.length > 0) { // 动态更新数据
+                count += 1;
+                const one = data.shift();
+                lastdata.shift();
+                lastdata.push(Array.from(one as any));
+                // 核心方法
+                if((count % Math.round(total / 3) === 0) || count === total) {
+                    (chart as any).setOption(newoption);
+                }
+            }
+        }
+        if(this.postparms.level === 2 ) {// 也就是在点击市级别地图的时候
+            const data: Points[]= this.randomlastdata(100);
+            // // 2.更新数据 逐渐变化
+            const newoption = chart.getOption();
+            const lastdata =  newoption.series[1].data; // [[78.90713899545392,39.6181074998455,Math.random()>0.5?-1:1],[78.90713899545392,39.6181074998455,Math.random()>0.5?-1:1],[78.90713899545392,39.6181074998455,Math.random()>0.5?-1:1],[78.90713899545392,39.6181074998455,Math.random()>0.5?-1:1],[86.885379,41.857898,Math.random()>0.5?-1:1],[86.885379,41.857898,Math.random()>0.5?-1:1],[86.885379,41.857898+Math.random()*10,Math.random()>0.5?-1:1],[86.885379,41.857898,Math.random()>0.5?-1:1],[86.885379,41.857898,Math.random()>0.5?-1:1]];
+            // console.log("level2更新数据");
+            // console.log("lastdata",lastdata);
+            lastdata.splice(0);
+            const total = data.length;
+            // let count = 0;
+            // 方法一
+            // while(data.length > 0) { // 动态更新数据
+            //     count += 1;
+            //     const one = data.shift();
+            //     lastdata.push(Array.from(one as any));
+            //     // 核心方法
+            //     if((count % Math.round(total / 3) === 0) || count === total) {
+            //         (chart as any).setOption(newoption);
+            //     }
+            // }
+            //  方法二
+            newoption.series[1].data = data;
+            (chart as any).setOption(newoption);
+        }
+    }
+    private randomlastdata(n: number): Points[] {
+        const data: Points[] = [];
+        for (let index = 0; index < n; index++) {
+            data.push([91.165855+(Math.random()-1)*15,44.659313+(Math.random()-1)*6,Math.random()>0.5?1:1]);
+        }
+        return data;
     }
 }
 </script>

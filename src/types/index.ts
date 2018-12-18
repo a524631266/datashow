@@ -26,6 +26,9 @@ interface PostParams {
     winlen: number;
     dimension: Dimension;
     refreshfeq: number;
+    level: number;
+    name: string;
+    postInterval: number;
 }
 // function Test (firstName:String, lastName:String) {
 //     let firstName2:String = firstName

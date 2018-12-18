@@ -32,7 +32,7 @@ export default class BoxHighChart extends Vue {
     @Prop() public positionClass!: PositionClass;
     @Prop() public data!: object;
     @Model("changepostparams") public postparms!: PostParams;
-    @Provide('option')
+    // @Provide('option')
     public option: Options = {};
     public postInterval =  2000 ;
     public entity =  "";

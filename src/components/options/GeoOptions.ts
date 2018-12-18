@@ -1,6 +1,43 @@
 import { MeasureName } from '@/types';
 // import 'echarts/extension/bmap/bmap.js';
 import 'echarts/dist/extension/bmap.min.js';
+export const provinceMap = {
+    新疆维吾尔自治区:"65",
+    西藏自治区:"54",
+    内蒙古自治区:"15",
+    青海省:"63",
+    四川省:"51",
+    黑龙江省:"23",
+    甘肃省:"62",
+    云南省:"53",
+    广西壮族自治区:"45",
+    湖南省:"43",
+    陕西省:"61",
+    广东省:"44",
+    吉林省:"22",
+    河北省:"13",
+    湖北省:"42",
+    贵州省:"52",
+    山东省:"37",
+    江西省:"36",
+    河南省:"41",
+    辽宁省:"21",
+    山西省:"14",
+    安徽省:"34",
+    福建省:"35",
+    浙江省:"33",
+    江苏省:"32",
+    重庆市:"50",
+    宁夏回族自治区:"64",
+    海南省:"46",
+    台湾省:"71",
+    北京市:"11",
+    天津市:"12",
+    上海市:"31",
+    香港特别行政区:"81",
+    澳门特别行政区:"82",
+};
+
 export const cityMap = {
     北京市: "110100",
     天津市: "120100",
@@ -345,8 +382,9 @@ export const cityMap = {
     自治区直辖县级行政区划: "659000",
     台湾省: "710000",
     香港特别行政区: "810100",
-    澳门特别行政区: "820000"
+    澳门特别行政区: "820000",
 };
+
 
 
 export const proviceChinese2PinYin = {
@@ -381,152 +419,256 @@ export const proviceChinese2PinYin = {
     天津: 'tianjin',
     香港: 'xianggang',
     新疆: 'xinjiang',
+    新疆维吾尔自治区: 'xinjiang',
     西藏: 'xizang',
     云南: 'yunnan',
     浙江: 'zhejiang',
 };
 
 
-export const getGeoChinaProvinceOptionConfig = (provincesArray: any, heatData: any, mapname: string, isCenter: boolean = true) => {
+export const Pinyin2proviceChinese = {
+    // xinjiang:'新疆',
+};
+
+
+
+const getLevenshteinDistance = (str1: string, str2: string) => {
+    if (str1 === undefined || str2 === undefined) {
+        throw new Error("str1 或者 str2 不能为空");
+    }
+};
+
+
+/**
+ * 获取城市的地图id，用来动态加载地图数据
+ * @param name level = 3 城市的名字
+ */
+export const getCityMapIdByName = (name: string) => {
+
+    return (cityMap as any)[name];
+};
+
+/**
+ * 获取城市的地图id，用来动态加载地图数据
+ * @param name level = 2 省地图的名字
+ */
+export const getProvinceMapIdByName = (name: string) => {
+
+    return (proviceChinese2PinYin as any)[name];
+};
+
+export interface ProvinceMapData {
+    coord: [number,number]; // 经度和纬度
+    id: number; // entity
+    name: string; // entity相对应的名称
+    value: number; // 数量 //由于是[-,-3]==>-1 && [3,-]==>1
+}
+
+/**
+ * 后去全国与省级别的配置
+ * @param provincesArray 经纬度,id,name,value,数据
+ * @param heatData 打点数据
+ * @param mapname 省或市的拼音
+ * @param isCenter 是否是中心
+ */
+export const getGeoChinaProvinceOptionConfig = (provincesArray: ProvinceMapData[], heatData: Points[], mapname: string, isCenter: boolean = true) => {
     return {
         title: {
-            // show:false,
             text: `分布图`,
-            x: 'center',
-            textStyle: {
-                color: "white",
-            },
+            x: "center",
+            textStyle: { color: "white" }
         },
         tooltip: {
-            trigger: 'item',
-            formatter: '{b}<br/>{c}'
+            trigger: "item",
+            formatter: "{b}<br/>{c}"
         },
         legend: {
-            orient: 'vertical',
-            x: 'left',
-            data: ['配电柜']
+            orient: "vertical",
+            x: "left",
+            data: ["用电量"]
         },
-        toolbox: {
-            feature: {
-                // myReturnTool:{
-                //     show: true,
-                //     title: '返回',
-                //     icon: `image://http://${window.location.host}/image/navigation-left-button.png`,
-                //     class:"glyphicon glyphicon-step-backward",
-                //     onclick: ()=>{
-                //         if(this.state.level!==0){
-                //             window.history.back()
-                //         }
-                //         console.log("this",this)
-                //     }
-                // },
-                // myReturnTool2:{
-                //     show: true,
-                //     title: '点击显示分类',
-                //     icon: `image://http://${window.location.host}/image/info.png`,
-                //     onclick: function(event){
-                //         console.log(this)
-                //     },
-                //     mouseover:()=>{
-                //         console.log("mouse over...........")
-                //     }
-                // }
-            }
-        },
-
+        toolbox: { feature: { } },
         geo: {
             map: mapname,
             show: false,
-            // label: {
-            //     show:true,
-            //     emphasis: {
-            //         show: true
-            //     },
-            // },
             roam: false,
             itemStyle: {
                 normal: {
-                    areaColor: '#CBCBCB',
-                    borderColor: 'white'
-                },
-                emphasis: {
-                    areaColor: 'yellow'
+                    areaColor: "#CBCBCB",
+                    borderColor: "white" },
+                    emphasis: { areaColor: "white" } },
+                    scaleLimit: { max: 2 }
+        },
+        visualMap: [
+            {
+                show: false,
+                top: "top",
+                min: -1,
+                max: 1,
+                seriesIndex: 0,
+                calculable: true,
+                inRange: {
+                    color: ["white", "white", "white", "white", "white"]
                 }
             },
-            scaleLimit: {
-                max: 2
-            }
-        },
-        visualMap: [{
-            show: false,
-            top: 'top',
-            min: 0,
-            max: 11,
-            seriesIndex: 0,
-            calculable: true,
-            inRange: {
-                color: ['white', 'white', 'white', 'white', 'white']// ['white', 'green', 'yellow', 'red','blue']
-            }
-        }, {
-            show: false,
-            min: 0,
-            max: 11,
-            splitNumber: 10,
-            seriesIndex: 1,
-            inRange: {
-                color: ['red', 'yellow', 'lightskyblue'].reverse()// ['#d94e5d','#eac736','#50a3ba'].reverse()
-            },
-            textStyle: {
-                color: 'blue'
-            }
-        },1],
+            {
+                show: false,
+                min: -1,
+                max: 1,
+                splitNumber: 10,
+                seriesIndex: 1,
+                inRange: {
+                    color: ["lightskyblue", "yellow", "red"]
+                },
+                textStyle: {
+                    color: "blue"
+                }
+            }],
         series: [
             {
-                name: '',
-                type: 'map',
+                name: "",
+                type: "map",
                 mapType: mapname,
-                roam: false,// 让地图可以拖拽
-                // hoverable: true,//是否让点击的省份漂浮起来
+                roam: false,
                 hoverable: true,
                 itemStyle: {
                     normal: {
-                        borderColor: 'rgba(100,149,237,0.6)',
+                        borderColor: "rgba(100,149,237,0.6)",
                         borderWidth: 0.5,
-                        label: { show: true, formatter: '{a}{b}({c})' },
+                        label: {
+                            show: true,
+                            formatter: "{a}{b}({c})"
+                        },
                         areaStyle: {
-                            color: '#1b1b1b'
+                            color: "#1b1b1b"
                         }
                     },
-                    // emphasis修改了鼠标滑到地区，让该地区的轮廓显示出来
                     emphasis: {
                         borderWidth: 2,
-                        borderColor: '#fff',
-                        color: 'transparent',
+                        borderColor: "#fff",
+                        color: "transparent"
                     }
                 },
                 data: provincesArray,
-                // heatmap: {
-                //     minAlpha: 0.1,
-                //     data: heatData
-                // }
-            }, {
-                name: '111',
-                type: 'heatmap',
-                coordinateSystem: 'geo',
-                data: heatData,
+            },
+            {
+                name: "111",
+                type: "heatmap",
+                coordinateSystem: "geo",
+                data:heatData,
                 pointSize: isCenter ? 18 : 9,// 用来显示打点的大小
                 blurSize: isCenter ? 40 : 20,
-                minAlpha: 1.0,
+                minAlpha: 1,
                 itemStyle: {
                     emphasis: {
-                        color: 'green',
+                        color: "green",
                         shadowBlur: 10,
-                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        shadowColor: "rgba(0, 0, 0, 0.5)"
                     }
                 }
-            },
+            }
         ]
     };
+    // return {
+    //     title: {
+    //         // show:false,
+    //         text: `分布图`,
+    //         // x: 'center',
+    //         textStyle: {
+    //             color: "white",
+    //         },
+    //     },
+    //     tooltip: {
+    //         trigger: 'item',
+    //         formatter: '{b}<br/>{c}'
+    //     },
+    //     // legend: {
+    //     //     orient: 'vertical',
+    //     //     // x: 'left',
+    //     //     data: ['配电柜']
+    //     // },
+    //     geo: {
+    //         map: (Pinyin2proviceChinese as any)[mapname]===undefined?mapname:(Pinyin2proviceChinese as any)[mapname],
+    //         show: false,
+    //         roam: false,
+    //         itemStyle: {
+    //             normal: {
+    //                 areaColor: '#CBCBCB',
+    //                 borderColor: 'white'
+    //             },
+    //             emphasis: {
+    //                 areaColor: 'yellow'
+    //             }
+    //         },
+    //         scaleLimit: {
+    //             max: 2
+    //         }
+    //     },
+    //     visualMap: [{
+    //         show: false,
+    //         top: 'top',
+    //         min: 0,
+    //         max: 11,
+    //         seriesIndex: 0,
+    //         calculable: true,
+    //         inRange: {
+    //             color: ['white', 'white', 'white', 'white', 'white']
+    //         }
+    //     }, {
+    //         show: false,
+    //         min: 0,
+    //         max: 11,
+    //         splitNumber: 10,
+    //         seriesIndex: 1,
+    //         inRange: {
+    //             color: ['lightskyblue', 'yellow', 'red']
+    //         },
+    //         textStyle: {
+    //             color: 'blue'
+    //         }
+    //     },1],
+    //     series: [
+    //         {
+    //             name: '',
+    //             type: 'map',
+    //             mapType: (Pinyin2proviceChinese as any)[mapname]===undefined?mapname:(Pinyin2proviceChinese as any)[mapname],
+    //             roam: false,// 让地图可以拖拽
+    //             // hoverable: true,//是否让点击的省份漂浮起来
+    //             hoverable: true,
+    //             itemStyle: {
+    //                 normal: {
+    //                     borderColor: 'rgba(100,149,237,0.6)',
+    //                     borderWidth: 0.5,
+    //                     label: { show: true, formatter: '{a}{b}({c})' },
+    //                     areaStyle: {
+    //                         color: '#1b1b1b'
+    //                     }
+    //                 },
+    //                 emphasis: {
+    //                     borderWidth: 2,
+    //                     borderColor: '#fff',
+    //                     color: 'transparent',
+    //                 }
+    //             },
+    //             data: provincesArray,
+    //         }, {
+    //             name: '111',
+    //             type: 'heatmap',
+    //             coordinateSystem: 'geo',
+    //             data: heatData,
+    //             pointSize: isCenter ? 18 : 9,// 用来显示打点的大小
+    //             blurSize: isCenter ? 40 : 20,
+    //             minAlpha: 1.0,
+    //             itemStyle: {
+    //                 emphasis: {
+    //                     color: 'green',
+    //                     shadowBlur: 10,
+    //                     shadowColor: 'rgba(0, 0, 0, 0.5)'
+    //                 }
+    //             }
+    //         },
+    //     ]
+    // };
 };
 
 interface MapCenter {
@@ -542,6 +684,7 @@ export interface GeoData {
     center: MapCenter; // 代表显示的中心图
     cityname: string; // 代表当前区域名称
     measurename: MeasureName; // 代表当前的测度名称 比如用电量
+    // points: Points[]; // 由经纬度值构成的打点数据
     points: Points[]; // 由经纬度值构成的打点数据
 }
 
@@ -752,6 +895,19 @@ export const getGeoCityOptionConfig = (data: GeoData) => {
     };
 };
 
+
+export const GeoTestData = {
+    geomap : {
+        childlabel : [ "哈密市", "阿克苏地区", "自治区直辖县级行政区划", "五家渠市", "阿勒泰地区", "塔城地区", "伊犁哈萨克自治州", "克孜勒苏柯尔克孜自治州", "巴音郭楞蒙古自治州　", "博尔塔拉蒙古自治州", "和田地区", "喀什地区", "吐鲁番地区", "克拉玛依市", "新县市", "巴音郭楞蒙古自治州", "库尔勒市", "新疆生产建设兵团", "新疆石河子市", "新疆石河子市", "新疆石河子市", "阿克苏", "伊梨州", "乌苏市", "昌吉回族自治州", "哈密地区", "哈密市", "乌鲁木齐市" ],
+        childid : [ 99504684, 99556364, 99690544, 99783688, 99787698, 99799398, 99928818, 99928828, 99928838, 99928848, 99928858, 99928868, 99928878, 99928898, 99928908, 99936088, 99936118, 99944698, 99955208, 99955228, 99955248, 99956028, 99959518, 99959538, 99966318, 99974646, 99974666, 99998998 ],
+        // ENT_C : [ 2, 0, 85, 0, 100, 384, 453, 0, 0, 25, 84, 135, 0, 8, 0, 233, 0, 25, 9, 0, 0, 1387, 0, 140, 282, 188, 0, 358 ],
+        point : {
+            coord : [ [ 78.90713899545392, 39.6181074998455 ], [ 86.885379, 41.857898 ] ],
+            // xAxis : [ "巴楚县", "博湖县" ],
+            value: [3,5],
+        }
+    }
+};
 
 
 

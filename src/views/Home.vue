@@ -65,13 +65,13 @@
         :data="one"
         v-model="one.urlparas"
     /> -->
-    <GeoMapEchart :urlparas="datalist[2].urlparas" 
-            :positionClass="datalist[2].positionClass" 
-            :key="2" 
-            :id="datalist[2].id" 
+    <GeoMapEchart :urlparas="datalist[7].urlparas" 
+            :positionClass="datalist[7].positionClass" 
+            :key="7" 
+            :id="datalist[7].id" 
             @ajaxFunc="ajaxFunc"
-            :data="datalist[2]"
-            v-model="datalist[2].urlparas">
+            :data="datalist[7]"
+            v-model="datalist[7].urlparas">
     </GeoMapEchart>
     <div id="testdiv" class="testdiv" @click="addcomponent">111
     </div>
@@ -102,6 +102,7 @@ const orgtrend = Object.assign({},InitTrendUrlProps);
 const orghp = Object.assign({},InitHeatMapUrlProps);
 const enttl = Object.assign({},InitTimeLineUrlProps);
 const orgtop = Object.assign({},InitTopUrlProps);
+const geo = Object.assign({},InitGeomapUrlProps);
 
 @Component({
   components: {
@@ -130,6 +131,8 @@ export default class Home extends Vue {
           option: {xAxis: "4"}, positionClass: PositionClass.LeftMiddle},
         {id: "chart-top", urlparas: orgtop,
           option: {xAxis: "1"}, positionClass: PositionClass.RightBottom},
+        {id: "chart-geomap", urlparas: geo,
+          option: {xAxis: "1"}, positionClass: PositionClass.Center}
     ];
     public beforeCreate() {
     // console.log("Home", PositionClass.LeftTop);

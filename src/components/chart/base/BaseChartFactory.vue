@@ -4,13 +4,10 @@
 </template>
 
 <script lang="ts">
-// import Vue from 'vue'
-// import Component from 'vue-class-component'
 import { Component, Vue, Prop, Emit, Model, Watch, Inject } from 'vue-property-decorator';
 import Highcharts, { Options , HeatMapSeriesOptions} from 'highcharts';
 import echarts from "echarts";
 import { PositionClass , PostParams, ChartType } from '@/types/index';
-
 import "echarts/map/js/china";
 import 'echarts/lib/chart/heatmap';
 @Component({
@@ -29,7 +26,7 @@ export default class BaseChartFactory extends Vue {
     }
     @Watch("option.change",{deep: true})
     private redrawChart(newVal: object, oldVal: object) {
-       console.log("options变化",newVal, oldVal);
+    //    console.log("options变化",newVal, oldVal);
        if(newVal !== oldVal && this.chartType === ChartType.highchart) {
             if (this.chartInstance) {
                 console.log("1");
@@ -39,13 +36,13 @@ export default class BaseChartFactory extends Vue {
        }
        if(newVal !== oldVal && this.chartType === ChartType.echart) {
             if (this.chartInstance) {
+                // console.log("Echart111111111111111111");
                 this.$emit("updateData",this.chartInstance,this.option);
                 // this.updateData(this.chartInstance,this.option); //
             } else {
                 const nodeid = document.getElementById(this.id);
                 const mychart = echarts.init(nodeid as any);
-                mychart.setOption(this.option);
-                console.log("Echart211111111111111111",this.chartInstance);
+                mychart.setOption(JSON.parse(JSON.stringify(this.option)));
                 this.chartInstance = mychart as any;
                 (window as any).echart = mychart as any;
             }
