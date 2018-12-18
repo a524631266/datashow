@@ -531,25 +531,43 @@ export const getGeoChinaProvinceOptionConfig = (provincesArray: ProvinceMapData[
                 mapType: mapname,
                 roam: false,
                 hoverable: true,
+                label: {
+                    normal: {
+                        show: true,
+                        formatter(a: any,b: any) {
+                            console.log("a","b",a,b);
+                            return a;
+                        }
+                    },
+                    emphasis: {
+                        show: true
+                    }
+                },
                 itemStyle: {
                     normal: {
                         borderColor: "rgba(100,149,237,0.6)",
                         borderWidth: 0.5,
                         label: {
-                            show: true,
-                            formatter: "{a}{b}({c})"
+                            show: false,
+                            // formatter: "{a}{b}({c})",
+                            // formatter: "{a}"
+                            formatter(a: any,b: any) {
+                                console.log("a","b",a,b);
+                                return a;
+                            }
                         },
                         areaStyle: {
                             color: "#1b1b1b"
                         }
                     },
                     emphasis: {
+                        show: true,
                         borderWidth: 2,
                         borderColor: "#fff",
                         color: "transparent"
                     }
                 },
-                data: provincesArray,
+                data: JSON.parse(JSON.stringify(provincesArray)),
             },
             {
                 name: "111",
