@@ -1,7 +1,9 @@
 <template>
-  <div id="app" class="panel">
+  <a-layout id="app" class="panel">
     <FloatBotton />
+    <a-layout-sider>
     <LeftBar />
+    </a-layout-sider>
     <div id="nav" class="panel-heading">
       <SlotBar>
         <h2 slot="leftbar">默默组织</h2>
@@ -15,7 +17,7 @@
       </keep-alive>
     </transition>
     </div>
-  </div>
+  </a-layout>
 </template>
 <script lang="ts">
 import { Component, Vue, Prop, Emit } from 'vue-property-decorator';
@@ -23,6 +25,7 @@ import SlotBar from "@/components/SlotBar.vue";
 import FloatBotton from "@/components/bar/FloatBotton.vue";
 import LeftBar from "@/components/bar/LeftBar.vue";
 import PubSub from 'pubsub-js';
+import Ant from "ant-design-vue";
 // import Ant from "ant-design-vue";
 // tslint:disable-next-line:no-var-requires
 // const { Button, message }  = require('ant-design-vue');
@@ -34,6 +37,8 @@ import PubSub from 'pubsub-js';
     // AMessage:message
     FloatBotton,
     LeftBar,
+    ALayout: Ant.Layout,
+    ALayoutSider: Ant.Layout.Sider,
   }
 })
 export default class App extends Vue {
@@ -97,6 +102,12 @@ body{
 }
 .ant-tree li span[class~="ant-tree-node-content-wrapper"]{
     color: white !important;
+}
+
+#components-layout-demo-basic .ant-layout-sider {
+  background: #3ba0e9;
+  color: #fff;
+  line-height: 120px;
 }
 
 
