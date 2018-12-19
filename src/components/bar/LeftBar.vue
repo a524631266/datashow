@@ -1,5 +1,6 @@
 <template>
   <a-tree
+    :class="openLeftBar?'':'hidetree'"
     :loadData="onLoadData"
     :treeData="treeData"
   />
@@ -42,6 +43,7 @@ interface ChildrenValue {
     },
 })
 export default class LeftBar extends Vue {
+    private openLeftBar = false;
     private treeData = [
                 {
                     id: 99998999,
@@ -85,49 +87,61 @@ export default class LeftBar extends Vue {
     //   console.log('onSelect', info);
     //   this.selectedKeys = selectedKeys;
     // }
-    @Emit()
+    public mounted() {
+        PubSub.subscribe("openLeftBar",(mesg: any,action: boolean) => {
+          this.openLeftBar = action;
+        });
+        // console.log('');
+    }
+    // @Emit()// 不能用，否则无法找到Promise
     private onLoadData(treeNode: any) {
         const {eventKey: postid ,dataRef:{id ,level }} = treeNode;
         return new Promise((resolve,reject) => {
-                // if (treeNode.children) {
-                //     resolve();
-                //     return;
-                // }
-                const posturl = `${prev}/case/entity?id=${postid}`;
-                Axios(
-                    {
-                    method:"get",
-                    url:posturl,
-                    }
-                ).then(
-                    (result) => {
-                        const {data} = result;
-                        const childrenlist: ChildrenValue[] = [];
-                        // console.log(data)
-                        data.forEach(
-                            (value: ChildrenValue,index: number)=> {
-                                const children = value;
-                                children.title = value.name + "(" + value.entityNum + ")";
-                                children.key = value.id + "";
-                                children.isLeaf = value.isEntity;
-                                children.level = level;
-                                childrenlist.push(children);
-                            }
-                        );
-                        treeNode.dataRef.children = childrenlist;
-                        this.treeData = [...this.treeData];
-                        console.log("tree data");
-                        // resolve("成功");
-                    }
-                );
-                resolve("111");
-            });
+            console.log(treeNode.dataRef.children);
+            if (treeNode.dataRef.children) {
+                resolve("");
+                return;
+            }
+            const posturl = `${prev}/case/entity?id=${postid}`;
+            Axios(
+                {
+                method:"get",
+                url:posturl,
+                }
+            ).then(
+                (result) => {
+                    const {data} = result;
+                    const childrenlist: ChildrenValue[] = [];
+                    // console.log(data)
+                    data.forEach(
+                        (value: ChildrenValue,index: number)=> {
+                            const children = value;
+                            children.title = value.name + "(" + value.entityNum + ")";
+                            children.key = value.id + "";
+                            children.isLeaf = value.isEntity;
+                            children.level = level;
+                            childrenlist.push(children);
+                        }
+                    );
+                    treeNode.dataRef.children = childrenlist;
+                    this.treeData = [...this.treeData];
+                    console.log("tree data");
+                    // resolve("成功");
+                },
+            ).catch(
+                (err: any) => {
+                    console.log("111111",err);
+                }
+            );
+            resolve("111");
+        });
     }
+
 }
 </script>
 
 <style lang='scss' scoped>
-
-
-
+.hidetree{
+    display: none;
+}
 </style>

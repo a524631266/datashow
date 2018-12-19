@@ -208,8 +208,6 @@ export default class Home extends Vue {
                     }
                 }
             );
-            // tslint:disable-next-line:no-debugger
-            debugger;
             if (beforepositionClass !== PositionClass.Center) {
                 this.datalist.some(
                     ( data: any ,index: number) => {

@@ -38,13 +38,6 @@ import PubSub from 'pubsub-js';
 })
 export default class App extends Vue {
     private collapsed = true;
-    private openLeftBar = false;
-    public mounted() {
-        PubSub.subscribe("openLeftBar",(mesg: any,action: boolean) => {
-          this.openLeftBar = action;
-        });
-        // console.log('');
-    }
     public destroyed() {
         console.log((this as any).some);
     }

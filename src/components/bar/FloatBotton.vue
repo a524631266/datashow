@@ -1,5 +1,5 @@
 <template>
-    <a-button ref="floatbutton" class="floatbutton" type="primary" @mouseleave="handlefloatLeaveButton" @click="showLeftBar" style="margin-bottom: 16px" @mousemove="haddlefloatMoveButton" @mousedown="handlefloatdownButton" @mouseup="handlefloatupButton">
+    <a-button draggable ref="floatbutton" class="floatbutton" :class="movelock?'':'ondrag'" type="primary" @mouseleave="handlefloatLeaveButton" @click="showLeftBar" style="margin-bottom: 16px"  @mousedown="handlefloatdownButton" @mouseup="handlefloatupButton">
       <a-icon :type="collapsed ? 'menu-unfold' : 'menu-fold'" /> 
     </a-button>
 </template>
@@ -17,21 +17,25 @@ import PubSub from 'pubsub-js';
 export default class FloatBotton extends Vue {
     private movelock = true;
     private collapsed = true;
-    private openLeftBar = false;
+    private openLeftBar = true;
+    private ondrag = false;
     @Emit()
     private handlefloatdownButton(e: MouseEvent) {
+        // console.log("点击");
+        this.ondrag = true;
         this.movelock = false;
     }
     @Emit()
     private handlefloatupButton(e: any) {
         this.movelock = true;// 锁住
+        // console.log("弹起来");
     }
     @Emit()
     private haddlefloatMoveButton(e: any) { // 需要优化按钮
         if(this.movelock) {// 锁住的状态不能移动
-            console.log("锁住的状态不能移动");
+            // console.log("锁住的状态不能移动");
         } else {
-            console.log("可以移动",e);
+            // console.log("可以移动",e);
             const {clientX,clientY} = e;
             // const buttonwith = (this.$refs.floatbutton as any).$el.style.width;
             const {width: buttonwidth,height: buttonheight} = window.getComputedStyle((this.$refs.floatbutton as any).$el);
@@ -45,11 +49,15 @@ export default class FloatBotton extends Vue {
     }
     @Emit()
     private handlefloatLeaveButton(e: any) {
-        setTimeout(() => this.haddlefloatMoveButton(e),50);
+        // console.log("离开");
+        this.haddlefloatMoveButton(e);
+        // setTimeout(() => this.haddlefloatMoveButton(e),0);
+        this.movelock = true;// 锁住
+        this.ondrag = false;
     }
     @Emit()
     private showLeftBar(e: any) {
-        console.log("dosomm");
+        // console.log("dosomm");
         this.collapsed = !this.collapsed;
         this.openLeftBar  = !this.openLeftBar;
         PubSub.publish("openLeftBar",this.openLeftBar);
@@ -63,5 +71,8 @@ export default class FloatBotton extends Vue {
   position: fixed;
   z-index: 500;
   left: 0;
+}
+.ondrag{
+    background: transparent;
 }
 </style>
