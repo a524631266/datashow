@@ -18,6 +18,23 @@ module.exports = {
             "style": "style.css"
           },
           "font-awesome"
+    ],
+    [
+        "import", 
+        { 
+            "libraryName": "ant-design-vue", 
+            "libraryDirectory": "es", 
+            "style": "css" 
+        },
+        "ant-design-vue"
+    ],
+    [
+      "import", 
+      {
+        "libraryName": "iview",
+        "libraryDirectory": "src/components"
+      },
+      "iview"
     ]
   ]
 }

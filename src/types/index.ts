@@ -40,7 +40,7 @@ interface PostParams {
 //     console.log(a)
 // }
 // add(PositionClass.LeftBottom)
-enum ChartType {
+enum ChartLibrary {
     echart = "echart",
     highchart = "highchart",
 }
@@ -48,5 +48,5 @@ enum MeasureName {
     Elec = "Elec",
 }
 export {
-    PositionClass,Dimension,PostParams,ChartType,MeasureName
+    PositionClass,Dimension,PostParams,ChartLibrary,MeasureName
 };

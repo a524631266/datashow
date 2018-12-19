@@ -63,7 +63,8 @@ npm run test:unit
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
-
+### if you want to solve the No Access-Control-Allow-Orign
+try to link https://cli.vuejs.org/zh/config/#devserver-proxy
 
 ### template
     "Print to console": {

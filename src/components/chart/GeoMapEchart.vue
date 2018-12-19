@@ -1,7 +1,7 @@
 <template>
   <div :class="positionClass" draggable="true" @dblclick="handledoubleclick">
        <LittleBar :show="positionClass === 'center'?false:true" :initshow="initshow" v-model="postparms">
-            <BaseChartFactory :positionClass="positionClass" :id="id" :option="option" :chartType="chartType" @updateData="updateData" slot="chart"/>
+            <BaseChartFactory :positionClass="positionClass" :id="id" :option="option" :chartLibrary="chartLibrary" @updateData="updateData" slot="chart"/>
         </LittleBar>
   </div>
 </template>
@@ -10,12 +10,12 @@
 import { Component, Vue, Prop, Emit, Watch, Model, Provide} from 'vue-property-decorator';
 import LittleBar from "@/components/chart/LittleBar.vue";
 import BaseChartFactory from "@/components/chart/base/BaseChartFactory.vue";
-import { PositionClass , PostParams , ChartType, MeasureName} from '@/types/index';
+import { PositionClass , PostParams , ChartLibrary, MeasureName} from '@/types/index';
 import { getGeoChinaProvinceOptionConfig, getGeoCityOptionConfig, GeoData, provinceMap,ProvinceMapData, Points, testPointsdata, cityMap,getCityMapIdByName, getProvinceMapIdByName, GeoTestData} from '@/components/options/GeoOptions.ts';
 import echarts,{ ECharts, EChartOption, EChartsOptionConfig } from "echarts";
 import { provincedata} from '@/components/options/ProvinceOptions.ts';
 import Axios,{AxiosPromise} from "axios";
-
+import PubSub from 'pubsub-js';
 // import 'echarts/map/js/province/xinjiang.js';
 const prev = process.env.NODE_ENV === "development"? "": "";
 
@@ -42,7 +42,7 @@ export default class GeoMapEchart extends Vue {
     public entity =  "";
     public initshow: boolean = this.positionClass === "center"?true: false ;
     private intervalid = 0;
-    private chartType = ChartType.echart;
+    private chartLibrary = ChartLibrary.echart;
     @Emit()
     public changedata() {
     //   console.log(this.data);
@@ -201,7 +201,7 @@ export default class GeoMapEchart extends Vue {
                         data.provinceArray.push({id: childid[index],name,coord: [ 85.61489933833856, 42.127000957642366],value:100});
                     }
                 );
-                console.log("childlabel",childlabel,data.provinceArray);
+                // console.log("childlabel",childlabel,data.provinceArray);
                 const {coord,value:pointvalue} = point;
                 coord.forEach(
                     (value: [number,number],index: number) => {

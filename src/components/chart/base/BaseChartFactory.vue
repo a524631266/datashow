@@ -7,7 +7,7 @@
 import { Component, Vue, Prop, Emit, Model, Watch, Inject } from 'vue-property-decorator';
 import Highcharts, { Options , HeatMapSeriesOptions} from 'highcharts';
 import echarts from "echarts";
-import { PositionClass , PostParams, ChartType } from '@/types/index';
+import { PositionClass , PostParams, ChartLibrary } from '@/types/index';
 import "echarts/map/js/china";
 import 'echarts/lib/chart/heatmap';
 @Component({
@@ -15,7 +15,7 @@ import 'echarts/lib/chart/heatmap';
 export default class BaseChartFactory extends Vue {
     @Prop() public id!: string;
     @Prop() public positionClass!: string;
-    @Prop() public chartType!: ChartType;
+    @Prop() public chartLibrary!: ChartLibrary;
     // @Inject("option") public option!: object;
     @Prop() public option!: object;
     // tslint:disable-next-line:ban-types
@@ -27,16 +27,16 @@ export default class BaseChartFactory extends Vue {
     }
     @Watch("option.change",{deep: true})
     private redrawChart(newVal: object, oldVal: object) {
-       console.log("options变化",newVal, oldVal);
-       if(newVal !== oldVal && this.chartType === ChartType.highchart) {
+    //    console.log("options变化",newVal, oldVal);
+       if(newVal !== oldVal && this.chartLibrary === ChartLibrary.highchart) {
             if (this.chartInstance) {
-                console.log("1");
+                // console.log("1");
                 (this.chartInstance as any).reflow();
             } else {
                 this.chartInstance = Highcharts.chart(this.id, this.option) as any;
             }
        }
-       if(newVal !== oldVal && this.chartType === ChartType.echart) {
+       if(newVal !== oldVal && this.chartLibrary === ChartLibrary.echart) {
             if (this.chartInstance) {
                 // console.log("Echart111111111111111111");
                 this.$emit("updateData",this.chartInstance,this.option);
@@ -47,17 +47,22 @@ export default class BaseChartFactory extends Vue {
                 mychart.setOption(JSON.parse(JSON.stringify(this.option)));
                 this.chartInstance = mychart as any;
                 (window as any).echart = mychart as any;
+                window.onresize = ()=> {
+                    (this.chartInstance as any).resize();
+                    // console.log("resize.........");
+                };
             }
        }
     }
     @Watch('positionClass',{deep: true})
     private reflowChart(newVal: object, oldVal: object) {
-        console.log("posiontClass Change");
-        if (this.chartInstance && this.chartType === ChartType.highchart) {
+        // console.log("posiontClass Change");
+        if (this.chartInstance && this.chartLibrary === ChartLibrary.highchart) {
             (this.chartInstance as any).reflow();
         }
-        if (this.chartInstance && this.chartType === ChartType.echart) {
+        if (this.chartInstance && this.chartLibrary === ChartLibrary.echart) {
             (this.chartInstance as any).resize();
+
         }
     }
 }

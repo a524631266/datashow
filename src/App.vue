@@ -1,36 +1,56 @@
 <template>
   <div id="app" class="panel">
+    <FloatBotton />
+    <LeftBar />
     <div id="nav" class="panel-heading">
       <SlotBar>
         <h2 slot="leftbar">默默组织</h2>
         <h2 slot="rightbar">默默配电柜</h2>
       </SlotBar>
     </div>
-    <div>
+    <div class="panel-body">
     <transition name="slide-left">
       <keep-alive>
-        
-          <router-view id="panel" class="panel-body" />
-        
+          <router-view id="panel"  />
       </keep-alive>
     </transition>
     </div>
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator';
+import { Component, Vue, Prop, Emit } from 'vue-property-decorator';
 import SlotBar from "@/components/SlotBar.vue";
+import FloatBotton from "@/components/bar/FloatBotton.vue";
+import LeftBar from "@/components/bar/LeftBar.vue";
+import PubSub from 'pubsub-js';
+// import Ant from "ant-design-vue";
+// tslint:disable-next-line:no-var-requires
+// const { Button, message }  = require('ant-design-vue');
+// tslint:disable-next-line:no-var-requires
 @Component({
   components:{
-    SlotBar
+    SlotBar,
+    // AButton:Button,
+    // AMessage:message
+    FloatBotton,
+    LeftBar,
   }
 })
 export default class App extends Vue {
+    private collapsed = true;
+    private openLeftBar = false;
     public mounted() {
-        console.log('');
+        PubSub.subscribe("openLeftBar",(mesg: any,action: boolean) => {
+          this.openLeftBar = action;
+        });
+        // console.log('');
     }
     public destroyed() {
         console.log((this as any).some);
+    }
+    @Emit()
+    private toggleCollapsed() {
+      this.collapsed = !this.collapsed;
     }
 }
 </script>
@@ -72,6 +92,19 @@ body{
   }
 }
 .panel-heading{
-  z-index: 1000;
+  z-index: 400;
 }
+
+.ant-tree{
+    z-index: 499;//小于 floatbotton;
+    position: fixed;
+    color: white !important;
+    text-align: left;
+    background: radial-gradient(circle at center,#000066 0%,#000000 200%);
+}
+.ant-tree li span[class~="ant-tree-node-content-wrapper"]{
+    color: white !important;
+}
+
+
 </style>

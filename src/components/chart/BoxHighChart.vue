@@ -2,14 +2,14 @@
 <template>
   <div :class="positionClass" draggable="true" @dblclick="handledoubleclick">
         <LittleBar :show="positionClass === 'center'?false:true" :initshow="initshow" v-model="postparms">
-          <BaseChartFactory :positionClass="positionClass" :id="id" :option="option" :chartType="chartType" slot="chart" />
+          <BaseChartFactory :positionClass="positionClass" :id="id" :option="option" :chartLibrary="chartLibrary" slot="chart" />
         </LittleBar>
   </div>
 </template>
 
 <script lang='ts'>
 import { Component, Vue, Prop, Emit, Model, Watch, Provide } from 'vue-property-decorator';
-import { PositionClass , PostParams ,ChartType} from '@/types/index';
+import { PositionClass , PostParams ,ChartLibrary} from '@/types/index';
 import BaseChartFactory from "@/components/chart/base/BaseChartFactory.vue";
 import LittleBar from "@/components/chart/LittleBar.vue";
 import Highcharts, { Options , HeatMapSeriesOptions} from 'highcharts';
@@ -39,7 +39,7 @@ export default class BoxHighChart extends Vue {
     public entity =  "";
     public initshow: boolean = this.positionClass === "center"?true: false ;
     private intervalid = 0;
-    private chartType = ChartType.highchart;
+    private chartLibrary = ChartLibrary.highchart;
     @Emit()
     public changedata() {
       console.log(this.data);
