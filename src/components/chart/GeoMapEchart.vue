@@ -19,8 +19,6 @@ import PubSub from 'pubsub-js';
 // import 'echarts/map/js/province/xinjiang.js';
 const prev = process.env.NODE_ENV === "development"? "": "";
 const websocketurlhost = process.env.NODE_ENV === "development"? "192.168.40.156:8080": "localhost:8088";
-
-
 @Component({
     components: {
         LittleBar,
@@ -217,6 +215,7 @@ export default class GeoMapEchart extends Vue {
       const count = 0 ;
       this.setInterval(count);
       this.initWebSocket(this.postparms);
+      setTimeout(()=> {this.websocket.close();},3000);
     }
     @Watch("postparms.postInterval",  {deep : true})
     private onHandleShow(val: boolean) {
@@ -310,6 +309,7 @@ export default class GeoMapEchart extends Vue {
         this.websocket.onmessage = this.wsonmessage;
         this.websocket.onclose = this.wsonclose;
         this.websocket.onerror = this.wsonerror;
+        // setTimeout(()=> {this.websocket.close();},3000);
     }
     @Emit()
     private wsonopen() {
@@ -323,7 +323,7 @@ export default class GeoMapEchart extends Vue {
     }
     @Emit()
     private wsonclose() {
-        console.log("open close",new Date());
+        console.log("wsonclose close",new Date(),this.chartstorepool);
         this.websocket.close();
         this.initWebSocket(this.urlparas);
     }
