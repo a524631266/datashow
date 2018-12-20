@@ -2,10 +2,10 @@
     <div class="container-fluid  rangeselect"  @mouseenter="showdownincon(true)" @mouseleave="showdownincon(false)">
         <div class="littlebar" :class="highlightbarclass"   @click="changeShow" v-show="initshow" @mouseenter="highlightbar(true)" @mouseleave="highlightbar(false)">
             <div class="row">
-                <div class="charttitletext"> {{titlename}} </div>
+                <div class="charttitletext"> {{titlename }} </div>
                 <div class="fa icondown middlebutton" :class="showdownicon"></div>
+                <div class="charttitletime"> {{data.starttime + "" + data.endtime }} </div>
             </div>
-        <!-- </div> -->
             <div class="row options1 table-dark" v-show="!show" @click.stop="donothing" >
                 <form class="col-4">
                     <h3 class="section-heading">用户选项</h3>
@@ -116,13 +116,13 @@ export default class LittleBar extends Vue {
         console.log("监听",this.show);
         // this.initshow = !this.initshow;
     }
-    // 一旦更新data 状态的任意一个值，就通知父组件 false会不监听对象子元素的变换
-    @Watch("data.postInterval", {deep : true})
-    public intervalupdate(val: boolean) {
-        console.log("监听data",this.postparms,val);
-        // this.initshow = !this.initshow;
-        this.talktofather();
-    }
+    // 一旦更新data 状态的任意一个值，就通知父组件 false会不监听对象子元素的变换,
+    // @Watch("data.postInterval", {deep : true})
+    // public intervalupdate(val: boolean) {
+    //     console.log("监听data",this.postparms,val);
+    //     // this.initshow = !this.initshow;
+    //     this.talktofather();
+    // }
     // @Watch("data.postInterval", {deep : true})
     // public starttimeupdate(val: boolean) {
     //     console.log("监听data",this.postparms,val);
@@ -160,6 +160,11 @@ export default class LittleBar extends Vue {
     private updatepostparams(value: any) {
         this.$emit("changepostparams", this.data);
     }
+    /**
+     * 这个方法会更改model数据的，也就是父亲的数据
+     * 如果父亲的数据是绑定到其父亲的model的，会自动
+     * 更新其父亲的数据
+     */
     private talktofather() {
         console.log("talktofather");
         this.$emit("changepostparams", this.data);

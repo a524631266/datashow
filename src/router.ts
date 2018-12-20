@@ -42,5 +42,6 @@ export default new Router({
       name: "node",
       component: () => import(/* webpackChunkName: "about" */ './views/Home.vue')
     },
+
   ],
 });

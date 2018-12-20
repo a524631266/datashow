@@ -77,7 +77,7 @@ const InitGeomapUrlProps: PostParams = {
     refreshfeq: 15 * 60 * 1000,
     level:2,
     name: "新疆维吾尔自治区",
-    postInterval: 1000 * 1
+    postInterval: 1000 * 1 * 60,
 };
 
 export {

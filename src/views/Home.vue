@@ -104,7 +104,7 @@
 
 <script lang="ts">
 import { appVue } from "@/main.ts";
-import { Component, Vue, Emit } from 'vue-property-decorator';
+import { Component, Vue, Emit, Watch } from 'vue-property-decorator';
 import HighchartFactory from "@/components/HighchartFactory.vue";
 import BoxHighChart from "@/components/chart/BoxHighChart.vue";
 import TimeLineHighChart from "@/components/chart/TimeLineHighChart.vue";
@@ -172,7 +172,19 @@ export default class Home extends Vue {
     // tslint:disable-next-line:no-empty
     public addcomponent() {
     }
-
+    @Watch("datalist",{deep: true})
+    private changedatalist(val: any) {
+        console.log("val","更改了数据", val);
+    }
+    @Watch("$route.query.entity",{deep: true})
+    private routerchange(val: any) {
+        console.log("路由变化",val,this.$route.query.entity);
+        this.datalist.forEach(
+            (data: any,index: number)=> {
+                this.datalist[index].urlparas.entity = val;
+            }
+        );
+    }
     private mounted() {
         const that = this;
         // home订阅交互的消息
