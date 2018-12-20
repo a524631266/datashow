@@ -1,7 +1,7 @@
 <template>
   <div :class="positionClass" draggable="true" @dblclick="handledoubleclick">
-       <LittleBar :show="positionClass === 'center'?false:true" :initshow="initshow" v-model="postparms">
-            <BaseChartFactory :positionClass="positionClass" :id="id" :option="option" :chartLibrary="chartLibrary" @updateData="updateData" slot="chart"/>
+       <LittleBar :titlename="titlename" :show="positionClass === 'center'?false:true" :initshow="initshow" v-model="postparms">
+            <BaseChartFactory :positionClass="positionClass" :id="id" :option="option" :chartLibrary="chartLibrary" @updateData="way2UpdateData" slot="chart"/>
         </LittleBar>
   </div>
 </template>
@@ -10,7 +10,7 @@
 import { Component, Vue, Prop, Emit, Watch, Model, Provide} from 'vue-property-decorator';
 import LittleBar from "@/components/chart/LittleBar.vue";
 import BaseChartFactory from "@/components/chart/base/BaseChartFactory.vue";
-import { PositionClass , PostParams , ChartLibrary, MeasureName} from '@/types/index';
+import { PositionClass , PostParams , ChartLibrary, MeasureName,ReturnGeoData,GeoTransData,ChartStorePool} from '@/types/index';
 import { getGeoChinaProvinceOptionConfig, getGeoCityOptionConfig, GeoData, provinceMap,ProvinceMapData, Points, testPointsdata, cityMap,getCityMapIdByName, getProvinceMapIdByName, GeoTestData} from '@/components/options/GeoOptions.ts';
 import echarts,{ ECharts, EChartOption, EChartsOptionConfig } from "echarts";
 import { provincedata} from '@/components/options/ProvinceOptions.ts';
@@ -18,11 +18,8 @@ import Axios,{AxiosPromise} from "axios";
 import PubSub from 'pubsub-js';
 // import 'echarts/map/js/province/xinjiang.js';
 const prev = process.env.NODE_ENV === "development"? "": "";
+const websocketurlhost = process.env.NODE_ENV === "development"? "192.168.40.156:8080": "localhost:8088";
 
-interface HeampTransData {
-    provinceArray: ProvinceMapData[];
-    points: Points[];
-}
 
 @Component({
     components: {
@@ -37,12 +34,15 @@ export default class GeoMapEchart extends Vue {
     @Prop() public data!: object;
     @Model("changepostparams") public postparms!: PostParams;
     // @Provide('option')
+    public chartstorepool: ChartStorePool<GeoTransData> = {};
     public option = {};
     // public postInterval =  1000 ;
     public entity =  "";
     public initshow: boolean = this.positionClass === "center"?true: false ;
+    public titlename = "Geo";
     private intervalid = 0;
     private chartLibrary = ChartLibrary.echart;
+    private websocket!: WebSocket;
     @Emit()
     public changedata() {
     //   console.log(this.data);
@@ -57,6 +57,9 @@ export default class GeoMapEchart extends Vue {
         this.option = option;
         // console.log(this.option,"更改为啥不触发");
     }
+    // @Emit()
+    // private setChartstorepool(data:GeoTransData) {
+    // }
     @Emit()
     private level2post(count: number) { // 这选择省的时候
         const {entity,starttime,endtime,entitynums,scale,winlen,name} = this.postparms;
@@ -73,19 +76,11 @@ export default class GeoMapEchart extends Vue {
         //     }
         // )
         const postprivinceId = (provinceMap as any)[name];
-        const promise = Axios({
-            method:"get",
-            url:`${prev}/js/china-main-city/${postprivinceId}.json`
-        }).then(
-            async (result)=> {
-            // console.log(result)
-            await echarts.registerMap(name,result.data);
-            return "success";
-        }).then(
+        const promise = this.getMapSource(postprivinceId, name).then(
             (suc) => {
-                this.Connect2().then(
-                    (data: any) => {
-                        if( data !== "err") {
+                this.postAndDealData(this.dealData).then(
+                    (data: string |  GeoTransData) => {
+                        if( typeof data !== 'string') {
                             const option2 = getGeoChinaProvinceOptionConfig(data.provinceArray,data.points,name,true) as any;
                             count += 1;
                             option2.change = count % 2;
@@ -102,19 +97,12 @@ export default class GeoMapEchart extends Vue {
         );
         // return promise;
     }
-    private level3post = (count: number) => { // 市
+    @Emit()
+    private level3post(count: number) { // 市
         const cityname = "杭州市";
         // const option2 = getGeoChinaProvinceOptionConfig() as any;
         const postCityId = cityMap[cityname];
-        const promise2 = Axios({
-            method:"get",
-            url:`${prev}/js/china-main-city/${postCityId}.json`
-        }).then(
-            async (result)=> {
-            // console.log(result)
-            await echarts.registerMap(name,result.data);
-            return "success";
-        }).then(
+        const promise2 = this.getMapSource(postCityId,cityname).then(
             (suc) => {
                 const data: GeoData = {
                     center:{JD: 120.1709,WD: 30.29},
@@ -132,14 +120,15 @@ export default class GeoMapEchart extends Vue {
         // (option2 as any).change = false;
         console.log("geo",this.option);
     }
-    private level4post = (count: number) => {
+    @Emit()
+    private level4post(count: number) {
         const cityname = "西湖区";
         // const option2 = getGeoChinaProvinceOptionConfig() as any;
         const postCityId = this.postparms.entity;
         const {entity,starttime,endtime,entitynums,scale,winlen} = this.postparms;
         const promise2 = Axios({
             method:"get",
-            url:`${prev}/?entity=${entity}&starttime=${starttime}&endtime=${endtime}&entitynums=${entitynums}&scale=${scale}&winlen=${winlen}`
+            url:`${prev}/elecnum/geomap?entity=${entity}&starttime=${starttime}&endtime=${endtime}&entitynums=${entitynums}&scale=${scale}&winlen=${winlen}`
         }).then(
             (result) => {
                 const data: GeoData = {
@@ -156,102 +145,78 @@ export default class GeoMapEchart extends Vue {
                 console.log("neizai",option2,this.option);
             }
         );
-        // (option2 as any).change = false;
-        console.log("geo",this.option);
     }
-    private Connect2(): Promise<string | HeampTransData> {
+    /**
+     * 不在vue实例中this无效
+     */
+    private dealData(data: ReturnGeoData): GeoTransData {
+        const result: GeoTransData = {
+                    provinceArray:[],
+                    points:[]
+        };
+        // 生成GeoTransData格式
+        const res = data.geomap;
+        const {childlabel,childid,point} = res;
+        childlabel.forEach(
+            (name: string,index: number) => {
+                result.provinceArray.push({id: childid[index],name,coord: [0,0],value:1});
+                // data.provinceArray.push({id: childid[index],name,coord: [0,0],value:0});
+            }
+        );
+        const {coord,value:pointvalue} = point;
+        coord.forEach(
+            (value: [number,number],index: number) => {
+                result.points.push([value[0],value[1],pointvalue[index]]);
+            }
+        );
+        this.chartstorepool[data.geomap.point.starttime] = result;
+        return result;
+    }
+    private postAndDealData(callback: any): Promise<GeoTransData> {
         const {entity,starttime,endtime,entitynums,scale,winlen} = this.postparms;
         const promise = Axios({
             method:"get",
-            url:`${prev}/?entity=${entity}&starttime=${starttime}&endtime=${endtime}&entitynums=${entitynums}&scale=${scale}&winlen=${winlen}`,
+            url:`${prev}/elecnum/geomap?entity=${entity}&starttime=${starttime}&endtime=${endtime}&entitynums=${entitynums}&scale=${scale}&winlen=${winlen}`,
         }).then(
             (result) => {
-                const data: HeampTransData = {
-                    provinceArray:[],
-                    points:[]
-                };
-                // 生成HeampTransData格式
-                const res = result.data.geomap;
-                const {childlabel,childid,point} = res;
-                childlabel.forEach(
-                    (name: string,index: number) => {
-                        data.provinceArray.push({id: childid[index],name,coord: [0,0],value:1});
-                        // data.provinceArray.push({id: childid[index],name,coord: [0,0],value:0});
-                    }
-                );
-                const {coord,value:pointvalue} = point;
-                coord.forEach(
-                    (value: [number,number],index: number) => {
-                        data.points.push([value[0],value[1],pointvalue[index]]);
-                    }
-                );
+                // return data;
+                const data: GeoTransData = callback(GeoTestData);
                 return data;
             }
         ).catch(
             (err) => {
-                const data: HeampTransData = {
-                    provinceArray:[],
-                    points:[]
-                };
-                const result = GeoTestData;
-                const res = result.geomap;
-                const {childlabel,childid,point} = res;
-                childlabel.forEach(
-                    (name: string,index: number) => {
-                        data.provinceArray.push({id: childid[index],name,coord: [ 85.61489933833856, 42.127000957642366],value:100});
-                    }
-                );
-                // console.log("childlabel",childlabel,data.provinceArray);
-                const {coord,value:pointvalue} = point;
-                coord.forEach(
-                    (value: [number,number],index: number) => {
-                        data.points.push([value[0],value[1],pointvalue[index]]);
-                    }
-                );
+                const data: GeoTransData = callback(GeoTestData);
                 return data;
-                // console.log("err");
-                // return "err";
             }
         );
         return promise;
     }
-    private levelpostmap = (level: number) => { // 中间商
-        let newlevel = level;
-        // tslint:disable-next-line:no-unused-expression
-        level > 4 && (newlevel = 4);
-        // tslint:disable-next-line:no-unused-expression
-        level < 0 && (newlevel = 1);
-        const proxypost = {
-            1 : this.level2post,
-            2 : this.level2post,
-            3 : this.level3post,
-            4 : this.level4post};
-        return (proxypost as any)[newlevel];
-    }
+    // private levelpostmap = (level: number) => { // 中间商
+    //     let newlevel = level;
+    //     // tslint:disable-next-line:no-unused-expression
+    //     level > 4 && (newlevel = 4);
+    //     // tslint:disable-next-line:no-unused-expression
+    //     level < 0 && (newlevel = 1);
+    //     const proxypost = {
+    //         1 : this.level2post,
+    //         2 : this.level2post,
+    //         3 : this.level3post,
+    //         4 : this.level4post};
+    //     return (proxypost as any)[newlevel];
+    // }
     @Emit()
     private setInterval(count: number) {
         count += 1;
         this.level2post(count);
         setTimeout(
-           () => (this.setInterval(count))
+           () => {this.setInterval(count);console.log(this.chartstorepool);}
         ,this.urlparas.postInterval);
     }
     private mounted() {
       const that = this;
       const count = 0 ;
       this.setInterval(count);
-    // //   this.level2post(count);
-    //   this.intervalid = setInterval(
-    //       () => {
-    //         count += 1;
-    //         // console.log("this.option.before",(this.option as any).change,this.option);
-    //         // this.levelpostmap(this.postparms.level)(count);
-    //         this.level2post(count);
-    //         // console.log("this.option after",this.option);
-    //       }
-    //     ,
-    //     this.urlparas.postInterval * 1
-    //   );
+      this.initWebSocket(this.postparms);
     }
     @Watch("postparms.postInterval",  {deep : true})
     private onHandleShow(val: boolean) {
@@ -261,10 +226,11 @@ export default class GeoMapEchart extends Vue {
     private destroyed() {
       // console.log("destory (this as any).intervalid", (this as any).intervalid);
       clearInterval(this.intervalid);
-      console.log("删除Geo组件");
+      console.log("删除Geo组件,并关闭当前的WebSocket");
+      this.websocket.close();
     }
     // @Emit()
-    private async updateData(chart: any,oldoption: any) {
+    private async way2UpdateData(chart: any,oldoption: any) {
         if(this.postparms.level >= 4 ) {// 也就是在点击市级别地图的时候
             const data: Points[]= Array.from((oldoption.series[0].data as any));
             // // 2.更新数据 逐渐变化
@@ -320,10 +286,50 @@ export default class GeoMapEchart extends Vue {
     }
     @Emit()
     private handledoubleclick() {
-    //   console.log("double click",this.id);
-      PubSub.publish("doubleclick2changecenter",this.id);
-      // this.resizeChart();
-      // (this.option as any).change = !(this.option as any).change;
+        // 双击事件为变换图表中心位置 坑爹啊
+        PubSub.publish("doubleclick2changecenter",this.id);
+    }
+    private getMapSource(entity: string,name: string): Promise<string> {
+        return Axios({
+            method:"get",
+            url:`${prev}/js/china-main-city/${entity}.json`
+        }).then(
+            async (result)=> {
+            // console.log(result)
+            await echarts.registerMap(name,result.data);
+            return "success";
+        });
+    }
+    //  一下为websocket方法
+    @Emit()
+    private initWebSocket(urlparas: PostParams) {
+        const websocketurl = `ws://${websocketurlhost}`;
+        console.log("initWebSocket",websocketurl);
+        this.websocket = new WebSocket(websocketurl);
+        this.websocket.onopen = this.wsonopen;
+        this.websocket.onmessage = this.wsonmessage;
+        this.websocket.onclose = this.wsonclose;
+        this.websocket.onerror = this.wsonerror;
+    }
+    @Emit()
+    private wsonopen() {
+        console.log("open geo",new Date());
+    }
+    @Emit()
+    private wsonmessage(evt: MessageEvent) {
+        const data: ReturnGeoData =  evt.data as ReturnGeoData;
+        console.log("open message",new Date(),data);
+        this.dealData(data);
+    }
+    @Emit()
+    private wsonclose() {
+        console.log("open close",new Date());
+        this.websocket.close();
+        this.initWebSocket(this.urlparas);
+    }
+    @Emit()
+    private wsonerror() {
+        console.log("open err",new Date());
     }
 }
 </script>

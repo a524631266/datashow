@@ -64,7 +64,9 @@ function getTwoDirectBarOption(positive_id: string[],datalist: TwoNumberList[],n
       }
     },
     title: {
-      text: title,
+      // show: false,
+      // text: title,
+      text: null,
       style: {
                 fontSize:'16px',
         fontWeight: 'bold',

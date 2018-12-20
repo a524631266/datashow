@@ -20,7 +20,9 @@ export const drawLineOptions = (listdata: any,title: string) => {
       backgroundColor: 'rgba(0,0,0,0)',
     },
     title : {
-      text : title,
+      // show: false,
+      // text : title,
+      text: null,
       // x : -20,
       style: {
                 fontSize:'16px',

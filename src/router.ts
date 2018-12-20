@@ -12,7 +12,7 @@ export default new Router({
     {
       path: '/',
       name: 'App',
-      component: App,
+      component: Home,
     },
     {
       path: '/about',
@@ -41,6 +41,6 @@ export default new Router({
       path: "/home/:entity",
       name: "node",
       component: () => import(/* webpackChunkName: "about" */ './views/Home.vue')
-    }
+    },
   ],
 });

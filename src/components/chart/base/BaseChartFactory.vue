@@ -23,7 +23,7 @@ export default class BaseChartFactory extends Vue {
     private data = [];
     private chartInstance = null;
     public mounted() {
-        // Highcharts.chart(this.id, this.option);
+        // console.log("1111111");
     }
     @Watch("option.change",{deep: true})
     private redrawChart(newVal: object, oldVal: object) {
@@ -35,6 +35,7 @@ export default class BaseChartFactory extends Vue {
             } else {
                 this.chartInstance = Highcharts.chart(this.id, this.option) as any;
             }
+            this.showHighChartLegend();
        }
        if(newVal !== oldVal && this.chartLibrary === ChartLibrary.echart) {
             if (this.chartInstance) {
@@ -47,6 +48,7 @@ export default class BaseChartFactory extends Vue {
                 mychart.setOption(JSON.parse(JSON.stringify(this.option)));
                 this.chartInstance = mychart as any;
                 (window as any).echart = mychart as any;
+                // 窗口变动自动变换数据
                 window.onresize = ()=> {
                     (this.chartInstance as any).resize();
                     // console.log("resize.........");
@@ -54,11 +56,20 @@ export default class BaseChartFactory extends Vue {
             }
        }
     }
+
+    private showHighChartLegend() {
+        if ( this.positionClass !== PositionClass.Center) {
+            (this.chartInstance as any).legend.update({enabled:false});
+        } else {
+            (this.chartInstance as any).legend.update({enabled:true});
+        }
+    }
     @Watch('positionClass',{deep: true})
     private reflowChart(newVal: object, oldVal: object) {
         // console.log("posiontClass Change");
         if (this.chartInstance && this.chartLibrary === ChartLibrary.highchart) {
             (this.chartInstance as any).reflow();
+            this.showHighChartLegend();
         }
         if (this.chartInstance && this.chartLibrary === ChartLibrary.echart) {
             (this.chartInstance as any).resize();

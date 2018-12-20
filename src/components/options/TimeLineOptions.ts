@@ -833,7 +833,9 @@ export const drawActionOptions = (objectlist: timelineData[], title: string) => 
         zoomType: 'x',
       },
       title: {
-          text: title,
+          // show: false,
+          // text: title,
+          text: null,
           style: {
               fontSize: '16px',
               fontWeight: 'bold',

@@ -17,7 +17,7 @@ import PubSub from 'pubsub-js';
 export default class FloatBotton extends Vue {
     private movelock = true;
     private collapsed = true;
-    private openLeftBar = true;
+    private openLeftBar = false;
     private ondrag = false;
     @Emit()
     private handlefloatdownButton(e: MouseEvent) {
@@ -68,9 +68,10 @@ export default class FloatBotton extends Vue {
 
 <style lang='scss' scoped>
 .floatbutton {
-  position: fixed;
+  position: absolute;
   z-index: 500;
   left: 0;
+  height: 100%;
 }
 .ondrag{
     background: transparent;

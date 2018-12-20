@@ -8,7 +8,7 @@
         :data="datalist[2]"
         v-model="datalist[2].urlparas"
     /> -->
-    <div class="select">用来选择条的</div>
+    <!-- <div class="select">用来选择条的</div> -->
     <div class="container">
         <!-- <BoxHighChart :urlparas="datalist[0].urlparas" 
             :positionClass="datalist[0].positionClass" 
@@ -150,27 +150,24 @@ export default class Home extends Vue {
           option: {xAxis: "2"}, positionClass: PositionClass.RightMiddle,chartName:"TrendHighChart"},
         {id: "chart-single-linechart", urlparas: orgtrend,
           option: {xAxis: "4"}, positionClass: PositionClass.LeftMiddle,chartName:"TrendHighChart"},
-        {id: "chart-top", urlparas: orgtop,
-          option: {xAxis: "1"}, positionClass: PositionClass.RightBottom,chartName:"TopHighChart"},
+          {id: "chart-heatmap", urlparas: orghp,
+        option: {xAxis: "4"}, positionClass: PositionClass.RightBottom,chartName:"HeatMapHighChart"},
         {id: "chart-geomap", urlparas: geo,
-          option: {xAxis: "1"}, positionClass: PositionClass.Center,chartName:"GeoMapEchart"}
+        option: {xAxis: "1"}, positionClass: PositionClass.Center,chartName:"GeoMapEchart"},
     ];
+    private centerid = "chart-geomap";
     private drawerlist = [
-         {id: "chart-heatmap", urlparas: orghp,
-        option: {xAxis: "4"}, positionClass: PositionClass.Drawer,chartName:"HeatMapHighChart"},
+            {id: "chart-top", urlparas: orgtop,
+            option: {xAxis: "1"}, positionClass: PositionClass.Drawer,chartName:"TopHighChart"},
     ];
     public beforeCreate() {
     // console.log("Home", PositionClass.LeftTop);
     }
-    @Emit()
-    public ajaxFunc(paras: PostParams) {
-        console.log("11111111", paras.entity, paras.starttime,
-                  paras.endtime, paras.entitynums, paras.scale, paras.winlen, paras.dimension,
-                  (this as any),
-                  );
-        this.datalist[0].option.xAxis = "10000";
-        return {};
-    }
+    // @Emit()
+    // public ajaxFunc(paras: PostParams) {
+    //     this.datalist[0].option.xAxis = "10000";
+    //     return {};
+    // }
     @Emit()
     // tslint:disable-next-line:no-empty
     public addcomponent() {
@@ -187,7 +184,7 @@ export default class Home extends Vue {
             this.datalist.some(
                 (data: any,index: number) => {
                     // tslint:disable-next-line:no-unused-expression
-                    if (data.id === "chart-geomap") {
+                    if (data.id === this.centerid) {
                         geoIndex = index;
                         geopositionClass = data.positionClass;
                         return true;
@@ -213,7 +210,7 @@ export default class Home extends Vue {
                     ( data: any ,index: number) => {
                         if(data.positionClass === PositionClass.Center) {
                             // debugger;
-                            if (id ==="chart-geomap" || data.id === "chart-geomap") {
+                            if (id === this.centerid || data.id === this.centerid ) {
                                 that.datalist[index].positionClass = beforepositionClass as any;
                                 that.datalist[idindex].positionClass = PositionClass.Center;
                             } else {

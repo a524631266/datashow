@@ -1,7 +1,10 @@
 <template>
     <div class="container-fluid  rangeselect"  @mouseenter="showdownincon(true)" @mouseleave="showdownincon(false)">
         <div class="littlebar" :class="highlightbarclass"   @click="changeShow" v-show="initshow" @mouseenter="highlightbar(true)" @mouseleave="highlightbar(false)">
-            <div class="fa icondown" :class="showdownicon" ></div>
+            <div class="row">
+                <div class="charttitletext"> {{titlename}} </div>
+                <div class="fa icondown middlebutton" :class="showdownicon"></div>
+            </div>
         <!-- </div> -->
             <div class="row options1 table-dark" v-show="!show" @click.stop="donothing" >
                 <form class="col-4">
@@ -97,7 +100,7 @@ import { Component, Vue, Prop, Watch, Emit, Model } from "vue-property-decorator
 import { PostParams,Dimension } from "@/types/index.ts";
 @Component
 export default class LittleBar extends Vue {
-    // @Prop({default: true}) public show!: boolean;
+    @Prop({default: ""}) public titlename!: string;
     // @Prop({default: "fa-sort-down"}) public showdownicon!: string;
     // @Prop({default: false }) public initshow!: boolean;
     // @Model("changepostparams2") postparms2!: PostParams;
@@ -146,10 +149,10 @@ export default class LittleBar extends Vue {
         this.highlightbarclass = show ? "table-dark":"";
     }
     public initShow() {
-        console.log(this.initshow,111111);
+        // console.log(this.initshow,111111);
     }
     private mounted() {
-        console.log("111111","加载");
+        // console.log("111111","加载");
     }
     private destroyed() {
         console.log((this as any).some);
@@ -260,6 +263,11 @@ $littlebarheight: 24px;
 .anchorBL{
     display:none;
 }
-
+.charttitletext{
+    float: left;
+}
+.middlebutton{
+    position: absolute;
+}
 </style>
 

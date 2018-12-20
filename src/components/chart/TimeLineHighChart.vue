@@ -1,7 +1,7 @@
 
 <template>
   <div :class="positionClass" draggable="true" @dblclick="handledoubleclick">
-        <LittleBar :show="positionClass === 'center'?false:true" :initshow="initshow" v-model="postparms">
+        <LittleBar :titlename="titlename" :show="positionClass === 'center'?false:true" :initshow="initshow" v-model="postparms">
             <BaseChartFactory :positionClass="positionClass" :id="id" :option="option" :chartLibrary="chartLibrary" slot="chart" />
         </LittleBar>
         
@@ -35,6 +35,7 @@ export default class TimeLineHighChart extends Vue {
     public initshow: boolean = this.positionClass === "center"?true: false ;
     private intervalid = 0;
     private chartLibrary = ChartLibrary.highchart;
+    private titlename = "异常";
     @Emit()
     public changedata() {
       console.log(this.data);
@@ -48,7 +49,7 @@ export default class TimeLineHighChart extends Vue {
             const option2 = drawActionOptions(inout, "1111") as any;
             (option2 as any).change = false;
             this.option = option2;
-            console.log(this.option);
+            // console.log(this.option);
         },
         this.postInterval
       );

@@ -1,28 +1,30 @@
 <template>
   <a-layout id="app" class="panel">
-    <FloatBotton />
-    <a-layout-sider>
-    <LeftBar />
+    <a-layout-sider class="treeselect">
+      <LeftBar />
     </a-layout-sider>
-    <div id="nav" class="panel-heading">
+    <!-- <div style="{display:inline-block}">
+    <LeftBar />
+    </div> -->
+    <a-layout >
+    <a-layout-header id="nav" class="layoutheader">
       <SlotBar>
-        <h2 slot="leftbar">默默组织</h2>
-        <h2 slot="rightbar">默默配电柜</h2>
       </SlotBar>
-    </div>
-    <div class="panel-body">
+    </a-layout-header>
+    <a-layout-content class="panel-body">
     <transition name="slide-left">
       <keep-alive>
           <router-view id="panel"  />
       </keep-alive>
     </transition>
-    </div>
+    </a-layout-content>
+    </a-layout>
   </a-layout>
 </template>
 <script lang="ts">
 import { Component, Vue, Prop, Emit } from 'vue-property-decorator';
 import SlotBar from "@/components/SlotBar.vue";
-import FloatBotton from "@/components/bar/FloatBotton.vue";
+// import FloatBotton from "@/components/bar/FloatBotton.vue";
 import LeftBar from "@/components/bar/LeftBar.vue";
 import PubSub from 'pubsub-js';
 import Ant from "ant-design-vue";
@@ -35,10 +37,11 @@ import Ant from "ant-design-vue";
     SlotBar,
     // AButton:Button,
     // AMessage:message
-    FloatBotton,
     LeftBar,
     ALayout: Ant.Layout,
     ALayoutSider: Ant.Layout.Sider,
+    ALayoutHeader: Ant.Layout.Header,
+    ALayoutContent: Ant.Layout.Content,
   }
 })
 export default class App extends Vue {
@@ -54,6 +57,8 @@ export default class App extends Vue {
 </script>
 
 <style lang="scss">
+$headerbarheight:24px;
+$vheight:100vh; 
 body{
     /* background-color: gray; */
     background-image: url("/html/xinjiang/img/background4.jpg") ;
@@ -92,10 +97,14 @@ body{
 .panel-heading{
   z-index: 400;
 }
+.panel-body{
+    position: relative;
+    width: 100%;
+}
 
 .ant-tree{
     z-index: 499;//小于 floatbotton;
-    position: fixed;
+    position: relative;
     color: white !important;
     text-align: left;
     background: radial-gradient(circle at center,#000066 0%,#000000 200%);
@@ -108,7 +117,24 @@ body{
   background: #3ba0e9;
   color: #fff;
   line-height: 120px;
+  z-index:401;
 }
-
-
+.ant-layout-sider{
+  top:0;
+  z-index:401;
+  // position: fixed;
+  height: 100vh !important;
+  overflow-y: auto;
+  width: auto !important;
+  max-width: 100vw !important;
+  min-width: 0px !important;
+  flex: none!important;
+}
+.layoutheader{
+  height: $headerbarheight;
+  z-index:400;
+}
+.ant-layout-header{
+  padding: 0px;
+}
 </style>

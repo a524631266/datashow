@@ -73,7 +73,8 @@ export const drawBoxOptions = (listdata: object[], xAxisList: string[], title: s
             // spacingBottom:12
         },
         title: {
-            text: title,
+            // text: title,
+            text: null,
             style: {
                 fontSize: '16px',
                 fontWeight: 'bold',

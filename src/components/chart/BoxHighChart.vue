@@ -1,7 +1,7 @@
 
 <template>
   <div :class="positionClass" draggable="true" @dblclick="handledoubleclick">
-        <LittleBar :show="positionClass === 'center'?false:true" :initshow="initshow" v-model="postparms">
+        <LittleBar :titlename="titlename" :show="positionClass === 'center'?false:true" :initshow="initshow" v-model="postparms">
           <BaseChartFactory :positionClass="positionClass" :id="id" :option="option" :chartLibrary="chartLibrary" slot="chart" />
         </LittleBar>
   </div>
@@ -40,9 +40,10 @@ export default class BoxHighChart extends Vue {
     public initshow: boolean = this.positionClass === "center"?true: false ;
     private intervalid = 0;
     private chartLibrary = ChartLibrary.highchart;
+    private titlename = "统计";
     @Emit()
     public changedata() {
-      console.log(this.data);
+      // console.log(this.data);
       if (this.id === "chart-top") {
           this.positionClass = PositionClass.Center;
       }
@@ -59,7 +60,7 @@ export default class BoxHighChart extends Vue {
             const option2 =  drawBoxOptions(boxchart3, xAxis3 , this.id) as Options;
             (option2 as any).change = false;
             this.option = option2;
-            console.log(this.option);
+            // console.log(this.option);
             // (this as any).$emit("ajaxFunc", this.$props.urlparas);
         },
         this.postInterval

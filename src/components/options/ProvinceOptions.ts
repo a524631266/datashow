@@ -3,6 +3,7 @@
 // tslint:disable-next-line:no-unused-expression
 export const provincedata = {
     title: {
+        show: false,
         text: "新疆 安装量 分布图",
         x: "center",
         textStyle: { color: "yellow" }

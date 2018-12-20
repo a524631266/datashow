@@ -131,7 +131,8 @@ export const drawHeatmapOptions = (listdata: heatmapData[], title: string, redra
             }
         },
         title: {
-            text: title,
+            // text: title,
+            text: null,
             align: 'center',
             style: {
                 fontSize: '16px',

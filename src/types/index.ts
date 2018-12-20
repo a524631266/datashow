@@ -1,3 +1,4 @@
+import { ProvinceMapData ,Points } from '@/components/options/GeoOptions';
 enum PositionClass {
     LeftTop = "left-top",
     RightTop = "right-top",
@@ -40,6 +41,43 @@ interface PostParams {
 //     console.log(a)
 // }
 // add(PositionClass.LeftBottom)
+interface GeoPointDat {
+    coord: Array<[number,number]>;
+    starttime: number;
+    value: number[];
+}
+
+interface GeoData {
+    coord: Array<[number,number]>;
+    childlabel: string[];
+    childid: number[];
+    point: GeoPointDat;
+}
+/**
+ * 格式如 {
+ *  geomap：{
+ *      coord: Array<[number,number]>;
+ *      childlabel: string[];
+ *      childid: number[];
+ *      point: {
+ *          coord: Array<[number,number]>;
+ *          starttime: number;
+ *          value: number[];
+ *      };
+ *    }
+ * }
+ */
+interface ReturnGeoData {
+    geomap: GeoData;
+}
+interface GeoTransData {
+    provinceArray: ProvinceMapData[];
+    points: Points[];
+}
+interface ChartStorePool<T> {
+    [name: number]: T;
+}
+
 enum ChartLibrary {
     echart = "echart",
     highchart = "highchart",
@@ -47,6 +85,9 @@ enum ChartLibrary {
 enum MeasureName {
     Elec = "Elec",
 }
+
+
+
 export {
-    PositionClass,Dimension,PostParams,ChartLibrary,MeasureName
+    PositionClass,Dimension,PostParams,ChartLibrary,MeasureName,ReturnGeoData,GeoTransData,ChartStorePool
 };
