@@ -1,6 +1,6 @@
 <template>
   <a-layout id="app" class="panel">
-    <a-layout-sider class="treeselect">
+    <a-layout-sider class="treeselect" v-show="openLeftBar">
       <LeftBar />
     </a-layout-sider>
     <!-- <div style="{display:inline-block}">
@@ -19,6 +19,7 @@
     </transition>
     </a-layout-content>
     </a-layout>
+    <tooltip-route></tooltip-route>
   </a-layout>
 </template>
 <script lang="ts">
@@ -28,6 +29,7 @@ import SlotBar from "@/components/SlotBar.vue";
 import LeftBar from "@/components/bar/LeftBar.vue";
 import PubSub from 'pubsub-js';
 import Ant from "ant-design-vue";
+import TooltipRoute from '@/components/bar/TooltipRoute.vue';
 // import Ant from "ant-design-vue";
 // tslint:disable-next-line:no-var-requires
 // const { Button, message }  = require('ant-design-vue');
@@ -42,17 +44,25 @@ import Ant from "ant-design-vue";
     ALayoutSider: Ant.Layout.Sider,
     ALayoutHeader: Ant.Layout.Header,
     ALayoutContent: Ant.Layout.Content,
+    TooltipRoute
   }
 })
 export default class App extends Vue {
     private collapsed = true;
+    private openLeftBar = false;
     public destroyed() {
         console.log((this as any).some);
+    }
+    public mounted() {
+      PubSub.subscribe("openLeftBar",(mesg: any,action: boolean) => {
+        this.openLeftBar = action;
+      });
     }
     @Emit()
     private toggleCollapsed() {
       this.collapsed = !this.collapsed;
     }
+
 }
 </script>
 
@@ -127,7 +137,7 @@ body{
   overflow-y: auto;
   width: auto !important;
   max-width: 100vw !important;
-  min-width: 0px !important;
+  // min-width: 200px !important;
   flex: none!important;
   box-shadow: 0 2px 8px #000000;
 }
