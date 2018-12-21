@@ -4,7 +4,7 @@
             <div class="row">
                 <div class="charttitletext"> {{titlename }} </div>
                 <div class="fa icondown middlebutton" :class="showdownicon"></div>
-                <div class="charttitletime"> {{data.starttime + "" + data.endtime }} </div>
+                <div class="charttitletime" v-show="false"> {{data.starttime + "" + data.endtime }} </div>
             </div>
             <div class="row options1 table-dark" v-show="!show" @click.stop="donothing" >
                 <form class="col-4">

@@ -45,7 +45,7 @@ export default class HeatMapHighChart extends Vue {
     private mounted() {
       this.intervalid = setTimeout(
         () => {
-            const option2 = drawHeatmapOptions(listdata, "HeatMap","" ,"") as any;
+            const option2 = drawHeatmapOptions(listdata, "HeatMap","" ,this.showTooltiop) as any;
             (option2 as any).change = false;
             this.option = option2;
             // console.log(this.option);
@@ -64,6 +64,11 @@ export default class HeatMapHighChart extends Vue {
     //       this.postInterval+3000
     //   );
     }
+    private showTooltiop(entity: string, name: string,clientX: number,clientY: number) {
+      // 方法在 LeftBar中订阅
+      const level = -1;
+      PubSub.publish("showtooltip",{entity,name,isLeaf:true,level,clientX,clientY});
+    }
     @Watch("postparms",  {deep : true})
     private onHandleShow(val: boolean) {
       console.log("监听",this.postparms,this.id);
@@ -80,6 +85,7 @@ export default class HeatMapHighChart extends Vue {
       // this.resizeChart();
       // (this.option as any).change = !(this.option as any).change;
     }
+
 }
 </script>
 

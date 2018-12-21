@@ -68,12 +68,27 @@ export default class FloatBotton extends Vue {
 
 <style lang='scss' scoped>
 .floatbutton {
-  position: absolute;
-  z-index: 500;
-  left: 0;
-  height: 100%;
+    position: absolute;
+    z-index: 500;
+    left: 0;
+    height: 100%;
+    //   background: transparent;
+    //   border: 0px transparent;
+    color: #8e8e8e;
+    text-shadow: 0 1px 0 rgba(0,0,0,.1);
+    background-color: #2a2a2c;
+    background-image: linear-gradient(180deg,#262628,#303032);
+    background-repeat: repeat-x;
+    border-color: #262628;
+    // padding: 6px 11px;
+    line-height: 16px;
+    border: 1px solid #2f2f32;
+    margin-right: 3px;
+    white-space: nowrap;
 }
 .ondrag{
     background: transparent;
 }
+
+
 </style>

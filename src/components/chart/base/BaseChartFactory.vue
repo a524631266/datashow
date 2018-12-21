@@ -18,12 +18,26 @@ export default class BaseChartFactory extends Vue {
     @Prop() public chartLibrary!: ChartLibrary;
     // @Inject("option") public option!: object;
     @Prop() public option!: object;
+    @Prop() public urlparas!: PostParams;
+    @Prop() public handleclick!: (elementdata: any)=>void;
     // tslint:disable-next-line:ban-types
     // @Prop() public updateData!: Function;
     private data = [];
     private chartInstance = null;
     public mounted() {
         // console.log("1111111");
+    }
+    @Watch("urlparas.entity",{deep:true})
+    private initChart(newVal: object, oldVal: object) {
+        console.log(this.id,"entity变化了",newVal);
+        if (this.chartLibrary === ChartLibrary.highchart) {
+            (this.chartInstance as any).destroy();
+        }
+        if (this.chartLibrary === ChartLibrary.highchart) {
+            (this.chartInstance as any).dispose();
+        }
+        this.chartInstance = null;
+        this.redrawChart(newVal, oldVal);
     }
     @Watch("option.change",{deep: true})
     private redrawChart(newVal: object, oldVal: object) {
@@ -41,18 +55,21 @@ export default class BaseChartFactory extends Vue {
             if (this.chartInstance) {
                 // console.log("Echart111111111111111111");
                 this.$emit("updateData",this.chartInstance,this.option);
+
                 // this.updateData(this.chartInstance,this.option); //
             } else {
+                console.log("resechart");
                 const nodeid = document.getElementById(this.id);
                 const mychart = echarts.init(nodeid as any);
                 mychart.setOption(JSON.parse(JSON.stringify(this.option)));
                 this.chartInstance = mychart as any;
-                (window as any).echart = mychart as any;
+                // (window as any).echart = mychart as any;
                 // 窗口变动自动变换数据
                 window.onresize = ()=> {
                     (this.chartInstance as any).resize();
                     // console.log("resize.........");
                 };
+                mychart.on("click",this.handleclick);
             }
        }
     }
@@ -75,6 +92,15 @@ export default class BaseChartFactory extends Vue {
             (this.chartInstance as any).resize();
 
         }
+    }
+    private destroyed() {
+        if (this.chartLibrary === ChartLibrary.highchart) {
+            (this.chartInstance as any).destroy();
+        }
+        if (this.chartLibrary === ChartLibrary.highchart) {
+            (this.chartInstance as any).dispose();
+        }
+        this.chartInstance = null;
     }
 }
 </script>

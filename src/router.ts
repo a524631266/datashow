@@ -40,7 +40,12 @@ export default new Router({
     {
       path: "/home/:entity",
       name: "node",
-      component: () => import(/* webpackChunkName: "about" */ './views/Home.vue')
+      component: () => import(/* webpackChunkName: "about" */ './views/Home.vue'),
+      meta: {
+        id: 0,
+        name : "",
+        level : 0,
+      },
     },
 
   ],

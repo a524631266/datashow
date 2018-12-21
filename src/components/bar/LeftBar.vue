@@ -1,8 +1,8 @@
 <template>
-  <a-popover placement="right" title="请选择">
-        <template slot="content">
-            <a :href="'/home/'+entity" target="_self" @click.prevent="router2new">{{entity}}</a>
-            <p>Content</p>
+  <a-popover :placement="tooltipplacement" :title="nodedataref.name"  :mouseLeaveDelay="0.1" :autoAdjustOverflow="false" :visible="tooltipShow" overlayClassName="tooltip2" ref="tooltip2" @visibleChange="visibleChange">
+        <template slot="content" class="aaa" >
+            <a :href="'/home/'+nodedataref.key" target="_self" @click.prevent="router2home" class="btn btn-sm">图表</a>
+            <a :href="'/info/'+nodedataref.key" target="_self" @click.prevent="router2info" class="btn btn-sm">用户信息</a>
         </template>
         <a-tree
             :class="openLeftBar?'':'hidetree'"
@@ -47,6 +47,7 @@ import { Component, Vue, Prop, Emit, Watch } from 'vue-property-decorator';
 const prev = process.env.NODE_ENV === "development"? "/tree": "";
 import Ant from "ant-design-vue";
 import Axios from "axios";
+import { entity,name,level } from "@/actions/initOptions.ts";
 interface ChildrenValue {
     id: number ;
     pId: number;
@@ -73,30 +74,29 @@ interface ChildrenValue {
     },
 })
 export default class LeftBar extends Vue {
-    private alignConfig ={
+    private alignConfig = {
                     points: ['tl', 'tr'],        // align top left point of sourceNode with top right point of targetNode
                     offset: [10, 20],            // the offset sourceNode by 10px in x and 20px in y,
                     targetOffset: ['30%','40%'], // the offset targetNode by 30% of targetNode width in x and 40% of targetNode height in y,
                     overflow: { adjustX: true, adjustY: true }, // auto adjust position when sourceNode is overflowed
                 };
     private openLeftBar = false;
-    private entity = "";
     private treeData = [
                 {
-                    id: 99998999,
+                    id: entity,
                     pId: 0,
-                    name: "新疆维吾尔自治区?",
-                    title:"新疆维吾尔自治区",
-                    mapname:"新疆维吾尔自治区",
+                    name,
+                    title:name,
+                    mapname:name,
                     icon: `${prev}/css/img/diy/building.png`,
                     open: true,
                     nocheck:true,
-                    level:2,
-                    coord:[87.62781199999995,43.793028],
+                    level,
+                    coord:[0,0],// [87.62781199999995,43.793028],
                     isLeaf: false,
-                    label: "新疆维吾尔自治区label",
-                    key: '99998999',
-                    value: '99998999',
+                    label: name,
+                    key: entity,
+                    value: entity,
                     // children: [
                     //     [{
                     //         value: '0-0-1',
@@ -117,11 +117,16 @@ export default class LeftBar extends Vue {
     //     { title: 'Expand to load', key: '1' },
     //     { title: 'Tree Node', key: '2', isLeaf: true },
     //   ];
-    private selectvalue = '99998999';
-    private expandedKeys = ['99998999'];
-    private autoExpandParent =  false;
-    private checkedKeys = ['99998999'];
-    private selectedKeys = [];
+    // private selectvalue = '99998999';
+    // private expandedKeys = ['99998999'];
+    // private autoExpandParent =  false;
+    // private checkedKeys = ['99998999'];
+    // private selectedKeys = [];
+    // private selectnode = null;
+    private tooltipShow = false;
+    // private tooltiptitlename = "";
+    private tooltipplacement = "leftTop";
+    private nodedataref: ChildrenValue = {} as any;
     // @Emit()
     // private onExpand(expandedKeys: any) { // 展开那个值?
     //   console.log('onExpand', expandedKeys);
@@ -144,11 +149,24 @@ export default class LeftBar extends Vue {
         PubSub.subscribe("openLeftBar",(mesg: any,action: boolean) => {
           this.openLeftBar = action;
         });
+        PubSub.subscribe("showtooltip",async (mesg: any,data: {entity: string,name: string,isLeaf: boolean,level: number,clientX: number,clientY: number}) => {
+          this.nodedataref.key = data.entity;
+          this.nodedataref.name = data.name;
+          this.nodedataref.isLeaf = data.isLeaf;
+          this.nodedataref.level = data.level;
+        //   this.tooltipplacement = "right";
+          await this.autoresizetooltip(data.clientX+"px",data.clientY+"px");
+          this.tooltipShow = true;
+          console.log(this.nodedataref.key);
+        //   this.tooltipplacement = "right";
+        });
         // console.log('');
     }
     // @Emit()// 不能用，否则无法找到Promise
     private onLoadData(treeNode: any) {
-        const {eventKey: postid } = treeNode;
+        console.log("treeNode",treeNode);
+        const {eventKey: postid} = treeNode;
+        const {level} = treeNode.dataRef;
         // const {eventKey: postid ,dataRef:{id ,level }} = treeNode;
         return new Promise((resolve,reject) => {
             console.log(treeNode.dataRef.children);
@@ -174,7 +192,7 @@ export default class LeftBar extends Vue {
                             children.title = value.name + "(" + value.entityNum + ")";
                             children.key = value.id + "";
                             children.isLeaf = value.isEntity;
-                            children.level = value.level;
+                            children.level = level + 1;
                             children.value = value.id + "";
                             children.label = value.name;
                             childrenlist.push(children);
@@ -238,14 +256,66 @@ export default class LeftBar extends Vue {
     //         resolve("111");
     //     });
     // }
+    //  调整气泡输出位置，这里不需要用默认
+    @Emit()
     private showtooltip(e: any) {
-        console.log(e,"mou");
-        const {key} = e.node.dataRef;
-        console.log(key);
-        this.entity = key;
+        // const {key,name} = e.node.dataRef;
+        const {clientX,clientY}  = e.event;
+        // this.entity = key;
+        // this.tooltiptitlename = name;
+        const mouseleft = clientX + "px";
+        const mousetop = clientY + "px";
+        // console.log("111111",e.event.target);
+        // 记录当前的target用来保管数据
+        // this.selectnode = e.event.target;
+        this.nodedataref = e.node.dataRef;
+        // this.autoresizetooltip();
+        setTimeout(()=>this.autoresizetooltip(mouseleft,mousetop),50);
     }
-    private router2new() {
-        this.$router.push({name: "node",query: { entity: this.entity +1 },params: { entity: this.entity + Math.random()}});
+    private autoresizetooltip(mouseleft: string,mousetop: string) {
+        const tooltipdom = document.getElementsByClassName("ant-popover");
+        if (tooltipdom[0] === undefined) {
+            setTimeout(this.autoresizetooltip,100);
+        } else {
+            (tooltipdom[0] as any).style.left = mouseleft;
+            (tooltipdom[0] as any).style.top = mousetop;
+        }
+        this.tooltipShow = true;
+        // console.log(tooltipdom);
+    }
+    @Emit()
+    private visibleChange(e: any,b: any) {
+        console.log("visible222222",e,b);
+        if(!e) {
+            this.tooltipplacement = "leftTop";
+            this.tooltipShow = false;
+        } else {
+            this.tooltipplacement = "right";
+            this.tooltipShow = true;
+        }
+    }
+    @Emit()
+    private getPopupContainer(trigger: any) {
+        return document.body;
+        // return trigger;
+        // console.log("childNodes333333",this.selectnode);
+        // return this.selectnode;
+    }
+    private router2home() {
+        this.$router.push({name: "node",query: {
+            entity: this.nodedataref.key,
+            name: this.nodedataref.name as any,
+            level:this.nodedataref.level as any,
+            isLeaf:this.nodedataref.isLeaf as any,
+            },params: { entity: this.nodedataref.key}});
+    }
+    private router2info() {
+        this.$router.push({name: "node",query: {
+            entity: this.nodedataref.key,
+            name: this.nodedataref.name as any,
+            level:this.nodedataref.level as any,
+            isLeaf:this.nodedataref.isLeaf as any,
+            },params: { entity: this.nodedataref.key}});
     }
 }
 </script>
@@ -253,5 +323,8 @@ export default class LeftBar extends Vue {
 <style lang='scss' scoped>
 .hidetree{
     display: none;
+}
+.tooltip2{
+    display: block !important;
 }
 </style>

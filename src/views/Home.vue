@@ -182,8 +182,11 @@ export default class Home extends Vue {
         this.datalist.forEach(
             (data: any,index: number)=> {
                 this.datalist[index].urlparas.entity = val;
+                this.datalist[index].urlparas.name = this.$route.query.name as any;
+                this.datalist[index].urlparas.level = this.$route.query.level as any;
             }
         );
+        PubSub.publish("updateleftbarname",this.$route.query.name);
     }
     private mounted() {
         const that = this;

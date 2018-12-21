@@ -21,7 +21,7 @@ interface Namemap {
     [x: string]: string;
 }
 
-export const drawHeatmapOptions = (listdata: heatmapData[], title: string, redrawEntityFunc: any, openInfo: any) => {// redrawEntityFunc(entityid)
+export const drawHeatmapOptions = (listdata: heatmapData[], title: string, redrawEntityFunc: any, openInfo: (entity: string, name: string,clientX: number,clientY: number)=>void) => {// redrawEntityFunc(entityid)
     // var title = "用电"
     // var listdata= [{x:123456,y:0,value:200},{x:123456,y:1,value:200},{x:123456,y:3,value:200},{x:1222356,y:23,value:200},{x:1234567,y:3,value:200}]
     const xmaptime: Xmaptime = {};
@@ -116,6 +116,7 @@ export const drawHeatmapOptions = (listdata: heatmapData[], title: string, redra
                         const clientY = (e as any).clientY;
                         console.log(namemap[xlist[index]],categories[index]);
                         // 先隐藏 ###########
+                        openInfo(categories[index],namemap[xlist[index]],clientX,clientY);
                         // infoObject.createNewInfoDiv(categories[index], namemap[xlist[index]], clientX, clientY, redrawEntityFunc, openInfo);
                     });
                     // Highcharts.addEvent(xAxis.labelGroup.element, 'mouseleave', (e) => {
