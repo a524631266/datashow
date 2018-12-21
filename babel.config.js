@@ -28,14 +28,14 @@ module.exports = {
         },
         "ant-design-vue"
     ],
-    [
-      "import", 
-      {
-        "libraryName": "iview",
-        "libraryDirectory": "src/components"
-      },
-      "iview"
-    ]
+    // [
+    //   "import", 
+    //   {
+    //     "libraryName": "iview",
+    //     "libraryDirectory": "src/components"
+    //   },
+    //   "iview"
+    // ]
   ]
 }
 

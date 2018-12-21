@@ -2,7 +2,7 @@ import Vue from 'vue';
 import App from './App.vue';
 import router from '@/router';
 import store from '@/store';
-import '@/iview';
+// import '@/iview';
 import Home from './views/Home.vue';
 import LittleBar from './components/chart/LittleBar.vue';
 import "bootstrap/dist/css/bootstrap.min.css";

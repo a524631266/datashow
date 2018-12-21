@@ -249,12 +249,14 @@ export default class Home extends Vue {
 <style>
 
 .left-bottom,.left-middle,.left-top,.center,.right-bottom,.right-middle,.right-top{
-    border-radius: 5px;
-    background: radial-gradient(circle at center,#000066 0%,#000000 200%);
+    border-radius: 2px;
+    background-image: radial-gradient(circle at center,#000066 0%,#000048 100%);
     color: white;   
     /* border: 30px; */
     /* margin:5px; */
     /* margin: 1px 1px 1px 1px; */
+    border: 2px solid #000050;
+    box-shadow: 0 2px 10px #000000;
 }
 #tooltip::after{
     content: '';

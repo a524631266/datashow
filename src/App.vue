@@ -61,7 +61,7 @@ $headerbarheight:24px;
 $vheight:100vh; 
 body{
     /* background-color: gray; */
-    background-image: url("/html/xinjiang/img/background4.jpg") ;
+    background-image: url("/xinjiang/img/background4.jpg");
     /* background-repeat: no-repeat; */
     /* background-size: cover; */
     background-attachment: fixed; 
@@ -129,12 +129,17 @@ body{
   max-width: 100vw !important;
   min-width: 0px !important;
   flex: none!important;
+  box-shadow: 0 2px 8px #000000;
 }
 .layoutheader{
   height: $headerbarheight;
   z-index:400;
+  box-shadow: 0 1px 2px #001400;
 }
 .ant-layout-header{
   padding: 0px;
+}
+.ant-layout{
+  background: transparent;
 }
 </style>
