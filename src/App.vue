@@ -152,4 +152,5 @@ body{
 .ant-layout{
   background: transparent;
 }
+
 </style>

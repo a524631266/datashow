@@ -200,9 +200,9 @@ export default class LeftBar extends Vue {
         // 记录当前的target用来保管数据
         // this.selectnode = e.event.target;
         this.nodedataref = e.node.dataRef;
-        const {entity,name,isLeaf,level} = e.node.dataRef;
+        const {key,name,isLeaf,level} = e.node.dataRef;
         // this.autoresizetooltip();
-        PubSub.publish("showtooltip",{entity,name,isLeaf,level,clientX,clientY});
+        PubSub.publish("showtooltip",{entity: key,name,isLeaf,level,clientX,clientY});
     }
 }
 </script>
