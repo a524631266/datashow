@@ -73,7 +73,9 @@ export default class BaseChartFactory extends Vue {
             }
        }
     }
-
+    /**
+     * highcart 显示legend
+     */
     private showHighChartLegend() {
         if ( this.positionClass !== PositionClass.Center) {
             (this.chartInstance as any).legend.update({enabled:false});
@@ -81,6 +83,11 @@ export default class BaseChartFactory extends Vue {
             (this.chartInstance as any).legend.update({enabled:true});
         }
     }
+    /**
+     * 这里是监听id是否变化，一旦变换有两种选择
+     * 1.hightchart 如果在中间图就要显示legend
+     * 2.如果是echart的话，由于目前版本只有地图，所以只要重新布局就行了
+     */
     @Watch('positionClass',{deep: true})
     private reflowChart(newVal: object, oldVal: object) {
         // console.log("posiontClass Change");
@@ -93,11 +100,14 @@ export default class BaseChartFactory extends Vue {
 
         }
     }
+    /**
+     * 销毁组件的时候
+     */
     private destroyed() {
         if (this.chartLibrary === ChartLibrary.highchart) {
             (this.chartInstance as any).destroy();
         }
-        if (this.chartLibrary === ChartLibrary.highchart) {
+        if (this.chartLibrary === ChartLibrary.echart) {
             (this.chartInstance as any).dispose();
         }
         this.chartInstance = null;
