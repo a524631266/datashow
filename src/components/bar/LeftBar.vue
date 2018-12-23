@@ -8,6 +8,7 @@
             :loadData="onLoadData"
             :treeData="treeData"
             @mouseenter="showtooltip"
+            @mouseleave="hidetooltip"
         />
   <!-- </a-popover> -->
   <!-- <a-tree-select
@@ -202,7 +203,11 @@ export default class LeftBar extends Vue {
         this.nodedataref = e.node.dataRef;
         const {key,name,isLeaf,level} = e.node.dataRef;
         // this.autoresizetooltip();
-        PubSub.publish("showtooltip",{entity: key,name,isLeaf,level,clientX,clientY});
+        PubSub.publish("showtooltip",{entity: key,name,isLeaf,level,clientX,clientY,target: e.event.target.getBoundingClientRect()});
+    }
+    private hidetooltip() {
+        console.log("levetree");
+        PubSub.publish("hidetooltip","none");
     }
 }
 </script>

@@ -64,10 +64,10 @@ export default class HeatMapHighChart extends Vue {
     //       this.postInterval+3000
     //   );
     }
-    private showTooltiop(entity: string, name: string,clientX: number,clientY: number) {
+    private showTooltiop(entity: string, name: string,clientX: number,clientY: number,target: DOMRect) {
       // 方法在 LeftBar中订阅
       const level = -1;
-      PubSub.publish("showtooltip",{entity,name,isLeaf:true,level,clientX,clientY});
+      PubSub.publish("showtooltip",{entity,name,isLeaf:true,level,clientX,clientY,target});
     }
     @Watch("postparms",  {deep : true})
     private onHandleShow(val: boolean) {

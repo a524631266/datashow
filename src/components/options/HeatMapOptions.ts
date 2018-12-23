@@ -1,6 +1,7 @@
 import Highcharts, { Options ,HeatMapChart} from 'highcharts';
 import $ from "jquery";
 import "./dependentjs/map";
+import PubSub from 'pubsub-js';
 // tslint:disable-next-line:class-name
 interface heatmapData {
     x: string;
@@ -21,7 +22,7 @@ interface Namemap {
     [x: string]: string;
 }
 
-export const drawHeatmapOptions = (listdata: heatmapData[], title: string, redrawEntityFunc: any, openInfo: (entity: string, name: string,clientX: number,clientY: number)=>void) => {// redrawEntityFunc(entityid)
+export const drawHeatmapOptions = (listdata: heatmapData[], title: string, redrawEntityFunc: any, openInfo: (entity: string, name: string,clientX: number,clientY: number,target: DOMRect)=>void) => {// redrawEntityFunc(entityid)
     // var title = "用电"
     // var listdata= [{x:123456,y:0,value:200},{x:123456,y:1,value:200},{x:123456,y:3,value:200},{x:1222356,y:23,value:200},{x:1234567,y:3,value:200}]
     const xmaptime: Xmaptime = {};
@@ -114,16 +115,19 @@ export const drawHeatmapOptions = (listdata: heatmapData[], title: string, redra
                         // 修正一下
                         const clientX = (e as any).clientX;
                         const clientY = (e as any).clientY;
-                        console.log(namemap[xlist[index]],categories[index]);
+                        // console.log(namemap[xlist[index]],categories[index]);
+                        // console.log("e.target", (e as any).target.style.left,(e as any).target.style.top,(e as any).target.style.width,(e as any).target.style.height);
+                        // console.log("e.target", (e as any).target.getBoundingClientRect(),e);
                         // 先隐藏 ###########
-                        openInfo(categories[index],namemap[xlist[index]],clientX,clientY);
+                        openInfo(categories[index],namemap[xlist[index]],clientX,clientY,(e as any).target.getBoundingClientRect());
                         // infoObject.createNewInfoDiv(categories[index], namemap[xlist[index]], clientX, clientY, redrawEntityFunc, openInfo);
                     });
-                    // Highcharts.addEvent(xAxis.labelGroup.element, 'mouseleave', (e) => {
-                    //     // 将原生事件添加上 chartX 和 chartY 值
-                    //     const timeoutid = setTimeout(() => { infoObject.hiddenInfo()}, 300);
-                    //     infoObject.setTimeoutId(timeoutid);
-                    // });
+                    Highcharts.addEvent(xAxis.labelGroup.element, 'mouseleave', (e) => {
+                        // 将原生事件添加上 chartX 和 chartY 值
+                        // const timeoutid = setTimeout(() => { infoObject.hiddenInfo()}, 300);
+                        // infoObject.setTimeoutId(timeoutid);
+                        PubSub.publish("hidetooltip","none");
+                    });
                 },
                 render() {
                     // 先隐藏 ###########

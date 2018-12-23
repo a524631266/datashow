@@ -86,8 +86,6 @@ enum MeasureName {
     Elec = "Elec",
 }
 
-
-
 export {
-    PositionClass,Dimension,PostParams,ChartLibrary,MeasureName,ReturnGeoData,GeoTransData,ChartStorePool
+    PositionClass,Dimension,PostParams,ChartLibrary,MeasureName,ReturnGeoData,GeoTransData,ChartStorePool,
 };
