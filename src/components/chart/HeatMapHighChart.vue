@@ -50,7 +50,7 @@ export default class HeatMapHighChart extends Vue {
     }
     @Watch("urlparas.entity",  {deep : true})
     private redraw(val: boolean) {
-      console.log("监听 entity timeline",this.postparms,this.id);
+      console.log("上层图表 HeatMapHighCHart",this.postparms,this.id);
       this.getData();
       // 在这里开始做长轮询 定时从后台传数据
     }

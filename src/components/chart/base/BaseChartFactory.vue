@@ -26,30 +26,31 @@ export default class BaseChartFactory extends Vue {
     private data = [];
     private chartInstance = null;
     public mounted() {
-        // console.log("1111111");
+        // console.log("1111111")
     }
     /**
      * 监控entity变化的时候，也就是当entityid真正变化的时候，就要更新视图
      */
-    // @Watch("urlparas.entity",{deep:true})
-    // private initChart(newVal: object, oldVal: object) {
-    //     console.log(this.id,"entity变化了 :new entity",newVal,";oldeVal",oldVal);
-    //     // 如果之前有图表的话直接销毁图表
-    //     if (this.chartInstance && this.chartLibrary === ChartLibrary.highchart) {
-    //         (this.chartInstance as any).destroy();
-    //     }
-    //     if (this.chartInstance && this.chartLibrary === ChartLibrary.echart) {
-    //         (this.chartInstance as any).dispose();
-    //     }
-    //     this.chartInstance = null;
-    //     // this.redrawChart(newVal, oldVal);
-    //     // this.$emit("getData");
-    //     // tslint:disable-next-line:no-unused-expression
-    //     this.getData && this.getData();
-    // }
+    @Watch("urlparas.entity",{deep:true})
+    private initChart(newVal: object, oldVal: object) {
+        console.log("entity变化了 :new entity",this.id,newVal,";oldeVal",oldVal);
+        // 如果之前有图表的话直接销毁图表
+        if (this.chartInstance && this.chartLibrary === ChartLibrary.highchart) {
+            // (this.chartInstance as any).showLoading();
+            (this.chartInstance as any).destroy();
+            this.chartInstance = Highcharts.chart(this.id, this.option) as any;
+        }
+        if (this.chartInstance && this.chartLibrary === ChartLibrary.echart) {
+            (this.chartInstance as any).dispose();
+            this.chartInstance = null;
+        }
+        // this.redrawChart(newVal, oldVal);
+        // this.$emit("getData");
+        // tslint:disable-next-line:no-unused-expression
+    }
     @Watch("option.change",{deep: true})
     private redrawChart(newVal: object, oldVal: object) {
-    //    console.log("options变化",newVal, oldVal);
+       console.log("options变化",newVal, oldVal,this.id);
        if(newVal !== oldVal && this.chartLibrary === ChartLibrary.highchart) {
             if (this.chartInstance) {
                 // console.log("1");

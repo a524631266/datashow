@@ -46,8 +46,8 @@ export default class BoxHighChart extends Vue {
     private titlename = "统计";
     @Watch("urlparas.entity",  {deep : true})
     private redraw(val: boolean) {
-      this.option = {} as any;
-      console.log("监听 entity timeline",this.postparms,this.id);
+      // this.option = {} as any;
+      console.log("上层图表 BoxHighcart变动",this.postparms,this.id);
       this.getData();
       // 在这里开始做长轮询 定时从后台传数据
     }
