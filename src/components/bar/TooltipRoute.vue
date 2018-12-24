@@ -40,6 +40,7 @@ export default class TooltipRoute extends Vue {
     public mounted() {
         // 订阅显示tooltip消息
         PubSub.subscribe("showtooltip",async (mesg: any,data: {entity: string,name: string,isLeaf: boolean,level: number,clientX: number,clientY: number,target: DOMRect}) => {
+          this.locktooltip = true;
           this.nodedataref.key = data.entity;
           this.nodedataref.name = data.name;
           this.nodedataref.isLeaf = data.isLeaf;
@@ -53,9 +54,9 @@ export default class TooltipRoute extends Vue {
         });
         // 订阅隐藏tooltip消息
         PubSub.subscribe("hidetooltip",(mesg: any) => {
-            if(!this.locktooltip) {
-                this.tooltipmouseleave();
-            }
+            // if(!this.locktooltip) {
+                this.delayhidetooltip();
+            // }
         });
     }
     // // @Emit()
@@ -119,25 +120,52 @@ export default class TooltipRoute extends Vue {
     @Emit()
     private tooltipmouseenter() {
         console.log("进入tooltip");
-        this.classname = "tooltip3";
         this.locktooltip = true;
         while (this.timeoutqueue.length > 0) {
             const before = this.timeoutqueue.shift();
             console.log("before",before);
             clearTimeout(before);
         }
+        this.classname = "tooltip3";
+        // 这句话很重要，要判断20ms之后是否会有离开事件，有的话，就设置成true,防止隐藏
+        setTimeout(
+            ()=> {// 20ms之后
+                if(!this.locktooltip) {
+                    this.locktooltip = true;
+                }
+            },
+            20
+        );
     }
     @Emit()
-    private tooltipmouseleave() {
+    private delayhidetooltip() {
+        console.log("离开tooltip delay");
         this.locktooltip = false;
         const timeid = setTimeout(
             ()=> {
-                this.classname = "tooltip2";
-                console.log("离开之后500ms",timeid);
+                if(!this.locktooltip) {
+                    this.classname = "tooltip2";
+                    console.log("离开之后500ms",timeid);
+                }
+            },
+            100
+        );
+        this.timeoutqueue.push(timeid);
+    }
+    @Emit()
+    private tooltipmouseleave() {
+        console.log("离开tooltip nodelay");
+        this.locktooltip = false;
+        // if(!this.locktooltip) {
+        const timeid = setTimeout(
+            ()=> {
+                if(!this.locktooltip) {
+                    this.classname = "tooltip2";
+                    console.log("离开之后500ms",timeid);
+                }
             },
             50
         );
-        console.log("离开tooltip",timeid);
         this.timeoutqueue.push(timeid);
     }
 }
