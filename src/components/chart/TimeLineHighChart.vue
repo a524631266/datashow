@@ -1,10 +1,9 @@
 
 <template>
   <div :class="positionClass" draggable="true" @dblclick="handledoubleclick">
-        <LittleBar :titlename="titlename" :show="positionClass === 'center'?false:true" :initshow="initshow" v-model="postparms">
-            <BaseChartFactory :positionClass="positionClass" :id="id" :option="option" :chartLibrary="chartLibrary" slot="chart" />
+        <LittleBar :titlename="titlename" :show="positionClass === 'center'?false:true" v-model="postparms">
+            <BaseChartFactory :positionClass="positionClass" :urlparas="urlparas" :id="id" :option="option" :chartLibrary="chartLibrary" @getData="getData" slot="chart" />
         </LittleBar>
-        
   </div>
 </template>
 
@@ -15,6 +14,8 @@ import BaseChartFactory from "@/components/chart/base/BaseChartFactory.vue";
 import LittleBar from "@/components/chart/LittleBar.vue";
 import { Options , HeatMapSeriesOptions} from 'highcharts';
 import { inout, drawActionOptions} from "@/components/options/TimeLineOptions.ts";
+import { getDataPromise, PostPath } from "@/actions/axiosProxy.ts";
+import { TimeLineChart,TimeLineChartTrans } from "@/types/postreturnform.ts";
 import PubSub from 'pubsub-js';
 @Component({
     components: {
@@ -32,53 +33,44 @@ export default class TimeLineHighChart extends Vue {
     public option: Options = {};
     public postInterval =  2000 ;
     public entity =  "";
-    public initshow: boolean = this.positionClass === "center"?true: false ;
     private intervalid = 0;
     private chartLibrary = ChartLibrary.highchart;
     private titlename = "异常";
-    @Emit()
-    public changedata() {
-      console.log(this.data);
-      if (this.id === "chart-top") {
-          this.positionClass = PositionClass.Center;
-      }
-    }
-    private mounted() {
-      this.intervalid = setTimeout(
-        () => {
-            const option2 = drawActionOptions(inout, "1111") as any;
-            (option2 as any).change = false;
-            this.option = option2;
-            // console.log(this.option);
-        },
-        this.postInterval
-      );
-      // 通过change来获取定义属性的变化
-    //   setInterval(
-    //       () => {
-    //           console.log("第二次变化");
-    //           (this.option as any).change = !(this.option as any).change ;
-    //           // this.option =  drawBoxOptions(boxchart3, xAxis3 , this.id) as Options;
-    //           console.log(this.option);
-    //       },
-    //       this.postInterval+3000
-    //   );
-    }
-    @Watch("postparms",  {deep : true})
-    private onHandleShow(val: boolean) {
-      console.log("监听",this.postparms,this.id);
-      // this.initshow = !this.initshow;
+    // private mounted() {
+    // }
+    @Watch("urlparas.entity",  {deep : true})
+    private redraw(val: boolean) {
+      console.log("监听 entity timeline",this.postparms,this.id);
+      this.getData();
+      // 在这里开始做长轮询 定时从后台传数据
     }
     private destroyed() {
-      // console.log("destory (this as any).intervalid", (this as any).intervalid);
       clearInterval(this.intervalid);
     }
     @Emit()
+    private getData() {
+      // console.log("获取timeline数据");
+      const promise = getDataPromise<TimeLineChart,TimeLineChartTrans>(this.urlparas,PostPath.exceptionOutput,this.dealData);
+      promise.then(
+        (data: string | TimeLineChartTrans) => {
+          if ( typeof data !== "string") {
+            const change = (this.option as any).change;
+            const option2 = drawActionOptions(data, "异常");
+            (option2 as any).change = !change;
+            this.option = option2;
+            // console.log("timelinedata",this.option);
+          }
+        }
+      );
+    }
+    private dealData(data: TimeLineChart): TimeLineChartTrans {
+      let result: TimeLineChartTrans = [];
+      result = data.action;
+      return result;
+    }
+    @Emit()
     private handledoubleclick() {
-      // console.log("double click",this.id);
       PubSub.publish("doubleclick2changecenter",this.id);
-      // this.resizeChart();
-      // (this.option as any).change = !(this.option as any).change;
     }
 }
 </script>

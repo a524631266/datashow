@@ -11,6 +11,14 @@ module.exports = {
                 pathRewrite: {
                     '^/tree': ''
                 }
+            },
+            '/xinjiang': {
+                target: 'http://192.168.10.63:8088',
+                secure:false,
+                changeOrigin: true,
+                pathRewrite: {
+                    '^/xinjiang': ''
+                }
             }
         }
     }

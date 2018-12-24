@@ -1,4 +1,5 @@
 import Highcharts, { Options } from 'highcharts';
+import { TopChart, TopChartTrans } from '@/types/postreturnform';
 interface TopValue {
   id: string;
   value: number;
@@ -14,7 +15,7 @@ interface TwoNumberList {
 
 export const objectlist = [{id:"881675", value :3.0238276701684295},{id:"881635", value :2.0785377819430155},{id:"881645", value :1.8775564380364207},{id:"881655", value :1.8453788029667204},{id:"881615", value :0.015448770251847033},{id:"881685", value :-0.1926384253430764},{id:"982235", value :-0.9999399080325635}];
 
-export const drawTopOptions = (objectlist: TopData,title: string,redrawEntityFunc: any,openInfo: any) => {
+export const drawTopOptions = (objectlist: TopChartTrans,title: string,redrawEntityFunc: any,openInfo: any) => {
   // objectlist [{id:123134,value:12354,}...]
   const datalist: TwoNumberList[] = [];
   // tslint:disable-next-line:variable-name

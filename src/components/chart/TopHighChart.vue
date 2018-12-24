@@ -1,8 +1,8 @@
 
 <template>
   <div :class="positionClass" draggable="true" @dblclick="handledoubleclick">
-        <LittleBar :titlename="titlename" :show="positionClass === 'center'?false:true" :initshow="initshow" v-model="postparms">
-            <BaseChartFactory :positionClass="positionClass" :id="id" :option="option" :chartLibrary="chartLibrary" slot="chart" />
+        <LittleBar :titlename="titlename" :show="positionClass === 'center'?false:true" v-model="postparms">
+            <BaseChartFactory :positionClass="positionClass" :id="id" :option="option" :urlparas="urlparas" :chartLibrary="chartLibrary" slot="chart" />
         </LittleBar>
   </div>
 </template>
@@ -14,7 +14,9 @@ import BaseChartFactory from "@/components/chart/base/BaseChartFactory.vue";
 import LittleBar from "@/components/chart/LittleBar.vue";
 import { Options , HeatMapSeriesOptions} from 'highcharts';
 import {objectlist, drawTopOptions } from "@/components/options/TopOptions.ts";
+import { getDataPromise, PostPath } from "@/actions/axiosProxy.ts";
 import PubSub from 'pubsub-js';
+import { TopChart, TopChartTrans } from '@/types/postreturnform';
 
 @Component({
     components: {
@@ -32,44 +34,40 @@ export default class TopHighChart extends Vue {
     public option: Options = {};
     public postInterval =  2000 ;
     public entity =  "";
-    public initshow: boolean = this.positionClass === "center"?true: false ;
     private intervalid = 0;
     private chartLibrary = ChartLibrary.highchart;
     private titlename = "重点";
+    // private mounted() {
+    // }
+    @Watch("urlparas.entity",  {deep : true})
+    private redraw(val: boolean) {
+      console.log("监听 entity TopHighChart",this.postparms,this.id);
+      this.getData();
+      // 在这里开始做长轮询 定时从后台传数据
+    }
     @Emit()
-    public changedata() {
-      console.log(this.data);
-      if (this.id === "chart-top") {
-          this.positionClass = PositionClass.Center;
-      }
+    private getData() {
+      // console.log("获取TopHighChart数据");
+      const promise = getDataPromise<TopChart,TopChartTrans>(this.urlparas,PostPath.topChart,this.dealData);
+      promise.then(
+        (data: string | TopChartTrans) => {
+          if ( typeof data !== "string") {
+            const change = (this.option as any).change;
+            const option2 = drawTopOptions(data, "重点","","");
+            (option2 as any).change = !change;
+            this.option = option2 as any;
+            // console.log("TopHighChartdata",this.option);
+          }
+        }
+      );
+    }
+    private dealData(data: TopChart): TopChartTrans {
+      let result: TopChartTrans = [];
+      result = data.table;
+      return result;
     }
     private mounted() {
-      this.intervalid = setTimeout(
-        () => {
-            const option2 = drawTopOptions(objectlist,"重点","","") as any;
-            (option2 as any).change = false;
-            this.option = option2;
-            // console.losg(this.option);
-        },
-        this.postInterval
-      );
-      // 通过change来获取定义属性的变化
-    //   setInterval(
-    //       () => {
-    //           console.log("第二次变化");
-    //           // boxchart3[1].data[0][1] = 133333000;
-    //           (this.option as any).series[1].data[0][1] = Math.random()*10000;
-    //           (this.option as any).change = !(this.option as any).change ;
-    //           // this.option =  drawBoxOptions(boxchart3, xAxis3 , this.id) as Options;
-    //           console.log(this.option);
-    //       },
-    //       this.postInterval+3000
-    //   );
-    }
-    @Watch("postparms",  {deep : true})
-    private onHandleShow(val: boolean) {
-      console.log("监听",this.postparms,this.id);
-      // this.initshow = !this.initshow;
+      console.log("加载topChart");
     }
     private destroyed() {
       // console.log("destory (this as any).intervalid", (this as any).intervalid);

@@ -2,6 +2,7 @@ import Highcharts, { Options ,HeatMapChart} from 'highcharts';
 import $ from "jquery";
 import "./dependentjs/map";
 import PubSub from 'pubsub-js';
+import { HeatmapChart, HeatmapChartTrans } from '@/types/postreturnform';
 // tslint:disable-next-line:class-name
 interface heatmapData {
     x: string;
@@ -22,7 +23,7 @@ interface Namemap {
     [x: string]: string;
 }
 
-export const drawHeatmapOptions = (listdata: heatmapData[], title: string, redrawEntityFunc: any, openInfo: (entity: string, name: string,clientX: number,clientY: number,target: DOMRect)=>void) => {// redrawEntityFunc(entityid)
+export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, redrawEntityFunc: any, openInfo: (entity: string, name: string,clientX: number,clientY: number,target: DOMRect)=>void) => {// redrawEntityFunc(entityid)
     // var title = "用电"
     // var listdata= [{x:123456,y:0,value:200},{x:123456,y:1,value:200},{x:123456,y:3,value:200},{x:1222356,y:23,value:200},{x:1234567,y:3,value:200}]
     const xmaptime: Xmaptime = {};
@@ -175,7 +176,7 @@ export const drawHeatmapOptions = (listdata: heatmapData[], title: string, redra
                 // enabled:false,
                 formatter() {
                     // console.log(this,"2222222222222",timemapx[this.value])
-                    // console.log(namemap,timemapx,this.value)
+                    // console.log(namemap,timemapx,(this as any).value);
                     return (this as any).value.slice(0, 5) + "...";
                 },
                 style: {

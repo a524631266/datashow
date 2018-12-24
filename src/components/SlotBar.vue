@@ -15,7 +15,7 @@
         </slot> -->
         <div  class="leftslot">{{leftbarname}}</div>
         <div  class="middleslot">
-            <LittleBar :show="true" :initshow="true" v-model="postparms">
+            <LittleBar :show="true" v-model="postparms">
             </LittleBar>
         </div>
         <div  class="rightslot">{{rightbarname}}</div>
@@ -43,7 +43,7 @@ export default class SlotBar extends Vue {
     private middlebarname = "";
     public mounted() {
         PubSub.subscribe("updateleftbarname",this.updateleftbarname);
-        PubSub.subscribe("updaterightname",this.updaterightname);
+        PubSub.subscribe("updaterightbarname",this.updaterightname);
         PubSub.subscribe("updatemiddledata",this.updatemiddledata);
     }
     public destroyed() {
@@ -55,7 +55,7 @@ export default class SlotBar extends Vue {
     }
     @Emit()
     private updaterightname(msg: any, name: string) {
-        this.leftbarname = name;
+        this.rightbarname = name;
     }
     @Emit()
     private updatemiddledata(msg: any, postparms: PostParams) {

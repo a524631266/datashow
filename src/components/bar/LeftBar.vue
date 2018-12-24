@@ -197,7 +197,7 @@ export default class LeftBar extends Vue {
         // this.tooltiptitlename = name;
         const mouseleft = clientX + "px";
         const mousetop = clientY + "px";
-        console.log("111111",e);
+        // console.log("111111",e);
         // 记录当前的target用来保管数据
         // this.selectnode = e.event.target;
         this.nodedataref = e.node.dataRef;
@@ -206,7 +206,7 @@ export default class LeftBar extends Vue {
         PubSub.publish("showtooltip",{entity: key,name,isLeaf,level,clientX,clientY,target: e.event.target.getBoundingClientRect()});
     }
     private hidetooltip() {
-        console.log("levetree");
+        // console.log("levetree");
         PubSub.publish("hidetooltip","none");
     }
 }

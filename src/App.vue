@@ -13,9 +13,9 @@
     </a-layout-header>
     <a-layout-content class="panel-body">
     <transition name="slide-left">
-      <keep-alive>
+      <!-- <keep-alive> -->
           <router-view id="panel"  />
-      </keep-alive>
+      <!-- </keep-alive> -->
     </transition>
     </a-layout-content>
     </a-layout>

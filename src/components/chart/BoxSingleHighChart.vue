@@ -31,7 +31,7 @@ import "echarts/dist/extension/dataTool.min.js";
         LittleBar,
     }
 })
-export default class BoxHighChart extends Vue {
+export default class BoxSingleHighChart extends Vue {
     @Prop() public id!: string;
     @Prop() public urlparas!: PostParams;
     @Prop() public positionClass!: PositionClass;
@@ -46,15 +46,14 @@ export default class BoxHighChart extends Vue {
     private titlename = "统计";
     @Watch("urlparas.entity",  {deep : true})
     private redraw(val: boolean) {
-      this.option = {} as any;
-      console.log("监听 entity timeline",this.postparms,this.id);
+      console.log("监听 entity BoxSingleChart",this.postparms,this.id);
       this.getData();
       // 在这里开始做长轮询 定时从后台传数据
     }
     @Emit()
     private getData() {
       // console.log("获取timeline数据");
-      const promise = getDataPromise<RegionBoxChart ,BoxChartTrans>(this.urlparas,PostPath.regionBoxChart,this.dealData);
+      const promise = getDataPromise<SingleBoxChart ,BoxChartTrans>(this.urlparas,PostPath.singleBoxChart,this.dealData);
       promise.then(
         (data: string | BoxChartTrans) => {
           // console.log("data",data);
@@ -68,11 +67,11 @@ export default class BoxHighChart extends Vue {
         }
       );
     }
-    private dealData(data: RegionBoxChart): BoxChartTrans {
+    private dealData(data: SingleBoxChart): BoxChartTrans {
       const result: BoxChartTrans = {xAxis:[],boxchart:[]} as any;
-      const xAxisList = data.region.boxchart.xAxis;
+      const xAxisList = data.boxchart.xAxis;
       // 转换数据值
-      const boxList = data.region.boxchart.boxs;
+      const boxList = data.boxchart.boxs;
       const ydata = (echarts as any).dataTool.prepareBoxplotData(boxList);
       const data2 = [
         {

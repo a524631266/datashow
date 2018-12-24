@@ -1,8 +1,8 @@
 
 <template>
   <div :class="positionClass" draggable="true" @dblclick="handledoubleclick">
-        <LittleBar :titlename="titlename" :show="positionClass === 'center'?false:true" :initshow="initshow" v-model="postparms">
-            <BaseChartFactory :positionClass="positionClass" :id="id" :option="option" :chartLibrary="chartLibrary" slot="chart"/>
+        <LittleBar :titlename="titlename" :show="positionClass === 'center'?false:true" v-model="postparms">
+            <BaseChartFactory :positionClass="positionClass" :id="id" :option="option" :urlparas="urlparas" :chartLibrary="chartLibrary" slot="chart"/>
         </LittleBar>
         
   </div>
@@ -15,7 +15,9 @@ import BaseChartFactory from "@/components/chart/base/BaseChartFactory.vue";
 import LittleBar from "@/components/chart/LittleBar.vue";
 import { Options , HeatMapSeriesOptions} from 'highcharts';
 import {listdata, drawLineOptions } from "@/components/options/TrendOptions.ts";
+import { getDataPromise, PostPath } from "@/actions/axiosProxy.ts";
 import PubSub from 'pubsub-js';
+import { SingleTrendChart, RegionTrendChart,TrendChartTrans } from '@/types/postreturnform';
 
 @Component({
     components: {
@@ -33,27 +35,50 @@ export default class TrendHighChart extends Vue {
     public option: Options = {};
     public postInterval =  2000 ;
     public entity =  "";
-    public initshow: boolean = this.positionClass === "center"?true: false ;
     private intervalid = 0;
     private chartLibrary = ChartLibrary.highchart;
     private titlename = "趋势";
+    @Watch("urlparas.entity",  {deep : true})
+    private redraw(val: boolean) {
+      console.log("监听 entity BoxSingleChart",this.postparms,this.id);
+      this.getData();
+      // 在这里开始做长轮询 定时从后台传数据
+    }
     @Emit()
-    public changedata() {
-      console.log(this.data);
-      if (this.id === "chart-top") {
-          this.positionClass = PositionClass.Center;
+    private getData() {
+      // console.log("获取TopHighChart数据");
+      const promise = getDataPromise<SingleTrendChart | RegionTrendChart,TrendChartTrans>(this.urlparas,this.urlparas.isLeaf?PostPath.singleLineChart:PostPath.regionLineChart,this.dealData);
+      promise.then(
+        (data: string | TrendChartTrans) => {
+          if ( typeof data !== "string") {
+            const change = (this.option as any).change;
+            const option2 = drawLineOptions(data, "趋势图");
+            (option2 as any).change = !change;
+            this.option = option2 as any;
+            // console.log("TopHighChartdata",this.option);
+          }
+        }
+      );
+    }
+    private dealData(data: SingleTrendChart | RegionTrendChart): TrendChartTrans {
+      let result: TrendChartTrans = [];
+      if (this.urlparas.isLeaf) { // 如果是配电柜的话
+        result = (data as SingleTrendChart).linechart;
+      } else { //  如果是组织的话
+        result = (data as RegionTrendChart).region.linechart;
       }
+      return result;
     }
     private mounted() {
-      this.intervalid = setTimeout(
-        () => {
-            const option2 = drawLineOptions(listdata,"趋势图") as any;
-            (option2 as any).change = false;
-            this.option = option2;
-            // console.log(this.id);
-        },
-        this.postInterval
-      );
+      // this.intervalid = setTimeout(
+      //   () => {
+      //       const option2 = drawLineOptions(listdata,"趋势图") as any;
+      //       (option2 as any).change = false;
+      //       this.option = option2;
+      //       // console.log(this.id);
+      //   },
+      //   this.postInterval
+      // );
       // 通过change来获取定义属性的变化
     //   setInterval(
     //       () => {
@@ -66,11 +91,6 @@ export default class TrendHighChart extends Vue {
     //       },
     //       this.postInterval+3000
     //   );
-    }
-    @Watch("postparms",  {deep : true})
-    private onHandleShow(val: boolean) {
-      console.log("监听",this.postparms,this.id);
-      // this.initshow = !this.initshow;
     }
     private destroyed() {
       // console.log("destory (this as any).intervalid", (this as any).intervalid);

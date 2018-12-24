@@ -1,6 +1,6 @@
 import Highcharts, { Options } from 'highcharts';
 import "./dependentjs/xrange";
-
+import { TimeLineChart,TimeLineChartTrans } from "@/types/postreturnform.ts";
 export const inout2 = [
 {starttime: 1542681155000, endtime: 1542695555000, id: '881675', type: '减少', value: -16},
     {starttime: 1542798935000, endtime: 1542807515000, id: '881675', type: '减少', value: -21},
@@ -802,7 +802,7 @@ const getInterData = (inlist: inlist[]) => {
     };
 };
 
-export const drawActionOptions = (objectlist: timelineData[], title: string) => {
+export const drawActionOptions = (objectlist: TimeLineChartTrans, title: string) => {
     // tslint:disable-next-line:no-shadowed-variable
     const inlist: inlist[] = [];
     // tslint:disable-next-line:no-shadowed-variable

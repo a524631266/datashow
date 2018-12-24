@@ -119,11 +119,11 @@ export default class TooltipRoute extends Vue {
     }
     @Emit()
     private tooltipmouseenter() {
-        console.log("进入tooltip");
+        // console.log("进入tooltip");
         this.locktooltip = true;
         while (this.timeoutqueue.length > 0) {
             const before = this.timeoutqueue.shift();
-            console.log("before",before);
+            // console.log("before",before);
             clearTimeout(before);
         }
         this.classname = "tooltip3";
@@ -139,13 +139,13 @@ export default class TooltipRoute extends Vue {
     }
     @Emit()
     private delayhidetooltip() {
-        console.log("离开tooltip delay");
+        // console.log("离开tooltip delay");
         this.locktooltip = false;
         const timeid = setTimeout(
             ()=> {
                 if(!this.locktooltip) {
                     this.classname = "tooltip2";
-                    console.log("离开之后500ms",timeid);
+                    // console.log("离开之后500ms",timeid);
                 }
             },
             100
@@ -154,14 +154,14 @@ export default class TooltipRoute extends Vue {
     }
     @Emit()
     private tooltipmouseleave() {
-        console.log("离开tooltip nodelay");
+        // console.log("离开tooltip nodelay");
         this.locktooltip = false;
         // if(!this.locktooltip) {
         const timeid = setTimeout(
             ()=> {
                 if(!this.locktooltip) {
                     this.classname = "tooltip2";
-                    console.log("离开之后500ms",timeid);
+                    // console.log("离开之后500ms",timeid);
                 }
             },
             50

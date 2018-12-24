@@ -50,7 +50,6 @@ import Third from '@/testDynamic/Third.vue';
 })
 export default class HighchartFactory extends Vue {
 
-    @Prop({default: false }) public initshow!: boolean;
     private name = 111;
     private currentView = "first";
     private first = "first"; // 导航栏文本1

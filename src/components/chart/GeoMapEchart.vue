@@ -1,6 +1,6 @@
 <template>
   <div :class="positionClass" draggable="true" @dblclick="handledoubleclick">
-       <LittleBar :titlename="titlename" :show="positionClass === 'center'?false:true" :initshow="initshow" v-model="postparms">
+       <LittleBar :titlename="titlename" :show="positionClass === 'center'?false:true" v-model="postparms">
             <BaseChartFactory :urlparas="urlparas" :positionClass="positionClass" :id="id" :option="option" :chartLibrary="chartLibrary" :handleclick="handleclick" @updateData="way2UpdateData" slot="chart"/>
         </LittleBar>
   </div>
@@ -36,7 +36,6 @@ export default class GeoMapEchart extends Vue {
     public option = {};
     // public postInterval =  1000 ;
     public entity =  "";
-    public initshow: boolean = this.positionClass === "center"?true: false ;
     public titlename = "Geo";
     private intervalid = 0;
     private chartLibrary = ChartLibrary.echart;
@@ -219,11 +218,6 @@ export default class GeoMapEchart extends Vue {
         //   模拟关闭之后重新启动
         //   setTimeout(()=> {this.websocket.close();},3000);
     }
-    @Watch("postparms.postInterval",  {deep : true})
-    private onHandleShow(val: boolean) {
-      console.log("监听间隔",this.postparms,this.id);
-      // this.initshow = !this.initshow;
-    }
     /**
      * 一旦entity有变化就重新画图
      */
@@ -238,7 +232,6 @@ export default class GeoMapEchart extends Vue {
         // 初始化websocket数据
         this.initWebSocket(this.postparms);
         // this.option = {change:"redraw"};
-      // this.initshow = !this.initshow;
     }
     private destroyed() {
       // console.log("destory (this as any).intervalid", (this as any).intervalid);
@@ -356,7 +349,7 @@ export default class GeoMapEchart extends Vue {
         } else {
             const { name , id , coord} = params.data as any;
             const level: number = this.urlparas.level + 1;
-            console.log(name , id , coord);
+            // console.log(name , id , coord);
             // PubSub.publish("showtooltip",{entity: id,name,isLeaf: false,this.urlparas.level + 1 ,0,0});
             this.$router.push({name: "node",query: {
                                 entity: id as any,name:name as any,level: level as any,isLeaf: false as any,

@@ -1,6 +1,6 @@
 <template>
     <div class="container-fluid  rangeselect"  @mouseenter="showdownincon(true)" @mouseleave="showdownincon(false)">
-        <div class="littlebar" :class="highlightbarclass"   @click="changeShow" v-show="initshow" @mouseenter="highlightbar(true)" @mouseleave="highlightbar(false)">
+        <div class="littlebar" :class="highlightbarclass"   @click="changeShow" @mouseenter="highlightbar(true)" @mouseleave="highlightbar(false)">
             <div class="row">
                 <div class="charttitletext"> {{titlename }} </div>
                 <div class="fa icondown middlebutton" :class="showdownicon"></div>
@@ -102,7 +102,6 @@ import { PostParams,Dimension } from "@/types/index.ts";
 export default class LittleBar extends Vue {
     @Prop({default: ""}) public titlename!: string;
     // @Prop({default: "fa-sort-down"}) public showdownicon!: string;
-    // @Prop({default: false }) public initshow!: boolean;
     // @Model("changepostparams2") postparms2!: PostParams;
     @Model("changepostparams") public postparms!: PostParams;
     private highlightbarclass = "";
@@ -110,25 +109,6 @@ export default class LittleBar extends Vue {
     private some = 1;
     private data: PostParams = this.postparms;
     private showdownicon: string = "";
-    private initshow = true;
-    @Watch("show", {deep : true})
-    public onHandleShow(val: boolean) {
-        console.log("监听",this.show);
-        // this.initshow = !this.initshow;
-    }
-    // 一旦更新data 状态的任意一个值，就通知父组件 false会不监听对象子元素的变换,
-    // @Watch("data.postInterval", {deep : true})
-    // public intervalupdate(val: boolean) {
-    //     console.log("监听data",this.postparms,val);
-    //     // this.initshow = !this.initshow;
-    //     this.talktofather();
-    // }
-    // @Watch("data.postInterval", {deep : true})
-    // public starttimeupdate(val: boolean) {
-    //     console.log("监听data",this.postparms,val);
-    //     // this.initshow = !this.initshow;
-    //     this.talktofather();
-    // }
     @Emit()
     public changeShow(showv: boolean | Event) {
         this.show = showv instanceof Event ? !this.show : showv;
@@ -147,9 +127,6 @@ export default class LittleBar extends Vue {
     @Emit()
     public highlightbar(show: boolean | any) {
         this.highlightbarclass = show ? "table-dark":"";
-    }
-    public initShow() {
-        // console.log(this.initshow,111111);
     }
     private mounted() {
         // console.log("111111","加载");

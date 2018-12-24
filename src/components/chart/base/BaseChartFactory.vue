@@ -20,6 +20,7 @@ export default class BaseChartFactory extends Vue {
     @Prop() public option!: object;
     @Prop() public urlparas!: PostParams;
     @Prop() public handleclick!: (elementdata: any)=>void;
+    @Prop() public getData!: ()=> void;
     // tslint:disable-next-line:ban-types
     // @Prop() public updateData!: Function;
     private data = [];
@@ -27,18 +28,25 @@ export default class BaseChartFactory extends Vue {
     public mounted() {
         // console.log("1111111");
     }
-    @Watch("urlparas.entity",{deep:true})
-    private initChart(newVal: object, oldVal: object) {
-        console.log(this.id,"entity变化了",newVal);
-        if (this.chartLibrary === ChartLibrary.highchart) {
-            (this.chartInstance as any).destroy();
-        }
-        if (this.chartLibrary === ChartLibrary.highchart) {
-            (this.chartInstance as any).dispose();
-        }
-        this.chartInstance = null;
-        this.redrawChart(newVal, oldVal);
-    }
+    /**
+     * 监控entity变化的时候，也就是当entityid真正变化的时候，就要更新视图
+     */
+    // @Watch("urlparas.entity",{deep:true})
+    // private initChart(newVal: object, oldVal: object) {
+    //     console.log(this.id,"entity变化了 :new entity",newVal,";oldeVal",oldVal);
+    //     // 如果之前有图表的话直接销毁图表
+    //     if (this.chartInstance && this.chartLibrary === ChartLibrary.highchart) {
+    //         (this.chartInstance as any).destroy();
+    //     }
+    //     if (this.chartInstance && this.chartLibrary === ChartLibrary.echart) {
+    //         (this.chartInstance as any).dispose();
+    //     }
+    //     this.chartInstance = null;
+    //     // this.redrawChart(newVal, oldVal);
+    //     // this.$emit("getData");
+    //     // tslint:disable-next-line:no-unused-expression
+    //     this.getData && this.getData();
+    // }
     @Watch("option.change",{deep: true})
     private redrawChart(newVal: object, oldVal: object) {
     //    console.log("options变化",newVal, oldVal);
@@ -104,13 +112,14 @@ export default class BaseChartFactory extends Vue {
      * 销毁组件的时候
      */
     private destroyed() {
-        if (this.chartLibrary === ChartLibrary.highchart) {
+        if (this.chartInstance && this.chartLibrary === ChartLibrary.highchart) {
             (this.chartInstance as any).destroy();
         }
-        if (this.chartLibrary === ChartLibrary.echart) {
+        if (this.chartInstance && this.chartLibrary === ChartLibrary.echart) {
             (this.chartInstance as any).dispose();
         }
         this.chartInstance = null;
+        console.log("路由切换的时候是否销毁组件","111111",this.id);
     }
 }
 </script>

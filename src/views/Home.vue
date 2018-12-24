@@ -112,6 +112,8 @@ import HeatMapHighChart from "@/components/chart/HeatMapHighChart.vue";
 import TrendHighChart from "@/components/chart/TrendHighChart.vue";
 import TopHighChart from "@/components/chart/TopHighChart.vue";
 import GeoMapEchart from "@/components/chart/GeoMapEchart.vue";
+import BoxSingleHighChart from "@/components/chart/BoxSingleHighChart.vue";
+
 import PubSub from 'pubsub-js';
 
 import { PositionClass , PostParams , Dimension } from "@/types/index.ts";
@@ -119,11 +121,11 @@ import { PositionClass , PostParams , Dimension } from "@/types/index.ts";
 import { InitBoxUrlProps,InitHeatMapUrlProps,InitTimeLineUrlProps,
         InitTopUrlProps,InitTrendUrlProps,InitGeomapUrlProps } from "@/actions/initOptions.ts";
 const orgbox = Object.assign({},InitBoxUrlProps);
-const entbox = Object.assign({},InitBoxUrlProps);
-const enttrend = Object.assign({},InitTrendUrlProps);
+const entbox = Object.assign({},InitBoxUrlProps,{isLeaf:true});
+const enttrend = Object.assign({},InitTrendUrlProps,{isLeaf:true});
 const orgtrend = Object.assign({},InitTrendUrlProps);
 const orghp = Object.assign({},InitHeatMapUrlProps);
-const enttl = Object.assign({},InitTimeLineUrlProps);
+const enttl = Object.assign({},InitTimeLineUrlProps,{isLeaf:true});
 const orgtop = Object.assign({},InitTopUrlProps);
 const geo = Object.assign({},InitGeomapUrlProps);
 
@@ -135,21 +137,22 @@ const geo = Object.assign({},InitGeomapUrlProps);
     HeatMapHighChart,
     TrendHighChart,
     TopHighChart,
-    GeoMapEchart
+    GeoMapEchart,
+    BoxSingleHighChart
   },
 })
 export default class Home extends Vue {
     private datalist =  [
-        {id: "chart-single-boxchart", urlparas: orgbox,
-          option: {xAxis: "1"}, positionClass: PositionClass.LeftTop,chartName:"BoxHighChart"},
-        {id: "chart-region-boxchart", urlparas: entbox,
-          option: {xAxis: "2"}, positionClass: PositionClass.RightTop,chartName:"BoxHighChart"},
+        {id: "chart-region-boxchart", urlparas: orgbox,
+          option: {xAxis: "1"}, positionClass: PositionClass.RightTop,chartName:"BoxHighChart"},
+        {id: "chart-single-boxchart", urlparas: entbox,
+          option: {xAxis: "2"}, positionClass: PositionClass.LeftTop,chartName:"BoxSingleHighChart"},
         {id: "chart-single-action", urlparas: enttl,
           option: {xAxis: "1"}, positionClass: PositionClass.LeftBottom,chartName:"TimeLineHighChart"},
-        {id: "chart-region-linechart", urlparas: enttrend,
-          option: {xAxis: "2"}, positionClass: PositionClass.RightMiddle,chartName:"TrendHighChart"},
-        {id: "chart-single-linechart", urlparas: orgtrend,
-          option: {xAxis: "4"}, positionClass: PositionClass.LeftMiddle,chartName:"TrendHighChart"},
+        {id: "chart-single-linechart", urlparas: enttrend,
+          option: {xAxis: "2"}, positionClass: PositionClass.LeftMiddle,chartName:"TrendHighChart"},
+        {id: "chart-region-linechart", urlparas: orgtrend,
+          option: {xAxis: "4"}, positionClass: PositionClass.RightMiddle,chartName:"TrendHighChart"},
           {id: "chart-heatmap", urlparas: orghp,
         option: {xAxis: "4"}, positionClass: PositionClass.RightBottom,chartName:"HeatMapHighChart"},
         {id: "chart-geomap", urlparas: geo,
@@ -178,15 +181,22 @@ export default class Home extends Vue {
     }
     @Watch("$route.query.entity",{deep: true})
     private routerchange(val: any) {
-        console.log("路由变化",val,this.$route.query.entity);
+        // console.log("路由变化",val,this.$route.query.entity);
         this.datalist.forEach(
             (data: any,index: number)=> {
-                this.datalist[index].urlparas.entity = val;
-                this.datalist[index].urlparas.name = this.$route.query.name as any;
-                this.datalist[index].urlparas.level = this.$route.query.level as any;
+                if((this.datalist[index].urlparas as any).isLeaf === this.$route.query.isLeaf) {
+                    this.datalist[index].urlparas.entity = val;
+                    this.datalist[index].urlparas.name = this.$route.query.name as any;
+                    this.datalist[index].urlparas.level = this.$route.query.level as any;
+                }
             }
         );
-        PubSub.publish("updateleftbarname",this.$route.query.name);
+        // 同时更新标题
+        if (this.$route.query.isLeaf) {
+            PubSub.publish("updaterightbarname",this.$route.query.name);
+        } else {
+            PubSub.publish("updateleftbarname",this.$route.query.name);
+        }
     }
     private mounted() {
         const that = this;

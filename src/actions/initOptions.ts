@@ -1,21 +1,23 @@
 import { PostParams ,Dimension} from "@/types";
 
-// export const entity = "99998999";
-// export const level = 2;
-// export const name = "新疆维吾尔自治区";
+export const entity = "99998999";
+export const level = 2;
+export const name = "新疆维吾尔自治区";
 
 // 241
 // export const entity = "99999758";
 // export const level = 4;
 // export const name = "西湖区";
-export const entity = "99928858";
-export const level = 3;
-export const name = "河田地区";
+
+
+// export const entity = "99928858";
+// export const level = 3;
+// export const name = "河田地区";
 
 const InitBoxUrlProps: PostParams = {
     entity,
-    starttime: "2018-01-01 00:00:00",
-    endtime: "2018-01-02 00:00:00",
+    starttime: "2018-12-15 00:00:00",
+    endtime: "2018-12-18 00:00:00",
     entitynums: 20,
     scale: 60 * 60,
     winlen: 30 * 24 * 60 * 60,
@@ -23,12 +25,13 @@ const InitBoxUrlProps: PostParams = {
     refreshfeq: 15 * 60 * 1000,
     level,
     name,
-    postInterval: 1000 * 15
+    postInterval: 1000 * 15,
+    isLeaf: false,
 };
 const InitHeatMapUrlProps: PostParams = {
     entity,
-    starttime: "2018-01-01 00:00:00",
-    endtime: "2018-01-02 00:00:00",
+    starttime: "2018-12-15 00:00:00",
+    endtime: "2018-12-18 00:00:00",
     entitynums: 20,
     scale: 60 * 60,
     winlen: 30 * 24 * 60 * 60,
@@ -36,13 +39,14 @@ const InitHeatMapUrlProps: PostParams = {
     refreshfeq: 15 * 60 * 1000,
     level,
     name,
-    postInterval: 1000 * 15
+    postInterval: 1000 * 15,
+    isLeaf: false,
 };
 
 const InitTimeLineUrlProps: PostParams = {
-    entity,
-    starttime: "2018-01-01 00:00:00",
-    endtime: "2018-01-02 00:00:00",
+    entity: "",
+    starttime: "2018-12-15 00:00:00",
+    endtime: "2018-12-18 00:00:00",
     entitynums: 20,
     scale: 60 * 60,
     winlen: 30 * 24 * 60 * 60,
@@ -50,13 +54,14 @@ const InitTimeLineUrlProps: PostParams = {
     refreshfeq: 15 * 60 * 1000,
     level,
     name,
-    postInterval: 1000 * 15
+    postInterval: 1000 * 15,
+    isLeaf: false,
 };
 
 const InitTopUrlProps: PostParams = {
     entity,
-    starttime: "2018-01-01 00:00:00",
-    endtime: "2018-01-02 00:00:00",
+    starttime: "2018-12-15 00:00:00",
+    endtime: "2018-12-18 00:00:00",
     entitynums: 20,
     scale: 60 * 60,
     winlen: 30 * 24 * 60 * 60,
@@ -64,12 +69,13 @@ const InitTopUrlProps: PostParams = {
     refreshfeq: 15 * 60 * 1000,
     level,
     name,
-    postInterval: 1000 * 15
+    postInterval: 1000 * 15,
+    isLeaf: false,
 };
 const InitTrendUrlProps: PostParams = {
     entity,
-    starttime: "2018-01-01 00:00:00",
-    endtime: "2018-01-02 00:00:00",
+    starttime: "2018-12-15 00:00:00",
+    endtime: "2018-12-18 00:00:00",
     entitynums: 20,
     scale: 60 * 60,
     winlen: 30 * 24 * 60 * 60,
@@ -77,12 +83,13 @@ const InitTrendUrlProps: PostParams = {
     refreshfeq: 15 * 60 * 1000,
     level,
     name,
-    postInterval: 1000 * 15
+    postInterval: 1000 * 15,
+    isLeaf: false,
 };
 const InitGeomapUrlProps: PostParams = {
     entity,
-    starttime: "2018-01-01 00:00:00",
-    endtime: "2018-01-02 00:00:00",
+    starttime: "2018-12-15 00:00:00",
+    endtime: "2018-12-18 00:00:00",
     entitynums: 20,
     scale: 60 * 60,
     winlen: 30 * 24 * 60 * 60,
@@ -90,7 +97,8 @@ const InitGeomapUrlProps: PostParams = {
     refreshfeq: 15 * 60 * 1000,
     level,
     name,
-    postInterval: 1000 * 1 * 1,
+    postInterval: 1000 * 1 * 60,
+    isLeaf: false,
 };
 
 export {

@@ -31,6 +31,7 @@ interface PostParams {
     level: number;
     name: string;
     postInterval: number;
+    isLeaf: boolean;
 }
 // function Test (firstName:String, lastName:String) {
 //     let firstName2:String = firstName
@@ -78,6 +79,9 @@ interface ChartStorePool<T> {
     [name: number]: T;
 }
 
+
+
+
 enum ChartLibrary {
     echart = "echart",
     highchart = "highchart",
@@ -85,6 +89,7 @@ enum ChartLibrary {
 enum MeasureName {
     Elec = "Elec",
 }
+
 
 export {
     PositionClass,Dimension,PostParams,ChartLibrary,MeasureName,ReturnGeoData,GeoTransData,ChartStorePool,
