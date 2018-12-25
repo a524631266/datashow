@@ -10,6 +10,7 @@ import echarts from "echarts";
 import { PositionClass , PostParams, ChartLibrary } from '@/types/index';
 import "echarts/map/js/china";
 import 'echarts/lib/chart/heatmap';
+import { updatestate } from '@/types/updateState';
 @Component({
 })
 export default class BaseChartFactory extends Vue {
@@ -49,12 +50,18 @@ export default class BaseChartFactory extends Vue {
         // tslint:disable-next-line:no-unused-expression
     }
     @Watch("option.change",{deep: true})
-    private redrawChart(newVal: object, oldVal: object) {
+    private redrawChart(newVal: updatestate, oldVal: updatestate) {
        console.log("options变化",newVal, oldVal,this.id);
        if(newVal !== oldVal && this.chartLibrary === ChartLibrary.highchart) {
             if (this.chartInstance) {
                 // console.log("1");
-                (this.chartInstance as any).reflow();
+                // (this.chartInstance as any).reflow();
+                if(oldVal === updatestate.redraw) { // 前一次数据为undefined的时候，为新的option因此需要重画
+                    // this.destroyed();
+                    this.chartInstance = Highcharts.chart(this.id, this.option) as any;
+                } else { // highchart增量更新数据的时候操作
+                    this.$emit("updateData",this.chartInstance,this.option);
+                }
             } else {
                 this.chartInstance = Highcharts.chart(this.id, this.option) as any;
             }
@@ -64,7 +71,7 @@ export default class BaseChartFactory extends Vue {
             }
        }
        if(newVal !== oldVal && this.chartLibrary === ChartLibrary.echart) {
-            if (this.chartInstance) {
+            if (this.chartInstance) { // echart增量更新数据的时候操作
                 // console.log("Echart111111111111111111");
                 this.$emit("updateData",this.chartInstance,this.option);
 
@@ -100,9 +107,11 @@ export default class BaseChartFactory extends Vue {
      */
     private toggleHighChartAxis() {
         if ( this.chartInstance && this.positionClass !== PositionClass.Center) {
-            (this.chartInstance as any).xAxis[0].update({labels:{enabled:false}});
+            // (this.chartInstance as any).xAxis[0].update({labels:{enabled:false}});
+            (this.chartInstance as any).xAxis[0].update({visible:false});
         } else if (this.chartInstance) {
-            (this.chartInstance as any).xAxis[0].update({labels:{enabled:true}});
+            // (this.chartInstance as any).xAxis[0].update({labels:{enabled:true}});
+            (this.chartInstance as any).xAxis[0].update({visible:true});
         }
     }
     /**

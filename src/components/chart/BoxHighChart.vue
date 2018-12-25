@@ -19,6 +19,7 @@ import PubSub from 'pubsub-js';
 import { RegionBoxChart, SingleBoxChart, BoxChartTrans } from '@/types/postreturnform';
 import echarts from "echarts";
 import "echarts/dist/extension/dataTool.min.js";
+import {highchartEmptyOption} from "@/components/options/EmptyChart.ts";
 // import { Component } from "vue-property-decorator";
 // @Component({
 //     components:{
@@ -38,7 +39,7 @@ export default class BoxHighChart extends Vue {
     @Prop() public data!: object;
     @Model("changepostparams") public postparms!: PostParams;
     // @Provide('option')
-    public option: Options = {};
+    public option: Options = highchartEmptyOption();
     public postInterval =  2000 ;
     public entity =  "";
     private intervalid = 0;
@@ -47,6 +48,7 @@ export default class BoxHighChart extends Vue {
     @Watch("urlparas.entity",  {deep : true})
     private redraw(val: boolean) {
       // this.option = {} as any;
+      this.option = drawBoxOptions([], [] , this.id) as any;
       console.log("上层图表 BoxHighcart变动",this.postparms,this.id);
       this.getData();
       // 在这里开始做长轮询 定时从后台传数据

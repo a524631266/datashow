@@ -154,11 +154,11 @@ export default class Home extends Vue {
         {id: "chart-region-linechart", urlparas: orgtrend,
           option: {xAxis: "4"}, positionClass: PositionClass.RightMiddle,chartName:"TrendHighChart"},
           {id: "chart-heatmap", urlparas: orghp,
-        option: {xAxis: "4"}, positionClass: PositionClass.RightBottom,chartName:"HeatMapHighChart"},
+        option: {xAxis: "4"}, positionClass: PositionClass.Center,chartName:"HeatMapHighChart"},
         {id: "chart-geomap", urlparas: geo,
-        option: {xAxis: "1"}, positionClass: PositionClass.Center,chartName:"GeoMapEchart"},
+        option: {xAxis: "1"}, positionClass: PositionClass.RightBottom,chartName:"GeoMapEchart"},
     ];
-    private centerid = "chart-geomap";
+    private centerid = "chart-heatmap";
     private drawerlist = [
         {id: "chart-region-boxchart", urlparas: orgbox,
           option: {xAxis: "1"}, positionClass: PositionClass.Drawer,chartName:"BoxHighChart"},

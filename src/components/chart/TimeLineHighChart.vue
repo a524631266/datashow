@@ -16,6 +16,7 @@ import { Options , HeatMapSeriesOptions} from 'highcharts';
 import { inout, drawActionOptions} from "@/components/options/TimeLineOptions.ts";
 import { getDataPromise, PostPath } from "@/actions/axiosProxy.ts";
 import { TimeLineChart,TimeLineChartTrans } from "@/types/postreturnform.ts";
+import {highchartEmptyOption} from "@/components/options/EmptyChart.ts";
 import PubSub from 'pubsub-js';
 @Component({
     components: {
@@ -30,7 +31,7 @@ export default class TimeLineHighChart extends Vue {
     @Prop() public data!: object;
     @Model("changepostparams") public postparms!: PostParams;
     @Provide('option')
-    public option: Options = {};
+    public option: Options = highchartEmptyOption();
     public postInterval =  2000 ;
     public entity =  "";
     private intervalid = 0;
@@ -40,6 +41,7 @@ export default class TimeLineHighChart extends Vue {
     // }
     @Watch("urlparas.entity",  {deep : true})
     private redraw(val: boolean) {
+      this.option = highchartEmptyOption();
       console.log("上层图表 TimeLineHighChart",this.postparms,this.id);
       this.getData();
       // 在这里开始做长轮询 定时从后台传数据

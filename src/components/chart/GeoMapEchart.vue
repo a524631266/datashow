@@ -16,9 +16,10 @@ import echarts,{ ECharts, EChartOption, EChartsOptionConfig } from "echarts";
 import { provincedata} from '@/components/options/ProvinceOptions.ts';
 import Axios,{AxiosPromise} from "axios";
 import PubSub from 'pubsub-js';
+import { getDataPromise, PostPath } from "@/actions/axiosProxy.ts";
 // import 'echarts/map/js/province/xinjiang.js';
-const prev = process.env.NODE_ENV === "development"? "": "";
-const websocketurlhost = process.env.NODE_ENV === "development"? "192.168.40.156:8080": "localhost:8088";
+const prev = process.env.NODE_ENV === "development"? "/xinjiang": "";
+const websocketurlhost = process.env.NODE_ENV === "development"? "192.168.40.148:8080": "localhost:8088";
 @Component({
     components: {
         LittleBar,
@@ -41,13 +42,7 @@ export default class GeoMapEchart extends Vue {
     private chartLibrary = ChartLibrary.echart;
     private websocket!: WebSocket;
     private coord!: [number,number];
-    @Emit()
-    public changedata() {
-    //   console.log(this.data);
-      if (this.id === "chart-top") {
-          this.positionClass = PositionClass.Center;
-      }
-    }
+    private websockecount = 0;
     @Emit()
     private setOption(option: any) {
         this.option = option;
@@ -69,7 +64,7 @@ export default class GeoMapEchart extends Vue {
                             // const data2: Points[]= this.randomlastdata(100);
                             // option2.series[1].data = data2;
                             this.setOption(option2);
-                            return option2;
+                            // return option2;
                         }
                     }
                 );
@@ -107,7 +102,7 @@ export default class GeoMapEchart extends Vue {
     private level4post(count: number) {
         // const option2 = getGeoChinaProvinceOptionConfig() as any;
         const postCityId = this.postparms.entity;
-        const {entity,starttime,endtime,entitynums,scale,winlen,name: cityname} = this.postparms;
+        const {entity,starttime,endtime,entitynums,scale,winlen,name: cityname,level} = this.postparms;
         const promise2 = Axios({
             method:"get",
             url:`${prev}/elecnum/geomap?entity=${entity}&starttime=${starttime}&endtime=${endtime}&entitynums=${entitynums}&scale=${scale}&winlen=${winlen}`
@@ -124,7 +119,7 @@ export default class GeoMapEchart extends Vue {
                 count+=1;
                 option2.change = count % 2;
                 this.option = option2;
-                console.log("neizai",option2,this.option);
+                console.log("正常 geo数据",option2,this.option);
             }
         ).catch(
             (result) => {
@@ -139,10 +134,28 @@ export default class GeoMapEchart extends Vue {
                 count+=1;
                 option2.change = count % 2;
                 this.option = option2;
-                console.log("neizai",option2,this.option);
+                console.log("err geo数据",option2,this.option);
             }
         );
     }
+
+    // @Emit()
+    // private getData() {
+    //   // console.log("获取timeline数据");
+    //   const promise = getDataPromise<ReturnGeoData ,GeoTransData>(this.urlparas,PostPath.geomap,this.dealData);
+    //   promise.then(
+    //     (data: string | GeoTransData) => {
+    //       // console.log("data",data);
+    //       if ( typeof data !== "string") {
+    //         const change = (this.option as any).change;
+    //         const option2 =  drawBoxOptions(data.boxchart, data.xAxis , this.id);
+    //         (option2 as any).change = !change;
+    //         this.option = option2 as any;
+    //         // console.log("BoxSingleHighChart",this.option);
+    //       }
+    //     }
+    //   );
+    // }
     /**
      * 处理数据的函数，用来把source数据源变成target目标数据源的结构
      */
@@ -314,7 +327,7 @@ export default class GeoMapEchart extends Vue {
     //  一下为websocket方法
     @Emit()
     private initWebSocket(urlparas: PostParams) {
-        const websocketurl = `ws://${websocketurlhost}/${urlparas.entity}`;
+        const websocketurl = `ws://${websocketurlhost}/websocket?entity=${urlparas.entity}&start=${urlparas.starttime.split(" ")[0]}&end=${urlparas.endtime.split(" ")[0]}`;
         console.log("initWebSocket",websocketurl);
         this.websocket = new WebSocket(websocketurl);
         this.websocket.onopen = this.wsonopen;
@@ -331,12 +344,15 @@ export default class GeoMapEchart extends Vue {
     private wsonmessage(evt: MessageEvent) {
         const data: ReturnGeoData =  evt.data as ReturnGeoData;
         // console.log("open message",new Date(),data);
-        this.dealData(data);
+        console.log("message",this.websockecount,data);
+        this.websockecount += 1;
+        // this.dealData(data);
     }
     @Emit()
     private wsonclose() {
         console.log("wsonclose close",new Date(),this.chartstorepool);
-        this.initWebSocket(this.urlparas);
+        // this.initWebSocket(this.urlparas);
+        // setTimeout(()=> {this.initWebSocket(this.urlparas);},1000);
     }
     @Emit()
     private wsonerror() {

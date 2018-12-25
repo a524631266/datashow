@@ -18,7 +18,7 @@ import {listdata, drawLineOptions } from "@/components/options/TrendOptions.ts";
 import { getDataPromise, PostPath } from "@/actions/axiosProxy.ts";
 import PubSub from 'pubsub-js';
 import { SingleTrendChart, RegionTrendChart,TrendChartTrans } from '@/types/postreturnform';
-
+import {highchartEmptyOption} from "@/components/options/EmptyChart.ts";
 @Component({
     components: {
         BaseChartFactory,
@@ -32,7 +32,7 @@ export default class TrendHighChart extends Vue {
     @Prop() public data!: object;
     @Model("changepostparams") public postparms!: PostParams;
     @Provide('option')
-    public option: Options = {};
+    public option: Options = highchartEmptyOption();
     public postInterval =  2000 ;
     public entity =  "";
     private intervalid = 0;
@@ -40,6 +40,7 @@ export default class TrendHighChart extends Vue {
     private titlename = "趋势";
     @Watch("urlparas.entity",  {deep : true})
     private redraw(val: boolean) {
+      this.option = highchartEmptyOption();
       console.log("上层图表 TrendHighChart",this.postparms,this.id);
       this.getData();
       // 在这里开始做长轮询 定时从后台传数据

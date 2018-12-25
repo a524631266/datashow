@@ -2,7 +2,7 @@
 <template>
   <div :class="positionClass" draggable="true" @dblclick="handledoubleclick">
         <LittleBar :titlename="titlename" :show="positionClass === 'center'?false:true" v-model="postparms">
-            <BaseChartFactory :positionClass="positionClass" :urlparas="urlparas" :id="id" :option="option" :chartLibrary="chartLibrary" slot="chart"/>
+            <BaseChartFactory :positionClass="positionClass" :urlparas="urlparas" :id="id" :option="option" @updateData="way2UpdateData" :chartLibrary="chartLibrary" slot="chart"/>
         </LittleBar>
   </div>
 </template>
@@ -17,7 +17,7 @@ import {listdata, drawHeatmapOptions } from "@/components/options/HeatMapOptions
 import { getDataPromise, PostPath } from "@/actions/axiosProxy.ts";
 import PubSub from 'pubsub-js';
 import { HeatmapChart, HeatmapChartTrans } from '@/types/postreturnform';
-
+import {highchartEmptyOption} from "@/components/options/EmptyChart.ts";
 @Component({
     components: {
         BaseChartFactory,
@@ -31,7 +31,7 @@ export default class HeatMapHighChart extends Vue {
     @Prop() public data!: object;
     @Model("changepostparams") public postparms!: PostParams;
     // @Provide('option')
-    public option: Options = {};
+    public option: Options = highchartEmptyOption();
     public postInterval =  2000 ;
     public entity =  "";
     private intervalid = 0;
@@ -50,6 +50,8 @@ export default class HeatMapHighChart extends Vue {
     }
     @Watch("urlparas.entity",  {deep : true})
     private redraw(val: boolean) {
+      // this.option = drawHeatmapOptions([{x: "0",name: "",y: 0,value: 0}], "HeatMap","" ,this.showTooltiop) as any;
+      this.option = highchartEmptyOption();
       console.log("上层图表 HeatMapHighCHart",this.postparms,this.id);
       this.getData();
       // 在这里开始做长轮询 定时从后台传数据
@@ -90,6 +92,9 @@ export default class HeatMapHighChart extends Vue {
       PubSub.publish("doubleclick2changecenter",this.id);
       // this.resizeChart();
       // (this.option as any).change = !(this.option as any).change;
+    }
+    private async way2UpdateData(chart: any,oldoption: any) {
+      chart.setOptions(this.option);
     }
 
 }

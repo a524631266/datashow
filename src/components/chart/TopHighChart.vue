@@ -17,7 +17,7 @@ import {objectlist, drawTopOptions } from "@/components/options/TopOptions.ts";
 import { getDataPromise, PostPath } from "@/actions/axiosProxy.ts";
 import PubSub from 'pubsub-js';
 import { TopChart, TopChartTrans } from '@/types/postreturnform';
-
+import {highchartEmptyOption} from "@/components/options/EmptyChart.ts";
 @Component({
     components: {
         BaseChartFactory,
@@ -31,7 +31,7 @@ export default class TopHighChart extends Vue {
     @Prop() public data!: object;
     @Model("changepostparams") public postparms!: PostParams;
     @Provide('option')
-    public option: Options = {};
+    public option: Options = highchartEmptyOption();
     public postInterval =  2000 ;
     public entity =  "";
     private intervalid = 0;
@@ -41,6 +41,7 @@ export default class TopHighChart extends Vue {
     // }
     @Watch("urlparas.entity",  {deep : true})
     private redraw(val: boolean) {
+      this.option = highchartEmptyOption();
       console.log("上层图表  TopHighChart",this.postparms,this.id);
       this.getData();
       // 在这里开始做长轮询 定时从后台传数据
