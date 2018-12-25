@@ -200,7 +200,7 @@ interface TopData {
     value: number; // 1.823430980425617
 }
 interface TopChart {
-    table: TopData[];
+    top: TopData[];
 }
 interface TopDataTrans {
     id: string;

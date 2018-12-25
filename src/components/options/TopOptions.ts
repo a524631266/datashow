@@ -1,5 +1,6 @@
 import Highcharts, { Options } from 'highcharts';
 import { TopChart, TopChartTrans } from '@/types/postreturnform';
+import PubSub from 'pubsub-js';
 interface TopValue {
   id: string;
   value: number;
@@ -15,7 +16,7 @@ interface TwoNumberList {
 
 export const objectlist = [{id:"881675", value :3.0238276701684295},{id:"881635", value :2.0785377819430155},{id:"881645", value :1.8775564380364207},{id:"881655", value :1.8453788029667204},{id:"881615", value :0.015448770251847033},{id:"881685", value :-0.1926384253430764},{id:"982235", value :-0.9999399080325635}];
 
-export const drawTopOptions = (objectlist: TopChartTrans,title: string,redrawEntityFunc: any,openInfo: any) => {
+export const drawTopOptions = (objectlist: TopChartTrans,title: string,redrawEntityFunc: any,openInfo: (entity: string, name: string,clientX: number,clientY: number,target: DOMRect)=>void) => {
   // objectlist [{id:123134,value:12354,}...]
   const datalist: TwoNumberList[] = [];
   // tslint:disable-next-line:variable-name
@@ -27,10 +28,10 @@ export const drawTopOptions = (objectlist: TopChartTrans,title: string,redrawEnt
   // tslint:disable-next-line:forin
   for (const i in objectlist) {
     if (objectlist[i].value>=0) {
-      datalist.push([objectlist[i].id,objectlist[i].value]);
+      datalist.push([objectlist[i].name,objectlist[i].value]);
       positive_id.push(objectlist[i].id);
     } else {
-      datalist2.splice(0,0,[objectlist[i].id,objectlist[i].value]);
+      datalist2.splice(0,0,[objectlist[i].name,objectlist[i].value]);
       negative_id.splice(0,0,objectlist[i].id);
     }
     if (objectlist[i].value<minvalue) {
@@ -40,7 +41,7 @@ export const drawTopOptions = (objectlist: TopChartTrans,title: string,redrawEnt
   return getTwoDirectBarOption(positive_id,datalist,negative_id,datalist2,title,redrawEntityFunc,openInfo);
 };
 // tslint:disable-next-line:variable-name
-function getTwoDirectBarOption(positive_id: string[],datalist: TwoNumberList[],negative_id: string[],datalist2: TwoNumberList[],title: string,redrawEntityFunc: any,openInfo: any) {
+function getTwoDirectBarOption(positive_id: string[],datalist: TwoNumberList[],negative_id: string[],datalist2: TwoNumberList[],title: string,redrawEntityFunc: any,openInfo: (entity: string, name: string,clientX: number,clientY: number,target: DOMRect)=>void) {
   return {
     chart: {
       type: 'bar',
@@ -50,13 +51,17 @@ function getTwoDirectBarOption(positive_id: string[],datalist: TwoNumberList[],n
       events: {
         load() {
             const seriesGroup = (this as any).seriesGroup;
-            Highcharts.addEvent(seriesGroup.element, 'mouseover',(e)=> {
-              // let clientX = e.clientX,clientY = e.clientY;
+            Highcharts.addEvent(seriesGroup.element, 'mouseover',(e: MouseEvent)=> {
+              // tslint:disable-next-line:one-variable-per-declaration
+              const clientX = e.clientX,clientY = e.clientY;
+              console.log("topevent",(e.target as any).point);
+              openInfo((e.target as any).point.category,(e.target as any).point.name,clientX,clientY,(e.target as any).getBoundingClientRect());
               // infoObject.createNewInfoDiv(e.target.point.name,e.target.point.name,clientX,clientY,redrawEntityFunc,openInfo)
             });
             Highcharts.addEvent(seriesGroup.element, 'mouseleave', (e)=> {
               // let timeoutid = setTimeout(()=>{infoObject.hiddenInfo()},300)
               // infoObject.setTimeoutId(timeoutid);
+              PubSub.publish("hidetooltip","none");
             });
         },
         render() {

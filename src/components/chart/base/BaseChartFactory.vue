@@ -58,7 +58,10 @@ export default class BaseChartFactory extends Vue {
             } else {
                 this.chartInstance = Highcharts.chart(this.id, this.option) as any;
             }
-            this.showHighChartLegend();
+            this.toggleHighChartLegend();
+            if (this.id === "chart-heatmap") {
+                this.toggleHighChartAxis();
+            }
        }
        if(newVal !== oldVal && this.chartLibrary === ChartLibrary.echart) {
             if (this.chartInstance) {
@@ -85,11 +88,21 @@ export default class BaseChartFactory extends Vue {
     /**
      * highcart 显示legend
      */
-    private showHighChartLegend() {
+    private toggleHighChartLegend() {
         if ( this.positionClass !== PositionClass.Center) {
             (this.chartInstance as any).legend.update({enabled:false});
         } else {
             (this.chartInstance as any).legend.update({enabled:true});
+        }
+    }
+    /**
+     * highcart 显示x轴数据
+     */
+    private toggleHighChartAxis() {
+        if ( this.chartInstance && this.positionClass !== PositionClass.Center) {
+            (this.chartInstance as any).xAxis[0].update({labels:{enabled:false}});
+        } else if (this.chartInstance) {
+            (this.chartInstance as any).xAxis[0].update({labels:{enabled:true}});
         }
     }
     /**
@@ -100,9 +113,13 @@ export default class BaseChartFactory extends Vue {
     @Watch('positionClass',{deep: true})
     private reflowChart(newVal: object, oldVal: object) {
         // console.log("posiontClass Change");
+        console.log("positionClass",this.id,this.chartInstance,this.chartLibrary);
         if (this.chartInstance && this.chartLibrary === ChartLibrary.highchart) {
+            this.toggleHighChartLegend();
+            if (this.id === "chart-heatmap") {
+                this.toggleHighChartAxis();
+            }
             (this.chartInstance as any).reflow();
-            this.showHighChartLegend();
         }
         if (this.chartInstance && this.chartLibrary === ChartLibrary.echart) {
             (this.chartInstance as any).resize();

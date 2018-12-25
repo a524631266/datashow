@@ -143,8 +143,8 @@ const geo = Object.assign({},InitGeomapUrlProps);
 })
 export default class Home extends Vue {
     private datalist =  [
-        {id: "chart-region-boxchart", urlparas: orgbox,
-          option: {xAxis: "1"}, positionClass: PositionClass.RightTop,chartName:"BoxHighChart"},
+         {id: "chart-top", urlparas: orgtop,
+            option: {xAxis: "1"}, positionClass: PositionClass.RightTop,chartName:"TopHighChart"},
         {id: "chart-single-boxchart", urlparas: entbox,
           option: {xAxis: "2"}, positionClass: PositionClass.LeftTop,chartName:"BoxSingleHighChart"},
         {id: "chart-single-action", urlparas: enttl,
@@ -160,8 +160,8 @@ export default class Home extends Vue {
     ];
     private centerid = "chart-geomap";
     private drawerlist = [
-            {id: "chart-top", urlparas: orgtop,
-            option: {xAxis: "1"}, positionClass: PositionClass.Drawer,chartName:"TopHighChart"},
+        {id: "chart-region-boxchart", urlparas: orgbox,
+          option: {xAxis: "1"}, positionClass: PositionClass.Drawer,chartName:"BoxHighChart"},
     ];
     public beforeCreate() {
     // console.log("Home", PositionClass.LeftTop);

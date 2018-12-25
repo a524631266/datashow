@@ -10,7 +10,7 @@
           <div class="ant-popover-arrow"></div>
           <div class="ant-popover-inner">
               <div>
-                <div class="ant-popover-title">{{nodedataref.name}}</div>
+                <div class="ant-popover-title" v-text="nodedataref.name"></div>
                 <div class="ant-popover-inner-content">
                     <a data-v-40e8afb2="" :href="'/home/'+nodedataref.key" @click.prevent="router2home" target="_self" class="btn btn-sm">图表</a>
                     <a data-v-40e8afb2="" :href="'/info/'+nodedataref.key" @click.prevent="router2info" target="_self" class="btn btn-sm">用户信息</a>
