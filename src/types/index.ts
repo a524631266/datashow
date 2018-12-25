@@ -32,6 +32,7 @@ interface PostParams {
     name: string;
     postInterval: number;
     isLeaf: boolean;
+    coord: [number,number];
 }
 // function Test (firstName:String, lastName:String) {
 //     let firstName2:String = firstName

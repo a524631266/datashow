@@ -23,26 +23,30 @@
                             <button class="btn btn-outline-secondary btn-sm" type="button"><i class="fa fa-calendar"></i></button>
                         </div>
                     </div>
-                    <label class="small">刷新频率:</label>
+                    <label class="small">scale:</label>
                     <div class="input-group input-group-sm">
-                        <select class="form-control" v-model="data.postInterval">
-                                <option label="200ms" value="200"></option>
+                        <select class="form-control" v-model="data.scale">
+                                <!-- <option label="200ms" value="200"></option>
                                 <option label="1s" value="1000"></option>
                                 <option label="2s" value="2000" selected="true"></option>
                                 <option label="4s" value="4000"></option>
                                 <option label="15min" value="15000"></option>
-                                <option label="1h" value="60000"></option>
+                                <option label="1h" value="60000"></option> -->
+                                <option label="1h" value="3600"></option>
+                                <option label="1d" value="86400" selected="true"></option>
                             </select>
-
                         <div class="input-group-addon">
                             <button class="btn btn-secondary btn-sm" type="submit" @click.prevent="updatepostparams">Apply</button>
                         </div>
                     </div>
                 </form>
                 <div class="col-8 timepicker-relative-section">
-                    <h3 class="section-heading">快选</h3>
+                    <h3 class="section-heading">时段范围</h3>
                     <div class="card-group">
-                        <ul class="card list-group list-group-flush">
+                        <ul v-for="(data,index) in rangeselectlist" :key="index" class="card list-group list-group-flush">
+                            <li v-for="(item,index) in data" :key="index" class="list-group-item small" @click="licktimeselectrange(item.value)">{{item.day}}</li>
+                        </ul>
+                        <!-- <ul class="card list-group list-group-flush">
                             <li class="list-group-item small"> Last 2 days </li>
                             <li class="list-group-item small"> Last 7 days </li>
                             <li class="list-group-item small"> Last 30 days </li>
@@ -70,8 +74,8 @@
                             <li class="list-group-item small"> This month so far </li>
                             <li class="list-group-item small"> This year </li>
                             <li class="list-group-item small"> This year so far </li>
-                        </ul>
-                        <ul class="card list-group list-group-flush">
+                        </ul> -->
+                        <!-- <ul class="card list-group list-group-flush">
                             <li class="list-group-item small"> Last 5 minutes </li>
                             <li class="list-group-item small"> Last 15 minutes </li>
                             <li class="list-group-item small"> Last 30 minutes </li>
@@ -80,7 +84,7 @@
                             <li class="list-group-item small"> Last 6 hours </li>
                             <li class="list-group-item small"> Last 12 hours </li>
                             <li class="list-group-item small"> Last 24 hours </li>
-                        </ul>
+                        </ul> -->
                     </div>
                     
                 </div>
@@ -98,6 +102,7 @@
 // import Component from 'vue-class-component'
 import { Component, Vue, Prop, Watch, Emit, Model } from "vue-property-decorator";
 import { PostParams,Dimension } from "@/types/index.ts";
+import moment,{ DurationInputObject } from "moment";
 @Component
 export default class LittleBar extends Vue {
     @Prop({default: ""}) public titlename!: string;
@@ -109,6 +114,11 @@ export default class LittleBar extends Vue {
     private some = 1;
     private data: PostParams = this.postparms;
     private showdownicon: string = "";
+    private rangeselectlist = [
+        [{day:" Last 2 days ",value: [2,'d']},{day:"Last 7 days ",value: [7,'d']},{day:"Last 30 days",value: [30,'d']},{day:"Last 90 days",value: [90,'d']},{day:"Last 6 months",value: [6,'M']},{day:"Last 1 year",value: [1,'y']},{day:"Last 2 years",value: [2,'y']},{day:"Last 5 years",value: [5,'y']},],
+        [{day:"Yesterday ",value: [1,'d']},{day:"Day before yesterday",value: [2,'d']},{day:"This day last week ",value: [1,'w']},{day:"last month ",value: [1,'M']},{day:"last year ",value: [1,'y']},],
+        [{day:"Today ",value: [1,'d']},{day:"This week ",value: [1,'w']},{day:"This month ",value: [1,'M']},{day:"This year ",value: [1,'y']}],
+    ];
     @Emit()
     public changeShow(showv: boolean | Event) {
         this.show = showv instanceof Event ? !this.show : showv;
@@ -127,6 +137,12 @@ export default class LittleBar extends Vue {
     @Emit()
     public highlightbar(show: boolean | any) {
         this.highlightbarclass = show ? "table-dark":"";
+    }
+    @Emit()
+    public licktimeselectrange(value: [any,string]) {
+        this.data.starttime = moment().subtract(value[0],value[1]).format("YYYY-MM-DD HH:mm:ss");
+        this.data.endtime = moment().format("YYYY-MM-DD HH:mm:ss");
+        // moment().subtract()
     }
     private mounted() {
         // console.log("111111","加载");

@@ -94,7 +94,7 @@ export default class HeatMapHighChart extends Vue {
       // (this.option as any).change = !(this.option as any).change;
     }
     private async way2UpdateData(chart: any,oldoption: any) {
-      chart.setOptions(this.option);
+      // chart.setOptions(this.option);
     }
 
 }

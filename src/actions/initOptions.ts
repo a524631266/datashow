@@ -3,7 +3,7 @@ import { PostParams ,Dimension} from "@/types";
 export const entity = "99998999";
 export const level = 2;
 export const name = "新疆维吾尔自治区";
-
+export const coord: [number,number] = [0,0];
 // 241
 // export const entity = "99999758";
 // export const level = 4;
@@ -27,6 +27,7 @@ const InitBoxUrlProps: PostParams = {
     name,
     postInterval: 1000 * 15,
     isLeaf: false,
+    coord
 };
 const InitHeatMapUrlProps: PostParams = {
     entity,
@@ -41,6 +42,7 @@ const InitHeatMapUrlProps: PostParams = {
     name,
     postInterval: 1000 * 15,
     isLeaf: false,
+    coord
 };
 
 const InitTimeLineUrlProps: PostParams = {
@@ -56,6 +58,7 @@ const InitTimeLineUrlProps: PostParams = {
     name,
     postInterval: 1000 * 15,
     isLeaf: false,
+    coord
 };
 
 const InitTopUrlProps: PostParams = {
@@ -71,6 +74,7 @@ const InitTopUrlProps: PostParams = {
     name,
     postInterval: 1000 * 15,
     isLeaf: false,
+    coord
 };
 const InitTrendUrlProps: PostParams = {
     entity,
@@ -85,6 +89,7 @@ const InitTrendUrlProps: PostParams = {
     name,
     postInterval: 1000 * 15,
     isLeaf: false,
+    coord
 };
 const InitGeomapUrlProps: PostParams = {
     entity,
@@ -99,6 +104,7 @@ const InitGeomapUrlProps: PostParams = {
     name,
     postInterval: 1000 * 1 * 60,
     isLeaf: false,
+    coord
 };
 
 export {

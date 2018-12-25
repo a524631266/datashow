@@ -63,6 +63,9 @@ export interface ChildrenValue {
     isEntity: boolean;
     label: string;
     value: string;
+    lnglat: string;
+    cityLnglat: string;
+    districtLnglat: string;
 }
 
 @Component({
@@ -129,6 +132,11 @@ export default class LeftBar extends Vue {
                             children.level = level + 1;
                             children.value = value.id + "";
                             children.label = value.name;
+                            children.coord = value.coord?value.coord
+                                                    :value.lnglat?[parseFloat(value.lnglat.split(",")[0]),parseFloat(value.lnglat.split(",")[1])]
+                                                    :value.cityLnglat?[parseFloat(value.cityLnglat.split(",")[0]),parseFloat(value.cityLnglat.split(",")[1])]
+                                                    :value.districtLnglat?[parseFloat(value.districtLnglat.split(",")[0]),parseFloat(value.districtLnglat.split(",")[1])]
+                                                    :[0,0];
                             childrenlist.push(children);
                         }
                     );
@@ -201,9 +209,9 @@ export default class LeftBar extends Vue {
         // 记录当前的target用来保管数据
         // this.selectnode = e.event.target;
         this.nodedataref = e.node.dataRef;
-        const {key,name,isLeaf,level} = e.node.dataRef;
+        const {key,name,isLeaf,level,coord} = e.node.dataRef;
         // this.autoresizetooltip();
-        PubSub.publish("showtooltip",{entity: key,name,isLeaf,level,clientX,clientY,target: e.event.target.getBoundingClientRect()});
+        PubSub.publish("showtooltip",{entity: key,name,isLeaf,level,clientX,clientY,target: e.event.target.getBoundingClientRect(),coord});
     }
     private hidetooltip() {
         // console.log("levetree");

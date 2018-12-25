@@ -39,12 +39,13 @@ export default class TooltipRoute extends Vue {
     private locktooltip = false;
     public mounted() {
         // 订阅显示tooltip消息
-        PubSub.subscribe("showtooltip",async (mesg: any,data: {entity: string,name: string,isLeaf: boolean,level: number,clientX: number,clientY: number,target: DOMRect}) => {
+        PubSub.subscribe("showtooltip",async (mesg: any,data: {entity: string,name: string,isLeaf: boolean,level: number,clientX: number,clientY: number,target: DOMRect,coord: [number, number]}) => {
           this.locktooltip = true;
           this.nodedataref.key = data.entity;
           this.nodedataref.name = data.name;
           this.nodedataref.isLeaf = data.isLeaf;
           this.nodedataref.level = data.level;
+          this.nodedataref.coord = data.coord;
           if( data.target) {
               this.overlayStyle = {left: (data.target.x+data.target.width) + "px",top: data.target.y + "px"};
           } else {
@@ -107,6 +108,7 @@ export default class TooltipRoute extends Vue {
             name: this.nodedataref.name as any,
             level:this.nodedataref.level as any,
             isLeaf:this.nodedataref.isLeaf as any,
+            coord:this.nodedataref.coord as any,
             },params: { entity: this.nodedataref.key}});
     }
     private router2info() {
@@ -115,6 +117,7 @@ export default class TooltipRoute extends Vue {
             name: this.nodedataref.name as any,
             level:this.nodedataref.level as any,
             isLeaf:this.nodedataref.isLeaf as any,
+            coord:this.nodedataref.coord as any,
             },params: { entity: this.nodedataref.key}});
     }
     @Emit()

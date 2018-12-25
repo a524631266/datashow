@@ -154,11 +154,11 @@ export default class Home extends Vue {
         {id: "chart-region-linechart", urlparas: orgtrend,
           option: {xAxis: "4"}, positionClass: PositionClass.RightMiddle,chartName:"TrendHighChart"},
           {id: "chart-heatmap", urlparas: orghp,
-        option: {xAxis: "4"}, positionClass: PositionClass.Center,chartName:"HeatMapHighChart"},
+        option: {xAxis: "4"}, positionClass: PositionClass.RightBottom,chartName:"HeatMapHighChart"},
         {id: "chart-geomap", urlparas: geo,
-        option: {xAxis: "1"}, positionClass: PositionClass.RightBottom,chartName:"GeoMapEchart"},
+        option: {xAxis: "1"}, positionClass: PositionClass.Center,chartName:"GeoMapEchart"},
     ];
-    private centerid = "chart-heatmap";
+    private centerid = "chart-geomap";
     private drawerlist = [
         {id: "chart-region-boxchart", urlparas: orgbox,
           option: {xAxis: "1"}, positionClass: PositionClass.Drawer,chartName:"BoxHighChart"},
@@ -188,6 +188,7 @@ export default class Home extends Vue {
                     this.datalist[index].urlparas.entity = val;
                     this.datalist[index].urlparas.name = this.$route.query.name as any;
                     this.datalist[index].urlparas.level = this.$route.query.level as any;
+                    this.datalist[index].urlparas.coord = this.$route.query.coord as any;
                 }
             }
         );
