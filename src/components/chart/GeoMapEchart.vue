@@ -1,6 +1,6 @@
 <template>
   <div :class="positionClass" draggable="true" @dblclick="handledoubleclick">
-       <LittleBar :positionClass="positionClass" :showday="showday" @querydate="querydate" @restarttodraw="restarttodraw" :appendtimelist="appendtimelist" :titlename="titlename" :show="positionClass === 'center'?false:true" v-model="postparms">
+       <LittleBar @redraw="start" :positionClass="positionClass" :showday="showday" @querydate="querydate" @restarttodraw="restarttodraw" :appendtimelist="appendtimelist" :titlename="titlename" :show="positionClass === 'center'?false:true" v-model="postparms">
             <BaseChartFactory :urlparas="urlparas" :positionClass="positionClass" :id="id" :option="option" :chartLibrary="chartLibrary" :handleclick="handleclick" @updateData="way2UpdateData" slot="chart"/>
         </LittleBar>
         <div v-text="nowtime" style="position:absolute;bottom:0;right:0;">
