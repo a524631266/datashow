@@ -471,7 +471,15 @@ export interface ProvinceMapData {
  * @param mapname 省或市的拼音
  * @param isCenter 是否是中心
  */
-export const getGeoChinaProvinceOptionConfig = (provincesArray: ProvinceMapData[], heatData: Points[], mapname: string, isCenter: boolean = true) => {
+export const getGeoChinaProvinceOptionConfig = (provincesArray: ProvinceMapData[], heatData: Points[], mapname: string, isCenter: boolean = true,geolimiter: GeoLimiter) => {
+    const points: Points[] = heatData.map(
+        (point: Points) => {
+            const p = filterPoint(point,geolimiter);
+            return p as any;
+        }
+    );
+    // tslint:disable-next-line:no-debugger
+    debugger;
     return {
         title: {
             show: false,
@@ -514,8 +522,8 @@ export const getGeoChinaProvinceOptionConfig = (provincesArray: ProvinceMapData[
             },
             {
                 show: false,
-                min: -1,
-                max: 1,
+                min: geolimiter.negative?-1:0,
+                max: geolimiter.positive?1:0,
                 splitNumber: 10,
                 seriesIndex: 1,
                 inRange: {
@@ -574,7 +582,7 @@ export const getGeoChinaProvinceOptionConfig = (provincesArray: ProvinceMapData[
                 name: "111",
                 type: "heatmap",
                 coordinateSystem: "geo",
-                data:heatData,
+                data: points,
                 pointSize: isCenter ? 18 : 9,// 用来显示打点的大小
                 blurSize: isCenter ? 40 : 20,
                 minAlpha: 1,
@@ -706,10 +714,33 @@ export interface GeoData {
     // points: Points[]; // 由经纬度值构成的打点数据
     points: Points[]; // 由经纬度值构成的打点数据
 }
-
+export interface GeoLimiter {
+    limit: number;
+    positive: boolean;
+    negative: boolean;
+}
+function filterPoint(points: Points,geolimiter: GeoLimiter ): Points {
+    const data: Points = points;
+    if (geolimiter.negative && geolimiter.positive) {
+        data[2] = data[2] >0? 1:data[2]<0?-1:0;
+    } else if( geolimiter.negative && !geolimiter.positive) {
+        data[2] = data[2] <0?-1:0;
+    } else if ( !geolimiter.negative && geolimiter.positive) {
+        data[2] = data[2] >0?1:0;
+    }
+    return data;
+}
 // mapStyle 见 http://lbsyun.baidu.com/index.php?title=jspopular/guide/custom
 // 获取样式 http://lbsyun.baidu.com/custom/
-export const getGeoCityOptionConfig = (data: GeoData) => {
+export const getGeoCityOptionConfig = (data: GeoData,geolimiter: GeoLimiter) => {
+    const points: Points[] = data.points.map(
+        (point: Points) => {
+            const p = filterPoint(point,geolimiter);
+            return p as any;
+        }
+    );
+    // tslint:disable-next-line:no-debugger
+    debugger;
     return {
         title: {
             show: false,
@@ -885,8 +916,8 @@ export const getGeoCityOptionConfig = (data: GeoData) => {
         visualMap: {
             show: false,
             top: 'top',
-            min: 0,
-            max: 0.01,
+            min: geolimiter.negative?-1:0,
+            max: geolimiter.positive?1:0,
             seriesIndex: 0,
             splitNumber: 5,
             calculable: false,
@@ -903,7 +934,7 @@ export const getGeoCityOptionConfig = (data: GeoData) => {
         series: [{
             type: 'heatmap',
             coordinateSystem: 'bmap',
-            data: data.points,
+            data: points,
             pointSize: 5,
             blurSize: 6,
             zoom: 1,// 设置缩放比例

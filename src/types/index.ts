@@ -55,6 +55,15 @@ interface GeoData {
     childid: number[];
     point: GeoPointDat;
 }
+
+interface GeoDataWsHead {
+    coord: Array<[number,number]>;
+    childlabel: string[];
+    childid: number[];
+}
+interface GeoDataWsBody {
+    point: GeoPointDat;
+}
 /**
  * 格式如 {
  *  geomap：{
@@ -71,6 +80,13 @@ interface GeoData {
  */
 interface ReturnGeoData {
     geomap: GeoData;
+}
+
+interface ReturnGeoDataWsHead {
+    geomap: GeoDataWsHead;
+}
+interface ReturnGeoDataWsBody {
+    geomap: GeoDataWsBody;
 }
 interface GeoTransData {
     provinceArray: ProvinceMapData[];
@@ -93,5 +109,5 @@ enum MeasureName {
 
 
 export {
-    PositionClass,Dimension,PostParams,ChartLibrary,MeasureName,ReturnGeoData,GeoTransData,ChartStorePool,
+    PositionClass,Dimension,PostParams,ChartLibrary,MeasureName,ReturnGeoData,GeoTransData,ChartStorePool,ReturnGeoDataWsHead,ReturnGeoDataWsBody
 };

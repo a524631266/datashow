@@ -3,6 +3,9 @@
        <LittleBar :titlename="titlename" :show="positionClass === 'center'?false:true" v-model="postparms">
             <BaseChartFactory :urlparas="urlparas" :positionClass="positionClass" :id="id" :option="option" :chartLibrary="chartLibrary" :handleclick="handleclick" @updateData="way2UpdateData" slot="chart"/>
         </LittleBar>
+        <div v-for="(ts,index) in appendtimelist" :key="index">
+            {{ts}}
+        </div>
   </div>
 </template>
 
@@ -10,13 +13,15 @@
 import { Component, Vue, Prop, Emit, Watch, Model, Provide} from 'vue-property-decorator';
 import LittleBar from "@/components/chart/LittleBar.vue";
 import BaseChartFactory from "@/components/chart/base/BaseChartFactory.vue";
-import { PositionClass , PostParams , ChartLibrary, MeasureName,ReturnGeoData,GeoTransData,ChartStorePool} from '@/types/index';
-import { getGeoChinaProvinceOptionConfig, getGeoCityOptionConfig, GeoData, provinceMap,ProvinceMapData, Points, testPointsdata, cityMap,getCityMapIdByName, getProvinceMapIdByName, GeoTestData} from '@/components/options/GeoOptions.ts';
+import { PositionClass , PostParams , ChartLibrary, MeasureName,ReturnGeoData,GeoTransData,ChartStorePool, ReturnGeoDataWsHead,ReturnGeoDataWsBody} from '@/types/index';
+import { getGeoChinaProvinceOptionConfig, getGeoCityOptionConfig, GeoData, provinceMap,ProvinceMapData, Points, testPointsdata, cityMap,getCityMapIdByName, getProvinceMapIdByName, GeoTestData, GeoLimiter} from '@/components/options/GeoOptions.ts';
 import echarts,{ ECharts, EChartOption, EChartsOptionConfig } from "echarts";
 import { provincedata} from '@/components/options/ProvinceOptions.ts';
 import Axios,{AxiosPromise} from "axios";
 import PubSub from 'pubsub-js';
 import { getDataPromise, PostPath } from "@/actions/axiosProxy.ts";
+import { updatestate } from "@/types/updateState.ts";
+import moment from "moment";
 // import 'echarts/map/js/province/xinjiang.js';
 const prev = process.env.NODE_ENV === "development"? "/xinjiang": "";
 const websocketurlhost = process.env.NODE_ENV === "development"? "192.168.10.63:8088": "localhost:8088";
@@ -33,45 +38,65 @@ export default class GeoMapEchart extends Vue {
     @Prop() public data!: object;
     @Model("changepostparams") public postparms!: PostParams;
     // @Provide('option')
-    public chartstorepool: ChartStorePool<GeoTransData | GeoData> = {};
+    // geoheaddata为第一帧数据，geoBodydata 为之后客户端传递过来的身体数据
+    public geoBodydata: ChartStorePool<ReturnGeoDataWsBody> = {};
+    public geoheaddata: ReturnGeoDataWsHead = {geomap:{}} as any;
     public option = {};
     // public postInterval =  1000 ;
     public entity =  "";
     public titlename = "Geo";
-    private intervalid = 0;
+    private intervalid: number[] = [];
     private chartLibrary = ChartLibrary.echart;
     private websocket!: WebSocket;
     private coord!: [number,number];
     private websockecount = 0;
     private redrawcount = 0;
+    private appendtimelist: number[] = [];
+    private geolimiter: GeoLimiter = {
+        limit: 3,
+        positive: true,
+        negative: true,
+    };
+    private initreturndata = {
+                        geomap:{
+                            coord:[],
+                            childlabel:[],
+                            childid:[],
+                            point:{
+                                coord:[],
+                                value:[],
+                                starttime:0
+                            }
+                        }
+                    };
     @Emit()
     private setOption(option: any) {
         this.option = option;
     }
-    @Emit()
-    private level2post(count: number) { // 这选择省的时候
-        const {entity,starttime,endtime,entitynums,scale,winlen,name} = this.postparms;
-        const that = this;
-        const postprivinceId = (provinceMap as any)[name];
-        const promise = this.getMapSource(postprivinceId, name).then(
-            (suc) => {
-                this.postAndDealData(this.dealData).then(
-                    (data: string |  GeoTransData) => {
-                        if( typeof data !== 'string') {
-                            // const option2 = getGeoChinaProvinceOptionConfig(data.provinceArray,data.points,name,true) as any;
-                            const option2 = getGeoChinaProvinceOptionConfig(data.provinceArray,this.randomlastdata(100),name,true) as any;
-                            count += 1;
-                            option2.change = count % 2;
-                            // const data2: Points[]= this.randomlastdata(100);
-                            // option2.series[1].data = data2;
-                            this.setOption(option2);
-                            // return option2;
-                        }
-                    }
-                );
-            }
-        );
-    }
+    // @Emit()
+    // private level2post(count: number) { // 这选择省的时候
+    //     const {entity,starttime,endtime,entitynums,scale,winlen,name} = this.postparms;
+    //     const that = this;
+    //     const postprivinceId = (provinceMap as any)[name];
+    //     const promise = this.getMapSource(postprivinceId, name).then(
+    //         (suc) => {
+    //             this.postAndDealData(this.dealData).then(
+    //                 (data: string |  GeoTransData) => {
+    //                     if( typeof data !== 'string') {
+    //                         // const option2 = getGeoChinaProvinceOptionConfig(data.provinceArray,data.points,name,true) as any;
+    //                         const option2 = getGeoChinaProvinceOptionConfig(data.provinceArray,this.randomlastdata(100),name,true) as any;
+    //                         count += 1;
+    //                         option2.change = count % 2;
+    //                         // const data2: Points[]= this.randomlastdata(100);
+    //                         // option2.series[1].data = data2;
+    //                         this.setOption(option2);
+    //                         // return option2;
+    //                     }
+    //                 }
+    //             );
+    //         }
+    //     );
+    // }
     private getPostprivinceId() {
         const {entity,starttime,endtime,entitynums,scale,winlen,name,level} = this.postparms;
         if (level === 2) {
@@ -82,93 +107,76 @@ export default class GeoMapEchart extends Vue {
         }
         return name;
     }
-    @Emit()
-    private level3post(count: number) { // 市
-        // const cityname = "杭州市";
-        const {entity,starttime,endtime,entitynums,scale,winlen,name:cityname} = this.postparms;
-        // const option2 = getGeoChinaProvinceOptionConfig() as any;
-        const postCityId = (cityMap as any)[cityname];
-        const promise2 = this.getMapSource(postCityId,cityname).then(
-            (suc) => {
-                this.postAndDealData(this.dealData).then(
-                    (data: string |  GeoTransData) => {
-                        if( typeof data !== 'string') {
-                            // const option2 = getGeoChinaProvinceOptionConfig(data.provinceArray,data.points,name,true) as any;
-                            const option2 = getGeoChinaProvinceOptionConfig(data.provinceArray,this.randomlastdata(100),cityname,true) as any;
-                            count += 1;
-                            option2.change = count % 2;
-                            // const data2: Points[]= this.randomlastdata(100);
-                            // option2.series[1].data = data2;
-                            this.setOption(option2);
-                            return option2;
-                        }
-                    }
-                );
-            }
-        );
-        // (option2 as any).change = false;
-        console.log("geo",this.option);
-    }
-    @Emit()
-    private level4post(count: number) {
-        // const option2 = getGeoChinaProvinceOptionConfig() as any;
-        const postCityId = this.postparms.entity;
-        const {entity,starttime,endtime,entitynums,scale,winlen,name: cityname,level} = this.postparms;
-        const promise2 = Axios({
-            method:"get",
-            url:`${prev}/elecnum/geomap?entity=${entity}&starttime=${starttime}&endtime=${endtime}&entitynums=${entitynums}&scale=${scale}&winlen=${winlen}`
-        }).then(
-            (result) => {
-                const data: GeoData = {
-                    center:{JD: this.coord[0],WD: this.coord[1]},
-                    cityname,
-                    measurename: MeasureName.Elec,
-                    points:testPointsdata.map((data)=>[data[0],data[1],count%2?-data[2]:data[2]] as any),
-                };
-                // const data: GeoData = result.data
-                const option2 = getGeoCityOptionConfig(data) as any;
-                count+=1;
-                option2.change = count % 2;
-                this.option = option2;
-                console.log("正常 geo数据",option2,this.option);
-            }
-        ).catch(
-            (result) => {
-                const data: GeoData = {
-                    center:{JD: 120.1709,WD: 30.29},
-                    cityname,
-                    measurename: MeasureName.Elec,
-                    points:testPointsdata.map((data)=>[data[0],data[1],count%2?-data[2]:data[2]] as any),
-                };
-                // const data: GeoData = result.data
-                const option2 = getGeoCityOptionConfig(data) as any;
-                count+=1;
-                option2.change = count % 2;
-                this.option = option2;
-                console.log("err geo数据",option2,this.option);
-            }
-        );
-    }
-
     // @Emit()
-    // private getData() {
-    //   // console.log("获取timeline数据");
-    //   const promise = getDataPromise<ReturnGeoData ,GeoTransData>(this.urlparas,PostPath.geomap,this.dealData);
-    //   promise.then(
-    //     (data: string | GeoTransData) => {
-    //       // console.log("data",data);
-    //       if ( typeof data !== "string") {
-    //         const change = (this.option as any).change;
-    //         const option2 =  drawBoxOptions(data.boxchart, data.xAxis , this.id);
-    //         (option2 as any).change = !change;
-    //         this.option = option2 as any;
-    //         // console.log("BoxSingleHighChart",this.option);
-    //       }
-    //     }
-    //   );
+    // private level3post(count: number) { // 市
+    //     // const cityname = "杭州市";
+    //     const {entity,starttime,endtime,entitynums,scale,winlen,name:cityname} = this.postparms;
+    //     // const option2 = getGeoChinaProvinceOptionConfig() as any;
+    //     const postCityId = (cityMap as any)[cityname];
+    //     const promise2 = this.getMapSource(postCityId,cityname).then(
+    //         (suc) => {
+    //             this.postAndDealData(this.dealData).then(
+    //                 (data: string |  GeoTransData) => {
+    //                     if( typeof data !== 'string') {
+    //                         // const option2 = getGeoChinaProvinceOptionConfig(data.provinceArray,data.points,name,true) as any;
+    //                         const option2 = getGeoChinaProvinceOptionConfig(data.provinceArray,this.randomlastdata(100),cityname,true) as any;
+    //                         count += 1;
+    //                         option2.change = count % 2;
+    //                         // const data2: Points[]= this.randomlastdata(100);
+    //                         // option2.series[1].data = data2;
+    //                         this.setOption(option2);
+    //                         return option2;
+    //                     }
+    //                 }
+    //             );
+    //         }
+    //     );
+    //     // (option2 as any).change = false;
+    //     console.log("geo",this.option);
+    // }
+    // @Emit()
+    // private level4post(count: number) {
+    //     // const option2 = getGeoChinaProvinceOptionConfig() as any;
+    //     const postCityId = this.postparms.entity;
+    //     const {entity,starttime,endtime,entitynums,scale,winlen,name: cityname,level} = this.postparms;
+    //     const promise2 = Axios({
+    //         method:"get",
+    //         url:`${prev}/elecnum/geomap?entity=${entity}&starttime=${starttime}&endtime=${endtime}&entitynums=${entitynums}&scale=${scale}&winlen=${winlen}`
+    //     }).then(
+    //         (result) => {
+    //             const data: GeoData = {
+    //                 center:{JD: this.coord[0],WD: this.coord[1]},
+    //                 cityname,
+    //                 measurename: MeasureName.Elec,
+    //                 points:testPointsdata.map((data)=>[data[0],data[1],count%2?-data[2]:data[2]] as any),
+    //             };
+    //             // const data: GeoData = result.data
+    //             const option2 = getGeoCityOptionConfig(data,this.geolimiter) as any;
+    //             count+=1;
+    //             option2.change = count % 2;
+    //             this.option = option2;
+    //             console.log("正常 geo数据",option2,this.option);
+    //         }
+    //     ).catch(
+    //         (result) => {
+    //             const data: GeoData = {
+    //                 center:{JD: 120.1709,WD: 30.29},
+    //                 cityname,
+    //                 measurename: MeasureName.Elec,
+    //                 points:testPointsdata.map((data)=>[data[0],data[1],count%2?-data[2]:data[2]] as any),
+    //             };
+    //             // const data: GeoData = result.data
+    //             const option2 = getGeoCityOptionConfig(data,this.geolimiter) as any;
+    //             count+=1;
+    //             option2.change = count % 2;
+    //             this.option = option2;
+    //             console.log("err geo数据",option2,this.option);
+    //         }
+    //     );
     // }
     /**
      * 处理数据的函数，用来把source数据源变成target目标数据源的结构
+     * 等级在小于4的情况下，也即是大于区的时候
      */
     private dealData(data: ReturnGeoData): GeoTransData {
         const result: GeoTransData = {
@@ -186,17 +194,24 @@ export default class GeoMapEchart extends Vue {
                 }
             );
         } else {
-            console.log("this.option",this.option);
-            result.provinceArray = (this.option as any).series[0].data;
-        }
-        if (point !== undefined) {
-            const {coord,value:pointvalue} = point;
-            coord.forEach(
-                (value: [number,number],index: number) => {
-                    result.points.push([value[0],value[1],pointvalue[index]]);
+            // console.log("this.option",this.option);
+            // 没有的话就直接为空好了
+            const {childlabel: childlabel2,childid: childid2,coord: fathercoord2} = this.geoheaddata.geomap;
+            childlabel2.forEach(
+                (name: string,index: number) => {
+                    result.provinceArray.push({id: childid2[index],name,coord: fathercoord2[index],value:1});
+                    // data.provinceArray.push({id: childid[index],name,coord: [0,0],value:0});
                 }
             );
         }
+        // if (point !== undefined) {
+        const {coord,value:pointvalue} = point;
+        coord.forEach(
+            (value: [number,number],index: number) => {
+                result.points.push([value[0],value[1],pointvalue[index]]);
+            }
+        );
+        // }
         return result;
     }
     /**
@@ -224,13 +239,6 @@ export default class GeoMapEchart extends Vue {
                     };
         }
         return result;
-        // const option2 = getGeoCityOptionConfig(result) as any;
-        // this.redrawcount += 1;
-        // option2.change = this.redrawcount % 2;
-        // this.option = option2;
-        // console.log("正常 geo数据",option2,this.option);
-        // this.chartstorepool[data.geomap.point.starttime] = result;
-        // return result;
     }
     private postAndDealData(callback: any): Promise<GeoTransData> {
         const {entity,starttime,endtime,entitynums,scale,winlen} = this.postparms;
@@ -251,47 +259,98 @@ export default class GeoMapEchart extends Vue {
         );
         return promise;
     }
-    private levelpostmap = (level: number) => { // 中间商
-        let newlevel = level;
-        // tslint:disable-next-line:no-unused-expression
-        level > 4 && (newlevel = 4);
-        // tslint:disable-next-line:no-unused-expression
-        level < 0 && (newlevel = 1);
-        const proxypost = {
-            1 : this.level2post,
-            2 : this.level2post,
-            3 : this.level3post,
-            4 : this.level4post};
-        return (proxypost as any)[newlevel];
-    }
-    @Emit()
-    private setInterval(count: number) {
-        count += 1;
-        this.levelpostmap(this.urlparas.level)(count);
-        setTimeout(
-           () => {this.setInterval(count);console.log(this.postparms.entity);}
-        ,this.urlparas.postInterval);
-    }
     @Emit()
     private setTimeoutdraw(count: number) {
         console.log(count);
-        const timelist = Object.keys(this.chartstorepool);
-        this.option = this.chartstorepool[(timelist as any)[count]];
-        if ( timelist.length < count) { // 当数据不全的时候不用再画了
-            count += 1;
+        const nowtime = this.appendtimelist[count];
+        const {length: timelen} = this.appendtimelist;
+        if (timelen)  {
+            const bodylist = this.geoBodydata[this.appendtimelist[count]];
+            const headlist = this.geoheaddata;
+            const data: ReturnGeoData = {geomap:{} as any};
+            data.geomap = headlist.geomap as any;
+            data.geomap.point = bodylist!==undefined?bodylist.geomap.point:this.initreturndata.geomap.point;
+            // 画图
+            if ( timelen > count) { // 一旦timelist大于 1 就要重新画
+                this.setOption(this.getLevelOption(data,false));
+                count += 1;
+            }
         }
-        this.intervalid = setTimeout(
+        this.intervalid.push(setTimeout(
            () => {this.setTimeoutdraw(count);}
-        ,5000);
+        ,5000));
+    }
+    /**
+     * 初始化数据
+     *  1. 初始化时间轴
+     *  2. 初始化body数据
+     *  3. 初始化head数据
+     */
+    private initData() {
+        this.appendtimelist = [];
+        this.geoBodydata = {};
+        this.geoheaddata= {geomap:{}} as any;
     }
     private mounted() {
-        const that = this;
-        const count = 0 ;
-        // this.setInterval(count);
-        // // 初始化websocket数据
-        // this.initWebSocket(this.postparms);
-        //   模拟关闭之后重新启动
-        //   setTimeout(()=> {this.websocket.close();},3000);
+        console.log("geo 加载");
+        this.initData();
+    }
+    /**
+     * data : 返回的option数据
+     * websocketfirst 为是否为websocket开始
+     */
+    private getLevelOption(data: ReturnGeoData,websocketfirst: boolean) {
+        const {level} = this.postparms;
+        let option = null;
+        if (websocketfirst) {
+            if (level>=4) {
+                option = getGeoCityOptionConfig(this.dealData_level4(data),this.geolimiter);
+                (option as any).change = updatestate.redraw;
+                // this.option = option;
+            } else {
+                const result = this.dealData(data);
+                const {name} = this.postparms;
+                option = getGeoChinaProvinceOptionConfig(result.provinceArray,result.points,name,true,this.geolimiter) as any;
+                (option as any).change = updatestate.redraw;
+                // this.setOption(option);
+            }
+        } else {
+            if(level>=4) {
+                const data2 = this.dealData_level4(data);
+                option = getGeoCityOptionConfig(data2,this.geolimiter) as any;
+            } else {
+                const result = this.dealData(data);
+                const {name} = this.postparms;
+                option = getGeoChinaProvinceOptionConfig(result.provinceArray,result.points,name,true,this.geolimiter) as any;
+            }
+            this.redrawcount += 1;
+            (option as any).change = this.redrawcount % 2;
+        }
+        return option;
+    }
+    private initBlackChart() {
+        const {level,name} = this.postparms;
+        if(level<4) { // 小于4时候显示地图
+            const postprivinceId = this.getPostprivinceId();
+            const promise = this.getMapSource(postprivinceId, name);
+            promise.then(
+                (suc) => {
+                    this.initWebSocket(this.postparms);
+                    const option = this.getLevelOption(this.initreturndata,true);
+                    this.setOption(option);
+                }
+            );
+        } else {// 大于等于4等级的时候显示最下面的地图
+            this.initWebSocket(this.postparms);
+            const option = this.getLevelOption(this.initreturndata,true);
+            this.setOption(option);
+        }
+    }
+    private clearIntervalnow() {
+        while (this.intervalid.length > 0 ) {
+            const id = this.intervalid.shift();
+            clearInterval(id);
+        }
     }
     /**
      * 一旦entity有变化就重新画图
@@ -301,38 +360,32 @@ export default class GeoMapEchart extends Vue {
      *    3. 当level<4 的时候初始化获取地图
      */
     @Watch("postparms.entity",  {deep : true})
-    private redraw(val: boolean) {
+    private start(val: boolean) {
         console.log("监听间隔,geo",val);
+        // 1. 关闭之前的websocket
         // tslint:disable-next-line:no-unused-expression
         this.websocket && (this.websocket.close());
-        clearInterval(this.intervalid);
-        const count = 0;
+        // 2.重置定时任务
+        this.clearIntervalnow();
+        // 2.1 初始化数据
+        this.initData();
+        // 3. 初始化地图
         // this.setInterval(count);
         // 初始化websocket数据
-        const {level,name} = this.postparms;
-        if(level<4) {
-            const postprivinceId = this.getPostprivinceId();
-            const promise = this.getMapSource(postprivinceId, name);
-            promise.then(
-                (suc) => {
-                    this.initWebSocket(this.postparms);
-                }
-            );
-        } else {
-            this.initWebSocket(this.postparms);
-        }
-        // 画图
+        this.initBlackChart();
+        // 4. 启动定时任务
+        const count = 0;
         this.setTimeoutdraw(count);
         // this.option = {change:"redraw"};
     }
     private destroyed() {
       // console.log("destory (this as any).intervalid", (this as any).intervalid);
-      clearInterval(this.intervalid);
+      this.clearIntervalnow();
       console.log("删除Geo组件,并关闭当前的WebSocket");
       this.websocket.close();
     }
-    // @Emit()
-    private async way2UpdateData(chart: any,oldoption: any) {
+    @Emit()
+    private way2UpdateData(chart: any,oldoption: any) {
         if(this.postparms.level >= 4 ) {// 也就是在点击市级别地图的时候
             // const data: Points[]= Array.from((oldoption.series[0].data as any));
             // // // 2.更新数据 逐渐变化
@@ -378,16 +431,17 @@ export default class GeoMapEchart extends Vue {
             //  方法二
             // const data: Points[]= this.randomlastdata(100);
             // newoption.series[1].data = data;
-            (chart as any).setOption(this.option);
+            console.log("oldoption",oldoption);
+            (chart as any).setOption(oldoption);
         }
     }
-    private randomlastdata(n: number): Points[] {
-        const data: Points[] = [];
-        for (let index = 0; index < n; index++) {
-            data.push([91.165855+(Math.random()-1)*15,44.659313+(Math.random()-1)*6,Math.random()>0.5?1:1]);
-        }
-        return data;
-    }
+    // private randomlastdata(n: number): Points[] {
+    //     const data: Points[] = [];
+    //     for (let index = 0; index < n; index++) {
+    //         data.push([91.165855+(Math.random()-1)*15,44.659313+(Math.random()-1)*6,Math.random()>0.5?1:1]);
+    //     }
+    //     return data;
+    // }
     @Emit()
     private handledoubleclick() {
         // 双击事件为变换图表中心位置 坑爹啊
@@ -396,13 +450,18 @@ export default class GeoMapEchart extends Vue {
     private getMapSource(entity: string,name: string): Promise<string> {
         return Axios({
             method:"get",
-            url:`${prev}/js/china-main-city/${entity}.json`
+            url:`/js/china-main-city/${entity}.json`
         }).then(
             async (result)=> {
             // console.log(result)
             await echarts.registerMap(name,result.data);
             return "success";
-        });
+        }).catch(
+            (err) => {
+                alert("找不到地图文件");
+                return Promise.reject("err");
+            }
+        );
     }
     /**
      * 初始化话websocket的时候要做的事情
@@ -412,7 +471,9 @@ export default class GeoMapEchart extends Vue {
     @Emit()
     private initWebSocket(urlparas: PostParams) {
         this.websockecount = 0 ;
-        this.chartstorepool = {};
+        // this.chartstorepool = {};
+        this.geoBodydata = {};
+        this.geoheaddata = {} as any;
         const websocketurl = `ws://${websocketurlhost}/websocket?entity=${urlparas.entity}&start=${urlparas.starttime.split(" ")[0]}&end=${urlparas.endtime.split(" ")[0]}`;
         console.log("initWebSocket",websocketurl);
         this.websocket = new WebSocket(websocketurl);
@@ -430,42 +491,18 @@ export default class GeoMapEchart extends Vue {
     private wsonmessage(evt: MessageEvent) {
         const data: ReturnGeoData =  JSON.parse(evt.data) as ReturnGeoData;
         const {level} = this.postparms;
-        // console.log("message",this.websockecount,data,this.redrawcount);
-        if ( this.websockecount === 0 ) { // 初始化的时候先获取地图注册
-            if (level>=4) {
-                const option2 = getGeoCityOptionConfig(this.dealData_level4(data));
-                (option2 as any).change = this.redrawcount % 2;
-                this.option = option2;
-            } else {
-                const result = this.dealData(data);
-                const {entity,starttime,endtime,entitynums,scale,winlen,name} = this.postparms;
-                const option2 = getGeoChinaProvinceOptionConfig(result.provinceArray,result.points,name,true) as any;
-                (option2 as any).change = this.redrawcount % 2;
-                this.setOption(option2);
-
-            }
-
-        } else {//  在之后的数据是有point数据的
-            let option2 = null;
-            if(level>=4) {
-                const data2 = this.dealData_level4(data);
-                option2 = getGeoCityOptionConfig(data2) as any;
-            } else {
-                const result = this.dealData(data);
-                option2 = getGeoChinaProvinceOptionConfig(result.provinceArray,result.points,name,true) as any;
-            }
-            this.redrawcount += 1;
-            (option2 as any).change = this.redrawcount % 2;
-            this.chartstorepool[data.geomap.point.starttime] = option2;
-            //  这里不进行数据的进行更新了
-            this.option = option2;
+        console.log("websocket 收到的新数据",this.websockecount,data,this.redrawcount);
+        if ( this.websockecount === 0 ) { // 初始化的时候导入头文件
+            this.geoheaddata = data;
+        } else {//  在之后的数据是放进body中
+            this.geoBodydata[data.geomap.point.starttime] = data;
+            this.appendtimelist.push(data.geomap.point.starttime);
         }
         this.websockecount += 1;
-        // this.dealData(data);
     }
     @Emit()
     private wsonclose() {
-        console.log("wsonclose close",new Date(),this.chartstorepool);
+        console.log("wsonclose close",new Date(),this.geoheaddata,this.geoBodydata);
         // this.initWebSocket(this.urlparas);
         // setTimeout(()=> {this.initWebSocket(this.urlparas);},1000);
     }
@@ -491,11 +528,6 @@ export default class GeoMapEchart extends Vue {
                                 },
                                 params: { entity: id as any}
                                 });
-            // this.postparms.entity = id;
-            // this.postparms.name = name;
-            // this.postparms.level = level;
-            // this.postparms.coord = coord;
-            // this.coord = coord;
         }
     }
 }

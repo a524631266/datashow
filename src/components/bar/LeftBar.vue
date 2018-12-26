@@ -80,7 +80,7 @@ export default class LeftBar extends Vue {
     private openLeftBar = false;
     private treeData = [
                 {
-                    id: entity,
+                    id: "99998999",
                     pId: 0,
                     name,
                     title:name,
@@ -92,8 +92,8 @@ export default class LeftBar extends Vue {
                     coord:[0,0],// [87.62781199999995,43.793028],
                     isLeaf: false,
                     label: name,
-                    key: entity,
-                    value: entity,
+                    key: "99998999",
+                    value: "99998999",
                 }
             ];
     private tooltipShow = false;

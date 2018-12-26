@@ -1,6 +1,6 @@
 import { PostParams ,Dimension} from "@/types";
 
-export const entity = "99998999";
+export const entity = "";
 export const level = 2;
 export const name = "新疆维吾尔自治区";
 export const coord: [number,number] = [0,0];
