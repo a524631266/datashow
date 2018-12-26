@@ -36,7 +36,7 @@
                                 <option label="1d" value="86400" selected="true"></option>
                             </select>
                         <div class="input-group-addon">
-                            <button class="btn btn-secondary btn-sm" type="submit" @click.prevent="updatepostparams">Apply</button>
+                            <button class="btn btn-secondary btn-sm" type="submit" @click.prevent="updatepostparams">查询</button>
                         </div>
                     </div>
                 </form>
@@ -54,7 +54,7 @@
         <div class="barBody">
             <slot name="chart">无数据</slot>
         </div>
-        <transition name="fade">
+        <!-- <transition name="fade"> -->
             <!-- :defaultValue="1" -->
             <a-row v-if="showprogress" class="siberbar">
                 <a-col :span="24">
@@ -67,15 +67,15 @@
                     </div>
                 </a-col> -->
             </a-row>
-        </transition>
-        <transition name="fade">
+        <!-- </transition> -->
+        <!-- <transition name="fade"> -->
             <a-progress v-if="showprogress" :format="progressformat" strokeLinecap="square" :percent="percent" />
-        </transition>
-        <transition name="fade" v-if="showprogress">
-             <div :style="{ width: '30%',position: 'absolute',bottom:0,right:0, border: '1px solid #d9d9d9', borderRadius: '2px' }">
+        <!-- </transition> -->
+        <!-- <transition name="fade" > -->
+             <div v-if="showprogress" :style="{ width: '30%',position: 'absolute',bottom:0,right:0, border: '1px solid #d9d9d9', borderRadius: '2px' }">
                 <a-calendar @select="onSelect" :fullscreen="false" @panelChange="onPanelChange" v-model="showday" mode="month"/>
              </div>
-        </transition>
+        <!-- </transition> -->
     </div>
 </template>
 <script lang="ts">
@@ -83,7 +83,7 @@
 // import Vue from 'vue'
 // import Component from 'vue-class-component'
 import { Component, Vue, Prop, Watch, Emit, Model } from "vue-property-decorator";
-import { PostParams,Dimension } from "@/types/index.ts";
+import { PostParams,Dimension, PositionClass } from "@/types/index.ts";
 import moment,{ DurationInputObject, Moment } from "moment";
 import Ant from "ant-design-vue";
 import 'moment/locale/zh-cn';
@@ -109,7 +109,7 @@ moment.locale('zh-cn');
         showprogress(): boolean {
             console.log("showprogress",(this as any).percent);
             // return (this as any).appendtimelist!==undefined?(this as any).percent===100?false:true:false;
-            return (this as any).appendtimelist!==undefined?true:false;
+            return (this as any).appendtimelist!==undefined && (this as any).positionClass===PositionClass.Center?true:false;
         }
     },
 })
@@ -117,6 +117,7 @@ export default class LittleBar extends Vue {
     @Prop({default: ""}) public titlename!: string;
     @Prop() public appendtimelist!: number[];
     @Prop({default: moment()}) public showday!: Moment;
+    @Prop() public positionClass!: PositionClass;
     // @Prop({default: "fa-sort-down"}) public showdownicon!: string;
     // @Model("changepostparams2") postparms2!: PostParams;
     @Model("changepostparams") public postparms!: PostParams;
@@ -194,7 +195,8 @@ export default class LittleBar extends Vue {
         // console.log((this as any).some);
     }
     private updatepostparams(value: any) {
-        this.$emit("changepostparams", this.data);
+        // this.$emit("changepostparams", this.data);
+        this.$emit("redraw");
     }
     private formatter(value: any) {
         if (value/20 < 1) {
