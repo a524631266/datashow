@@ -401,13 +401,13 @@ export default class GeoMapEchart extends Vue {
       this.websocket.close();
     }
     @Emit()
-    private way2UpdateData(chart: any,oldoption: any) {
+    private way2UpdateData(chart: any,newoption: any) {
         if(this.postparms.level >= 4 ) {// 也就是在点击市级别地图的时候
-            // const data: Points[]= Array.from((oldoption.series[0].data as any));
+            const data: Points[]= Array.from((newoption.series[0].data as any));
             // // // 2.更新数据 逐渐变化
-            // const newoption = chart.getOption();
-            // const lastdata = newoption.series[0].data;
-            // 1 .逐点添加数据
+            const oldoption = chart.getOption();
+            // a .逐点添加数据
+            // const lastdata = oldoption.series[0].data;
             // const total = data.length;
             // let count = 0;
             // while(data.length > 0) { // 动态更新数据
@@ -417,16 +417,20 @@ export default class GeoMapEchart extends Vue {
             //     lastdata.push(Array.from(one as any));
             //     // 核心方法
             //     if((count % Math.round(total / 3) === 0) || count === total) {
-            //         (chart as any).setOption(newoption);
+            //         (chart as any).setOption(oldoption);
             //     }
             // }
-            // 2 . 批量更新数据
+            // 清楚掉所有数数据
+            // b .批量显示
+            oldoption.series[0].data = data as any;
             (chart as any).setOption(oldoption);
+            // 2 . 批量更新数据 但是会重置中心
+            // (chart as any).setOption(newoption);
         }
         if(this.postparms.level === 2 || this.postparms.level === 3 ) {// 也就是在点击市级别地图的时候
             // // 2.更新数据 逐渐变化
             // 获取图表的原配置
-            const newoption = chart.getOption();
+            // const newoption = chart.getOption();
             // 获取图表的前一帧第二个数据
             // const lastdata =  newoption.series[1].data; // [[78.90713899545392,39.6181074998455,Math.random()>0.5?-1:1],[78.90713899545392,39.6181074998455,Math.random()>0.5?-1:1],[78.90713899545392,39.6181074998455,Math.random()>0.5?-1:1],[78.90713899545392,39.6181074998455,Math.random()>0.5?-1:1],[86.885379,41.857898,Math.random()>0.5?-1:1],[86.885379,41.857898,Math.random()>0.5?-1:1],[86.885379,41.857898+Math.random()*10,Math.random()>0.5?-1:1],[86.885379,41.857898,Math.random()>0.5?-1:1],[86.885379,41.857898,Math.random()>0.5?-1:1]];
             // lastdata.splice(0);
@@ -447,17 +451,10 @@ export default class GeoMapEchart extends Vue {
             //  方法二
             // const data: Points[]= this.randomlastdata(100);
             // newoption.series[1].data = data;
-            console.log("oldoption",oldoption);
-            (chart as any).setOption(oldoption);
+            // console.log("oldoption",newoption);
+            (chart as any).setOption(newoption);
         }
     }
-    // private randomlastdata(n: number): Points[] {
-    //     const data: Points[] = [];
-    //     for (let index = 0; index < n; index++) {
-    //         data.push([91.165855+(Math.random()-1)*15,44.659313+(Math.random()-1)*6,Math.random()>0.5?1:1]);
-    //     }
-    //     return data;
-    // }
     @Emit()
     private handledoubleclick() {
         // 双击事件为变换图表中心位置 坑爹啊
