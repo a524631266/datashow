@@ -231,8 +231,9 @@ export default class LittleBar extends Vue {
     private onPanelChange(value: any, mode: any) {
       console.log(value, mode);
     }
+
     private onSelect(date: Moment) {
-        const querydate = moment(date,"YYYY-MM-DD").valueOf();
+        const querydate = moment(date,"YYYY-MM-DD").startOf("day").valueOf();
         this.$emit("querydate",querydate);
     }
 }

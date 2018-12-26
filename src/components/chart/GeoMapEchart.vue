@@ -558,6 +558,7 @@ export default class GeoMapEchart extends Vue {
     @Emit()
     private querydate(ts: number) {
         this.clearIntervalnow();
+        console.log("tsts",ts);
         const index = this.appendtimelist.indexOf(ts);
         if( index >= 0) {
             this.setTimeoutdraw(index,false);
