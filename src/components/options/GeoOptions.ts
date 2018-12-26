@@ -478,8 +478,6 @@ export const getGeoChinaProvinceOptionConfig = (provincesArray: ProvinceMapData[
             return p as any;
         }
     );
-    // tslint:disable-next-line:no-debugger
-    debugger;
     return {
         title: {
             show: false,
@@ -739,8 +737,6 @@ export const getGeoCityOptionConfig = (data: GeoData,geolimiter: GeoLimiter) => 
             return p as any;
         }
     );
-    // tslint:disable-next-line:no-debugger
-    debugger;
     return {
         title: {
             show: false,

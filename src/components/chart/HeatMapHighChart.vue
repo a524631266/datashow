@@ -32,7 +32,7 @@ export default class HeatMapHighChart extends Vue {
     @Model("changepostparams") public postparms!: PostParams;
     // @Provide('option')
     public option: Options = highchartEmptyOption();
-    public postInterval =  2000 ;
+    public showinterval =  2000 ;
     public entity =  "";
     private intervalid = 0;
     private chartLibrary = ChartLibrary.highchart;
@@ -45,7 +45,7 @@ export default class HeatMapHighChart extends Vue {
       //       this.option = option2;
       //       // console.log(this.option);
       //   },
-      //   this.postInterval
+      //   this.showinterval
       // );
     }
     @Watch("urlparas.entity",  {deep : true})

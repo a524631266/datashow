@@ -33,7 +33,7 @@ export default class HighchartFactory extends Vue {
     @Prop() public option!: object;
     @Prop() public data!: object;
     @Model("changepostparams") public postparms!: PostParams;
-    public postInterval =  200 ;
+    public showinterval =  200 ;
     public entity =  "";
     public initshow: boolean = this.positionClass === "center"?true: false ;
     private intervalid = 0;
@@ -59,7 +59,7 @@ export default class HighchartFactory extends Vue {
                 //     drawHeatmapOptions(listdata, "HeatMap","" ,"") as any
                 //     );
             },
-            this.postInterval
+            this.showinterval
         );
     }
     @Watch("postparms",  {deep : true})

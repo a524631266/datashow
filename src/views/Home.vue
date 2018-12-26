@@ -175,10 +175,10 @@ export default class Home extends Vue {
     // tslint:disable-next-line:no-empty
     public addcomponent() {
     }
-    @Watch("datalist",{deep: true})
-    private changedatalist(val: any) {
-        console.log("val","更改了数据", val);
-    }
+    // @Watch("datalist",{deep: true})
+    // private changedatalist(val: any) {
+    //     console.log("val","更改了数据", val);
+    // }
     @Watch("$route.query.entity",{deep: true})
     private routerchange(val: any) {
         // console.log("路由变化",val,this.$route.query.entity);
@@ -297,7 +297,9 @@ export default class Home extends Vue {
     position: relative;
 }
 
-
+span {
+  color: white !important;
+}
 
 .right-top{
     position:absolute;

@@ -46,45 +46,6 @@
                         <ul v-for="(data,index) in rangeselectlist" :key="index" class="card list-group list-group-flush">
                             <li v-for="(item,index) in data" :key="index" class="list-group-item small" @click="licktimeselectrange(item.value)">{{item.day}}</li>
                         </ul>
-                        <!-- <ul class="card list-group list-group-flush">
-                            <li class="list-group-item small"> Last 2 days </li>
-                            <li class="list-group-item small"> Last 7 days </li>
-                            <li class="list-group-item small"> Last 30 days </li>
-                            <li class="list-group-item small"> Last 90 days </li>
-                            <li class="list-group-item small"> Last 6 months </li>
-                            <li class="list-group-item small"> Last 1 year </li>
-                            <li class="list-group-item small"> Last 2 years </li>
-                            <li class="list-group-item small"> Last 5 years </li>
-                        </ul>
-                        <ul class="card list-group list-group-flush">
-                            <li class="list-group-item small"> Yesterday </li>
-                            <li class="list-group-item small"> Day before yesterday </li>
-                            <li class="list-group-item small"> This day last week </li>
-                            <li class="list-group-item small"> Previous week </li>
-                            <li class="list-group-item small"> Previous month </li>
-                            <li class="list-group-item small"> Previous year </li>
-
-                        </ul>
-                        <ul class="card list-group list-group-flush">
-                            <li class="list-group-item small"> Today </li>
-                            <li class="list-group-item small"> Today so far </li>
-                            <li class="list-group-item small"> This week </li>
-                            <li class="list-group-item small"> This week so far </li>
-                            <li class="list-group-item small"> This month </li>
-                            <li class="list-group-item small"> This month so far </li>
-                            <li class="list-group-item small"> This year </li>
-                            <li class="list-group-item small"> This year so far </li>
-                        </ul> -->
-                        <!-- <ul class="card list-group list-group-flush">
-                            <li class="list-group-item small"> Last 5 minutes </li>
-                            <li class="list-group-item small"> Last 15 minutes </li>
-                            <li class="list-group-item small"> Last 30 minutes </li>
-                            <li class="list-group-item small"> Last 1 hour </li>
-                            <li class="list-group-item small"> Last 3 hours </li>
-                            <li class="list-group-item small"> Last 6 hours </li>
-                            <li class="list-group-item small"> Last 12 hours </li>
-                            <li class="list-group-item small"> Last 24 hours </li>
-                        </ul> -->
                     </div>
                     
                 </div>
@@ -93,7 +54,23 @@
         <div class="barBody">
             <slot name="chart">无数据</slot>
         </div>
-        
+        <transition name="fade">
+            <!-- :defaultValue="1" -->
+            <a-row v-if="showprogress" class="siberbar">
+                <a-col :span="24">
+                    <a-slider  :tipFormatter="formatter" :marks="slidermarks"  v-model="innershowInterval" />
+                    <a-button shape="circle" icon="play-circle" size="small" @click="restarttodraw"/>
+                </a-col>
+                <!-- <a-col :span="4">
+                    <div>
+                    
+                    </div>
+                </a-col> -->
+            </a-row>
+        </transition>
+        <transition name="fade">
+            <a-progress v-if="showprogress" :format="progressformat" strokeLinecap="square" :percent="percent" />
+        </transition>
     </div>
 </template>
 <script lang="ts">
@@ -103,33 +80,85 @@
 import { Component, Vue, Prop, Watch, Emit, Model } from "vue-property-decorator";
 import { PostParams,Dimension } from "@/types/index.ts";
 import moment,{ DurationInputObject } from "moment";
-@Component
+import Ant from "ant-design-vue";
+@Component({
+    components: {
+        AProgress: Ant.Progress,
+        ASlider: Ant.Slider,
+        ARow: Ant.Row,
+        ACol: Ant.Col,
+        AButton: Ant.Button,
+    },
+    computed:{
+        percent(): number {
+            // return 75;
+            // tslint:disable-next-line:radix
+            return parseInt(((this as any).appendtimelist?(this as any).appendtimelist.length:0)/(this as any).totaltimelen+"")*100;
+            // tslint:disable-next-line:radix
+            // return parseInt(0.5 +"") * 100;
+        },
+        showprogress(): boolean {
+            console.log("showprogress",(this as any).percent);
+            // return (this as any).appendtimelist!==undefined?(this as any).percent===100?false:true:false;
+            return (this as any).appendtimelist!==undefined?true:false;
+        }
+    },
+})
 export default class LittleBar extends Vue {
     @Prop({default: ""}) public titlename!: string;
+    @Prop() public appendtimelist!: number[];
     // @Prop({default: "fa-sort-down"}) public showdownicon!: string;
     // @Model("changepostparams2") postparms2!: PostParams;
     @Model("changepostparams") public postparms!: PostParams;
     private highlightbarclass = "";
+    private totaltimelen = 0;
     private show = true;
     private some = 1;
     private data: PostParams = this.postparms;
     private showdownicon: string = "";
+    private innershowInterval = 0;
+    private slidermarks = {
+        0: {
+          style: {
+            color: 'white',
+          },
+          label: "0s",
+        },
+        50: {
+          style: {
+            color: 'white',
+          },
+          label: "2.5s",
+        },
+        100: {
+          style: {
+            color: 'white',
+          },
+          label: "5s",
+        }
+    };
     private rangeselectlist = [
         [{day:" Last 2 days ",value: [2,'d']},{day:"Last 7 days ",value: [7,'d']},{day:"Last 30 days",value: [30,'d']},{day:"Last 90 days",value: [90,'d']},{day:"Last 6 months",value: [6,'M']},{day:"Last 1 year",value: [1,'y']},{day:"Last 2 years",value: [2,'y']},{day:"Last 5 years",value: [5,'y']},],
         [{day:"Yesterday ",value: [1,'d']},{day:"Day before yesterday",value: [2,'d']},{day:"This day last week ",value: [1,'w']},{day:"last month ",value: [1,'M']},{day:"last year ",value: [1,'y']},],
         [{day:"Today ",value: [1,'d']},{day:"This week ",value: [1,'w']},{day:"This month ",value: [1,'M']},{day:"This year ",value: [1,'y']}],
     ];
+    @Watch("innershowInterval")
+    public setInterval(newval: any,oldval: any) {
+        // console.log("newval:",newval,"oldval：",oldval);
+        // tslint:disable-next-line:radix
+        this.data.showinterval = parseInt(newval / 100 * 5000+"");
+    }
     @Emit()
     public changeShow(showv: boolean | Event) {
         this.show = showv instanceof Event ? !this.show : showv;
-        console.log(this.show,showv , showv instanceof Event);
-        this.some += 1;
+        // console.log(this.show,showv , showv instanceof Event);
+        // this.some += 1;
     }
-    @Emit()
-    public ShowRangeSelect(show: boolean | any) {
-        this.show = show !== undefined ? show : !this.show;
-        this.some += 1;
-    }
+    // @Emit()
+    // public ShowRangeSelect(show: boolean | any) {
+    //     this.show = show !== undefined ? show : !this.show;
+    //     this.some += 1;
+    // }
     @Emit()
     public hide(show: boolean | any) {
         this.show = show !== undefined ? show : !this.show;
@@ -146,12 +175,28 @@ export default class LittleBar extends Vue {
     }
     private mounted() {
         // console.log("111111","加载");
+        const start = moment(this.postparms.starttime);
+        const end = moment(this.postparms.endtime);
+        const {scale} = this.postparms;
+        this.totaltimelen = end.diff(start,scale===3600?"h":scale===86000?"d":"d");
+        console.log("计算日期",this.totaltimelen);
+        this.innershowInterval = this.postparms.showinterval / 1000 * 20 ;
     }
     private destroyed() {
         console.log((this as any).some);
     }
     private updatepostparams(value: any) {
         this.$emit("changepostparams", this.data);
+    }
+    private formatter(value: any) {
+        if (value/20 < 1) {
+            return `${value/20 * 1000} ms`;
+        } else {
+            return `${value/20}s`;
+        }
+    }
+    private progressformat(value: any) {
+        return `${value}%`;
     }
     /**
      * 这个方法会更改model数据的，也就是父亲的数据
@@ -170,6 +215,9 @@ export default class LittleBar extends Vue {
         // console.log("sssssssssssss");
         this.showdownicon = show?"fa-sort-down":"";
         // console.log("showdownicon",show,this.showdownicon,this.postparms.entity);
+    }
+    private restarttodraw() {
+        this.$emit("restarttodraw");
     }
 }
 </script>
@@ -267,5 +315,30 @@ $littlebarheight: 24px;
 .middlebutton{
     position: absolute;
 }
+.ant-progress{
+    position: absolute;
+    top: 0;
+    left: 10%;
+    width: 30%;
+    // margin-left: -25%; 
+    
+}
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 10s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
+
+.siberbar {
+    position: absolute;
+    width: 33%;
+    bottom: 0;
+    &.ant-btn {
+        background: transparent;
+        border: 0;
+    }
+}
+
 </style>
 

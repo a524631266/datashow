@@ -1,10 +1,9 @@
 <template>
   <div :class="positionClass" draggable="true" @dblclick="handledoubleclick">
-       <LittleBar :titlename="titlename" :show="positionClass === 'center'?false:true" v-model="postparms">
+       <LittleBar @restarttodraw="restarttodraw" :appendtimelist="appendtimelist" :titlename="titlename" :show="positionClass === 'center'?false:true" v-model="postparms">
             <BaseChartFactory :urlparas="urlparas" :positionClass="positionClass" :id="id" :option="option" :chartLibrary="chartLibrary" :handleclick="handleclick" @updateData="way2UpdateData" slot="chart"/>
         </LittleBar>
-        <div v-for="(ts,index) in appendtimelist" :key="index">
-            {{ts}}
+        <div v-text="nowtime" style="position:absolute;bottom:0;right:0;">
         </div>
   </div>
 </template>
@@ -30,6 +29,14 @@ const websocketurlhost = process.env.NODE_ENV === "development"? "192.168.10.63:
         LittleBar,
         BaseChartFactory
     },
+    computed: {
+        nowtime() {
+            const appendtimelist = (this as any).appendtimelist;
+            const timeoutcount = (this as any).timeoutcount;
+            const finaltime = appendtimelist[timeoutcount];
+            return moment(finaltime).format("YYYY-MM-DD HH:mm:ss");
+        }
+    }
 })
 export default class GeoMapEchart extends Vue {
     @Prop() public id!: string;
@@ -42,7 +49,7 @@ export default class GeoMapEchart extends Vue {
     public geoBodydata: ChartStorePool<ReturnGeoDataWsBody> = {};
     public geoheaddata: ReturnGeoDataWsHead = {geomap:{}} as any;
     public option = {};
-    // public postInterval =  1000 ;
+    // public showinterval =  1000 ;
     public entity =  "";
     public titlename = "Geo";
     private intervalid: number[] = [];
@@ -51,6 +58,7 @@ export default class GeoMapEchart extends Vue {
     private coord!: [number,number];
     private websockecount = 0;
     private redrawcount = 0;
+    private timeoutcount = 0;
     private appendtimelist: number[] = [];
     private geolimiter: GeoLimiter = {
         limit: 3,
@@ -261,10 +269,11 @@ export default class GeoMapEchart extends Vue {
     }
     @Emit()
     private setTimeoutdraw(count: number) {
-        console.log(count);
+        // console.log(count);
         const nowtime = this.appendtimelist[count];
         const {length: timelen} = this.appendtimelist;
         if (timelen)  {
+            this.timeoutcount = count;
             const bodylist = this.geoBodydata[this.appendtimelist[count]];
             const headlist = this.geoheaddata;
             const data: ReturnGeoData = {geomap:{} as any};
@@ -278,7 +287,7 @@ export default class GeoMapEchart extends Vue {
         }
         this.intervalid.push(setTimeout(
            () => {this.setTimeoutdraw(count);}
-        ,5000));
+        ,this.postparms.showinterval));
     }
     /**
      * 初始化数据
@@ -381,6 +390,7 @@ export default class GeoMapEchart extends Vue {
     private destroyed() {
       // console.log("destory (this as any).intervalid", (this as any).intervalid);
       this.clearIntervalnow();
+      this.initData();
       console.log("删除Geo组件,并关闭当前的WebSocket");
       this.websocket.close();
     }
@@ -530,6 +540,12 @@ export default class GeoMapEchart extends Vue {
                                 });
         }
     }
+    @Emit()
+    private restarttodraw() {
+        this.clearIntervalnow();
+        const count = 0;
+        this.setTimeoutdraw(count);
+    }
 }
 </script>
 
@@ -537,4 +553,5 @@ export default class GeoMapEchart extends Vue {
 .anchorBL{
     display:none;
 }
+
 </style>

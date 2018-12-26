@@ -30,7 +30,7 @@ interface PostParams {
     refreshfeq: number;
     level: number;
     name: string;
-    postInterval: number;
+    showinterval: number;
     isLeaf: boolean;
     coord: [number,number];
 }

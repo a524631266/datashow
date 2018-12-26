@@ -32,7 +32,7 @@ export default class TopHighChart extends Vue {
     @Model("changepostparams") public postparms!: PostParams;
     @Provide('option')
     public option: Options = highchartEmptyOption();
-    public postInterval =  2000 ;
+    public showinterval =  2000 ;
     public entity =  "";
     private intervalid = 0;
     private chartLibrary = ChartLibrary.highchart;

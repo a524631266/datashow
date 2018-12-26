@@ -33,7 +33,7 @@ export default class TrendHighChart extends Vue {
     @Model("changepostparams") public postparms!: PostParams;
     @Provide('option')
     public option: Options = highchartEmptyOption();
-    public postInterval =  2000 ;
+    public showinterval =  2000 ;
     public entity =  "";
     private intervalid = 0;
     private chartLibrary = ChartLibrary.highchart;
@@ -78,7 +78,7 @@ export default class TrendHighChart extends Vue {
       //       this.option = option2;
       //       // console.log(this.id);
       //   },
-      //   this.postInterval
+      //   this.showinterval
       // );
       // 通过change来获取定义属性的变化
     //   setInterval(
@@ -90,7 +90,7 @@ export default class TrendHighChart extends Vue {
     //           // this.option =  drawBoxOptions(boxchart3, xAxis3 , this.id) as Options;
     //           console.log(this.option);
     //       },
-    //       this.postInterval+3000
+    //       this.showinterval+3000
     //   );
     }
     private destroyed() {

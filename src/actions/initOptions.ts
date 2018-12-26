@@ -25,7 +25,7 @@ const InitBoxUrlProps: PostParams = {
     refreshfeq: 15 * 60 * 1000,
     level,
     name,
-    postInterval: 1000 * 15,
+    showinterval: 1000 * 15,
     isLeaf: false,
     coord
 };
@@ -40,7 +40,7 @@ const InitHeatMapUrlProps: PostParams = {
     refreshfeq: 15 * 60 * 1000,
     level,
     name,
-    postInterval: 1000 * 15,
+    showinterval: 1000 * 15,
     isLeaf: false,
     coord
 };
@@ -56,7 +56,7 @@ const InitTimeLineUrlProps: PostParams = {
     refreshfeq: 15 * 60 * 1000,
     level,
     name,
-    postInterval: 1000 * 15,
+    showinterval: 1000 * 15,
     isLeaf: false,
     coord
 };
@@ -72,7 +72,7 @@ const InitTopUrlProps: PostParams = {
     refreshfeq: 15 * 60 * 1000,
     level,
     name,
-    postInterval: 1000 * 15,
+    showinterval: 1000 * 15,
     isLeaf: false,
     coord
 };
@@ -87,7 +87,7 @@ const InitTrendUrlProps: PostParams = {
     refreshfeq: 15 * 60 * 1000,
     level,
     name,
-    postInterval: 1000 * 15,
+    showinterval: 1000 * 15,
     isLeaf: false,
     coord
 };
@@ -96,13 +96,13 @@ const InitGeomapUrlProps: PostParams = {
     starttime: "2018-12-15 00:00:00",
     endtime: "2018-12-18 00:00:00",
     entitynums: 20,
-    scale: 60 * 60,
+    scale: 60 * 60 * 24,
     winlen: 30 * 24 * 60 * 60,
     dimension: Dimension.geomap,
     refreshfeq: 15 * 60 * 1000,
     level,
     name,
-    postInterval: 1000 * 1 * 60,
+    showinterval: 1000 * 1,
     isLeaf: false,
     coord
 };
