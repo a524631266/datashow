@@ -297,10 +297,21 @@ export default class Home extends Vue {
     position: relative;
 }
 
-span {
-  color: white !important;
+:global(.ant-progress-text) {
+  color: white ;
 }
-
+:global(.ant-fullcalendar-column-header-inner) {
+  color: white ;
+}
+:global(.ant-fullcalendar-last-month-cell .ant-fullcalendar-value) {
+    color: darkcyan;
+}
+:global(.ant-fullcalendar-next-month-btn-day .ant-fullcalendar-value){
+    color: darkcyan;
+}
+:global(.ant-fullcalendar-value) {
+    color: white;
+}
 .right-top{
     position:absolute;
     left:0%;

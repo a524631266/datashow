@@ -71,6 +71,11 @@
         <transition name="fade">
             <a-progress v-if="showprogress" :format="progressformat" strokeLinecap="square" :percent="percent" />
         </transition>
+        <transition name="fade" v-if="showprogress">
+             <div :style="{ width: '30%',position: 'absolute',bottom:0,right:0, border: '1px solid #d9d9d9', borderRadius: '2px' }">
+                <a-calendar @select="onSelect" :fullscreen="false" @panelChange="onPanelChange" v-model="showday" mode="month"/>
+             </div>
+        </transition>
     </div>
 </template>
 <script lang="ts">
@@ -79,8 +84,11 @@
 // import Component from 'vue-class-component'
 import { Component, Vue, Prop, Watch, Emit, Model } from "vue-property-decorator";
 import { PostParams,Dimension } from "@/types/index.ts";
-import moment,{ DurationInputObject } from "moment";
+import moment,{ DurationInputObject, Moment } from "moment";
 import Ant from "ant-design-vue";
+import 'moment/locale/zh-cn';
+moment.locale('zh-cn');
+// (window as any).moment = moment;
 @Component({
     components: {
         AProgress: Ant.Progress,
@@ -88,6 +96,7 @@ import Ant from "ant-design-vue";
         ARow: Ant.Row,
         ACol: Ant.Col,
         AButton: Ant.Button,
+        ACalendar: Ant.Calendar,
     },
     computed:{
         percent(): number {
@@ -107,13 +116,13 @@ import Ant from "ant-design-vue";
 export default class LittleBar extends Vue {
     @Prop({default: ""}) public titlename!: string;
     @Prop() public appendtimelist!: number[];
+    @Prop({default: moment()}) public showday!: Moment;
     // @Prop({default: "fa-sort-down"}) public showdownicon!: string;
     // @Model("changepostparams2") postparms2!: PostParams;
     @Model("changepostparams") public postparms!: PostParams;
     private highlightbarclass = "";
     private totaltimelen = 0;
     private show = true;
-    private some = 1;
     private data: PostParams = this.postparms;
     private showdownicon: string = "";
     private innershowInterval = 0;
@@ -152,7 +161,6 @@ export default class LittleBar extends Vue {
     public changeShow(showv: boolean | Event) {
         this.show = showv instanceof Event ? !this.show : showv;
         // console.log(this.show,showv , showv instanceof Event);
-        // this.some += 1;
     }
     // @Emit()
     // public ShowRangeSelect(show: boolean | any) {
@@ -183,7 +191,7 @@ export default class LittleBar extends Vue {
         this.innershowInterval = this.postparms.showinterval / 1000 * 20 ;
     }
     private destroyed() {
-        console.log((this as any).some);
+        // console.log((this as any).some);
     }
     private updatepostparams(value: any) {
         this.$emit("changepostparams", this.data);
@@ -218,6 +226,14 @@ export default class LittleBar extends Vue {
     }
     private restarttodraw() {
         this.$emit("restarttodraw");
+    }
+
+    private onPanelChange(value: any, mode: any) {
+      console.log(value, mode);
+    }
+    private onSelect(date: Moment) {
+        const querydate = moment(date,"YYYY-MM-DD").valueOf();
+        this.$emit("querydate",querydate);
     }
 }
 </script>
@@ -330,6 +346,7 @@ $littlebarheight: 24px;
   opacity: 0;
 }
 
+ 
 .siberbar {
     position: absolute;
     width: 33%;

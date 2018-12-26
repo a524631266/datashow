@@ -1,6 +1,6 @@
 <template>
   <div :class="positionClass" draggable="true" @dblclick="handledoubleclick">
-       <LittleBar @restarttodraw="restarttodraw" :appendtimelist="appendtimelist" :titlename="titlename" :show="positionClass === 'center'?false:true" v-model="postparms">
+       <LittleBar :showday="showday" @querydate="querydate" @restarttodraw="restarttodraw" :appendtimelist="appendtimelist" :titlename="titlename" :show="positionClass === 'center'?false:true" v-model="postparms">
             <BaseChartFactory :urlparas="urlparas" :positionClass="positionClass" :id="id" :option="option" :chartLibrary="chartLibrary" :handleclick="handleclick" @updateData="way2UpdateData" slot="chart"/>
         </LittleBar>
         <div v-text="nowtime" style="position:absolute;bottom:0;right:0;">
@@ -20,7 +20,9 @@ import Axios,{AxiosPromise} from "axios";
 import PubSub from 'pubsub-js';
 import { getDataPromise, PostPath } from "@/actions/axiosProxy.ts";
 import { updatestate } from "@/types/updateState.ts";
-import moment from "moment";
+import moment,{ Moment } from "moment";
+import 'moment/locale/zh-cn';
+moment.locale('zh-cn');
 // import 'echarts/map/js/province/xinjiang.js';
 const prev = process.env.NODE_ENV === "development"? "/xinjiang": "";
 const websocketurlhost = process.env.NODE_ENV === "development"? "192.168.10.63:8088": "localhost:8088";
@@ -60,6 +62,7 @@ export default class GeoMapEchart extends Vue {
     private redrawcount = 0;
     private timeoutcount = 0;
     private appendtimelist: number[] = [];
+    private showday!: Moment;
     private geolimiter: GeoLimiter = {
         limit: 3,
         positive: true,
@@ -268,9 +271,10 @@ export default class GeoMapEchart extends Vue {
         return promise;
     }
     @Emit()
-    private setTimeoutdraw(count: number) {
+    private setTimeoutdraw(count: number,loop: boolean) {
         // console.log(count);
         const nowtime = this.appendtimelist[count];
+        this.showday = moment(nowtime);
         const {length: timelen} = this.appendtimelist;
         if (timelen)  {
             this.timeoutcount = count;
@@ -285,9 +289,11 @@ export default class GeoMapEchart extends Vue {
                 count += 1;
             }
         }
-        this.intervalid.push(setTimeout(
-           () => {this.setTimeoutdraw(count);}
-        ,this.postparms.showinterval));
+        if(loop) {
+            this.intervalid.push(setTimeout(
+            () => {this.setTimeoutdraw(count,loop);}
+            ,this.postparms.showinterval));
+        }
     }
     /**
      * 初始化数据
@@ -384,7 +390,7 @@ export default class GeoMapEchart extends Vue {
         this.initBlackChart();
         // 4. 启动定时任务
         const count = 0;
-        this.setTimeoutdraw(count);
+        this.setTimeoutdraw(count,true);
         // this.option = {change:"redraw"};
     }
     private destroyed() {
@@ -544,7 +550,20 @@ export default class GeoMapEchart extends Vue {
     private restarttodraw() {
         this.clearIntervalnow();
         const count = 0;
-        this.setTimeoutdraw(count);
+        this.setTimeoutdraw(count,true);
+    }
+    /**
+     * 一旦时间没有，要重新获取数据
+     */
+    @Emit()
+    private querydate(ts: number) {
+        this.clearIntervalnow();
+        const index = this.appendtimelist.indexOf(ts);
+        if( index >= 0) {
+            this.setTimeoutdraw(index,false);
+        } else {
+            this.websocket.send(ts+"");
+        }
     }
 }
 </script>
