@@ -312,6 +312,17 @@ export default class Home extends Vue {
 :global(.ant-fullcalendar-value) {
     color: white;
 }
+:global(.ant-btn-circle) {
+    background: transparent;
+    border: 0;
+}
+:global(.ant-btn-circle:hover) {
+    background: gray;
+    border: 0;
+}
+:global(.anticon-play-circle){
+    color: white;
+}
 .right-top{
     position:absolute;
     left:0%;
