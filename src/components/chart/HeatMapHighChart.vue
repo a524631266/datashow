@@ -19,13 +19,15 @@ import PubSub from 'pubsub-js';
 import { HeatmapChart, HeatmapChartTrans } from '@/types/postreturnform';
 import {highchartEmptyOption} from "@/components/options/EmptyChart.ts";
 import { updatestate } from '@/types/updateState';
+import Axios from "axios";
+import { AxiosSourceManage } from "@/implements/AxiosSourceManage";
 @Component({
     components: {
         BaseChartFactory,
         LittleBar,
     }
 })
-export default class HeatMapHighChart extends Vue {
+export default class HeatMapHighChart extends Vue implements AxiosSourceManage {
     @Prop() public id!: string;
     @Prop() public urlparas!: PostParams;
     @Prop() public positionClass!: PositionClass;
@@ -33,11 +35,29 @@ export default class HeatMapHighChart extends Vue {
     @Model("changepostparams") public postparms!: PostParams;
     // @Provide('option')
     public option: Options = highchartEmptyOption();
-    public showinterval =  2000 ;
-    public entity =  "";
-    private intervalid = 0;
+    public axiosSource = Axios.CancelToken.source();
     private chartLibrary = ChartLibrary.highchart;
     private titlename = "热力图";
+    @Emit()
+    public cancelAxios() {
+      this.axiosSource.cancel("删除HeatMap");
+    }
+    @Emit()
+    public getData() {
+      // console.log("获取timeline数据");
+      const promise = getDataPromise<HeatmapChart,HeatmapChartTrans>(this.urlparas,PostPath.heatmap,this.axiosSource,this.dealData);
+      promise.then(
+        (data: string | HeatmapChartTrans) => {
+          if ( typeof data !== "string") {
+            const change = (this.option as any).change;
+            const option2 = drawHeatmapOptions(data, "HeatMap","" ,this.showTooltiop);
+            (option2 as any).change = updatestate.redraw;
+            this.option = option2 as any;
+            // console.log("timelinedata",this.option);
+          }
+        }
+      );
+    }
     private mounted() {
       // this.intervalid = setTimeout(
       //   () => {
@@ -51,27 +71,12 @@ export default class HeatMapHighChart extends Vue {
     }
     @Watch("urlparas.entity",  {deep : true})
     private redraw(val: boolean) {
+      this.cancelAxios();
       // this.option = drawHeatmapOptions([{x: "0",name: "",y: 0,value: 0}], "HeatMap","" ,this.showTooltiop) as any;
       this.option = highchartEmptyOption();
       console.log("上层图表 HeatMapHighCHart",this.postparms,this.id);
       this.getData();
       // 在这里开始做长轮询 定时从后台传数据
-    }
-    @Emit()
-    private getData() {
-      // console.log("获取timeline数据");
-      const promise = getDataPromise<HeatmapChart,HeatmapChartTrans>(this.urlparas,PostPath.heatmap,this.dealData);
-      promise.then(
-        (data: string | HeatmapChartTrans) => {
-          if ( typeof data !== "string") {
-            const change = (this.option as any).change;
-            const option2 = drawHeatmapOptions(data, "HeatMap","" ,this.showTooltiop);
-            (option2 as any).change = updatestate.redraw;
-            this.option = option2 as any;
-            // console.log("timelinedata",this.option);
-          }
-        }
-      );
     }
     private dealData(data: HeatmapChart): HeatmapChartTrans {
       let result: HeatmapChartTrans = [];
@@ -85,7 +90,7 @@ export default class HeatMapHighChart extends Vue {
     }
     private destroyed() {
       // console.log("destory (this as any).intervalid", (this as any).intervalid);
-      clearInterval(this.intervalid);
+      // clearInterval(this.intervalid);
     }
     @Emit()
     private handledoubleclick() {

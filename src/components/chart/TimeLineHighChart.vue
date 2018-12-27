@@ -19,13 +19,15 @@ import { TimeLineChart,TimeLineChartTrans } from "@/types/postreturnform.ts";
 import {highchartEmptyOption} from "@/components/options/EmptyChart.ts";
 import PubSub from 'pubsub-js';
 import { updatestate } from '@/types/updateState';
+import Axios from "axios";
+import { AxiosSourceManage } from "@/implements/AxiosSourceManage";
 @Component({
     components: {
         BaseChartFactory,
         LittleBar,
     }
 })
-export default class TimeLineHighChart extends Vue {
+export default class TimeLineHighChart extends Vue implements AxiosSourceManage {
     @Prop() public id!: string;
     @Prop() public urlparas!: PostParams;
     @Prop() public positionClass!: PositionClass;
@@ -33,27 +35,19 @@ export default class TimeLineHighChart extends Vue {
     @Model("changepostparams") public postparms!: PostParams;
     @Provide('option')
     public option: Options = highchartEmptyOption();
-    public showinterval =  2000 ;
-    public entity =  "";
-    private intervalid = 0;
+    public axiosSource = Axios.CancelToken.source();
     private chartLibrary = ChartLibrary.highchart;
     private titlename = "异常";
     // private mounted() {
     // }
-    @Watch("urlparas.entity",  {deep : true})
-    private redraw(val: boolean) {
-      this.option = highchartEmptyOption();
-      console.log("上层图表 TimeLineHighChart",this.postparms,this.id);
-      this.getData();
-      // 在这里开始做长轮询 定时从后台传数据
-    }
-    private destroyed() {
-      clearInterval(this.intervalid);
+    @Emit()
+    public cancelAxios() {
+      this.axiosSource.cancel("关闭timeline");
     }
     @Emit()
-    private getData() {
+    public getData() {
       // console.log("获取timeline数据");
-      const promise = getDataPromise<TimeLineChart,TimeLineChartTrans>(this.urlparas,PostPath.exceptionOutput,this.dealData);
+      const promise = getDataPromise<TimeLineChart,TimeLineChartTrans>(this.urlparas,PostPath.exceptionOutput,this.axiosSource,this.dealData);
       promise.then(
         (data: string | TimeLineChartTrans) => {
           if ( typeof data !== "string") {
@@ -65,6 +59,17 @@ export default class TimeLineHighChart extends Vue {
           }
         }
       );
+    }
+    @Watch("urlparas.entity",  {deep : true})
+    private redraw(val: boolean) {
+      this.cancelAxios();
+      this.option = highchartEmptyOption();
+      console.log("上层图表 TimeLineHighChart",this.postparms,this.id);
+      this.getData();
+      // 在这里开始做长轮询 定时从后台传数据
+    }
+    private destroyed() {
+      // clearInterval(this.intervalid);
     }
     private dealData(data: TimeLineChart): TimeLineChartTrans {
       let result: TimeLineChartTrans = [];

@@ -20,13 +20,15 @@ import PubSub from 'pubsub-js';
 import { SingleTrendChart, RegionTrendChart,TrendChartTrans } from '@/types/postreturnform';
 import {highchartEmptyOption} from "@/components/options/EmptyChart.ts";
 import { updatestate } from '@/types/updateState';
+import Axios from "axios";
+import { AxiosSourceManage } from "@/implements/AxiosSourceManage";
 @Component({
     components: {
         BaseChartFactory,
         LittleBar,
     }
 })
-export default class TrendHighChart extends Vue {
+export default class TrendHighChart extends Vue implements AxiosSourceManage {
     @Prop() public id!: string;
     @Prop() public urlparas!: PostParams;
     @Prop() public positionClass!: PositionClass;
@@ -34,22 +36,17 @@ export default class TrendHighChart extends Vue {
     @Model("changepostparams") public postparms!: PostParams;
     @Provide('option')
     public option: Options = highchartEmptyOption();
-    public showinterval =  2000 ;
-    public entity =  "";
-    private intervalid = 0;
+    public axiosSource = Axios.CancelToken.source();
     private chartLibrary = ChartLibrary.highchart;
     private titlename = "趋势";
-    @Watch("urlparas.entity",  {deep : true})
-    private redraw(val: boolean) {
-      this.option = highchartEmptyOption();
-      console.log("上层图表 TrendHighChart",this.postparms,this.id);
-      this.getData();
-      // 在这里开始做长轮询 定时从后台传数据
+    @Emit()
+    public cancelAxios() {
+      this.axiosSource.cancel("趋势图关闭");
     }
     @Emit()
-    private getData() {
+    public getData() {
       // console.log("获取TopHighChart数据");
-      const promise = getDataPromise<SingleTrendChart | RegionTrendChart,TrendChartTrans>(this.urlparas,this.urlparas.isLeaf?PostPath.singleLineChart:PostPath.regionLineChart,this.dealData);
+      const promise = getDataPromise<SingleTrendChart | RegionTrendChart,TrendChartTrans>(this.urlparas,this.urlparas.isLeaf?PostPath.singleLineChart:PostPath.regionLineChart,this.axiosSource,this.dealData);
       promise.then(
         (data: string | TrendChartTrans) => {
           if ( typeof data !== "string") {
@@ -61,6 +58,14 @@ export default class TrendHighChart extends Vue {
           }
         }
       );
+    }
+    @Watch("urlparas.entity",  {deep : true})
+    private redraw(val: boolean) {
+      this.cancelAxios();
+      this.option = highchartEmptyOption();
+      console.log("上层图表 TrendHighChart",this.postparms,this.id);
+      this.getData();
+      // 在这里开始做长轮询 定时从后台传数据
     }
     private dealData(data: SingleTrendChart | RegionTrendChart): TrendChartTrans {
       let result: TrendChartTrans = [];
@@ -96,7 +101,7 @@ export default class TrendHighChart extends Vue {
     }
     private destroyed() {
       // console.log("destory (this as any).intervalid", (this as any).intervalid);
-      clearInterval(this.intervalid);
+      // clearInterval(this.intervalid);
     }
     @Emit()
     private handledoubleclick() {

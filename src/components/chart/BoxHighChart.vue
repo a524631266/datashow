@@ -21,6 +21,8 @@ import echarts from "echarts";
 import "echarts/dist/extension/dataTool.min.js";
 import {highchartEmptyOption} from "@/components/options/EmptyChart.ts";
 import { updatestate } from '@/types/updateState';
+import Axios from "axios";
+import { AxiosSourceManage } from "@/implements/AxiosSourceManage";
 // import { Component } from "vue-property-decorator";
 // @Component({
 //     components:{
@@ -33,7 +35,7 @@ import { updatestate } from '@/types/updateState';
         LittleBar,
     }
 })
-export default class BoxHighChart extends Vue {
+export default class BoxHighChart extends Vue implements AxiosSourceManage {
     @Prop() public id!: string;
     @Prop() public urlparas!: PostParams;
     @Prop() public positionClass!: PositionClass;
@@ -41,22 +43,17 @@ export default class BoxHighChart extends Vue {
     @Model("changepostparams") public postparms!: PostParams;
     // @Provide('option')
     public option: Options = highchartEmptyOption();
-    public entity =  "";
-    private intervalid = 0;
+    public axiosSource = Axios.CancelToken.source();
     private chartLibrary = ChartLibrary.highchart;
     private titlename = "统计";
-    @Watch("urlparas.entity",  {deep : true})
-    private redraw(val: boolean) {
-      // this.option = {} as any;
-      this.option = drawBoxOptions([], [] , this.id) as any;
-      console.log("上层图表 BoxHighcart变动",this.postparms,this.id);
-      this.getData();
-      // 在这里开始做长轮询 定时从后台传数据
+    @Emit()
+    public cancelAxios() {
+      this.axiosSource.cancel("删除组织box");
     }
     @Emit()
-    private getData() {
+    public getData() {
       // console.log("获取timeline数据");
-      const promise = getDataPromise<RegionBoxChart ,BoxChartTrans>(this.urlparas,PostPath.regionBoxChart,this.dealData);
+      const promise = getDataPromise<RegionBoxChart ,BoxChartTrans>(this.urlparas,PostPath.regionBoxChart,this.axiosSource,this.dealData);
       promise.then(
         (data: string | BoxChartTrans) => {
           // console.log("data",data);
@@ -69,6 +66,15 @@ export default class BoxHighChart extends Vue {
           }
         }
       );
+    }
+    @Watch("urlparas.entity",  {deep : true})
+    private redraw(val: boolean) {
+      this.cancelAxios();
+      // this.option = {} as any;
+      this.option = drawBoxOptions([], [] , this.id) as any;
+      console.log("上层图表 BoxHighcart变动",this.postparms,this.id);
+      this.getData();
+      // 在这里开始做长轮询 定时从后台传数据
     }
     private dealData(data: RegionBoxChart): BoxChartTrans {
       const result: BoxChartTrans = {xAxis:[],boxchart:[]} as any;
@@ -133,7 +139,7 @@ export default class BoxHighChart extends Vue {
     }
     private destroyed() {
       // console.log("destory (this as any).intervalid", (this as any).intervalid);
-      clearInterval(this.intervalid);
+      // clearInterval(this.intervalid);
     }
     @Emit()
     private handledoubleclick() {

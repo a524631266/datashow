@@ -19,13 +19,15 @@ import PubSub from 'pubsub-js';
 import { TopChart, TopChartTrans } from '@/types/postreturnform';
 import {highchartEmptyOption} from "@/components/options/EmptyChart.ts";
 import { updatestate } from '@/types/updateState';
+import Axios from "axios";
+import { AxiosSourceManage } from "@/implements/AxiosSourceManage";
 @Component({
     components: {
         BaseChartFactory,
         LittleBar,
     }
 })
-export default class TopHighChart extends Vue {
+export default class TopHighChart extends Vue implements AxiosSourceManage {
     @Prop() public id!: string;
     @Prop() public urlparas!: PostParams;
     @Prop() public positionClass!: PositionClass;
@@ -33,24 +35,19 @@ export default class TopHighChart extends Vue {
     @Model("changepostparams") public postparms!: PostParams;
     @Provide('option')
     public option: Options = highchartEmptyOption();
-    public showinterval =  2000 ;
-    public entity =  "";
-    private intervalid = 0;
+    public axiosSource = Axios.CancelToken.source();
     private chartLibrary = ChartLibrary.highchart;
     private titlename = "重点";
     // private mounted() {
     // }
-    @Watch("urlparas.entity",  {deep : true})
-    private redraw(val: boolean) {
-      this.option = highchartEmptyOption();
-      console.log("上层图表  TopHighChart",this.postparms,this.id);
-      this.getData();
-      // 在这里开始做长轮询 定时从后台传数据
+    @Emit()
+    public cancelAxios() {
+      this.axiosSource.cancel("关闭重点图表");
     }
     @Emit()
-    private getData() {
+    public getData() {
       // console.log("获取TopHighChart数据");
-      const promise = getDataPromise<TopChart,TopChartTrans>(this.urlparas,PostPath.topChart,this.dealData);
+      const promise = getDataPromise<TopChart,TopChartTrans>(this.urlparas,PostPath.topChart,this.axiosSource,this.dealData);
       promise.then(
         (data: string | TopChartTrans) => {
           if ( typeof data !== "string") {
@@ -62,6 +59,14 @@ export default class TopHighChart extends Vue {
           }
         }
       );
+    }
+    @Watch("urlparas.entity",  {deep : true})
+    private redraw(val: boolean) {
+      this.cancelAxios();
+      this.option = highchartEmptyOption();
+      console.log("上层图表  TopHighChart",this.postparms,this.id);
+      this.getData();
+      // 在这里开始做长轮询 定时从后台传数据
     }
     private dealData(data: TopChart): TopChartTrans {
       let result: TopChartTrans = [];
@@ -78,7 +83,7 @@ export default class TopHighChart extends Vue {
     }
     private destroyed() {
       // console.log("destory (this as any).intervalid", (this as any).intervalid);
-      clearInterval(this.intervalid);
+      // clearInterval(this.intervalid);
     }
     @Emit()
     private handledoubleclick() {

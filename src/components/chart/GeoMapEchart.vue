@@ -22,6 +22,7 @@ import { getDataPromise, PostPath } from "@/actions/axiosProxy.ts";
 import { updatestate } from "@/types/updateState.ts";
 import moment,{ Moment } from "moment";
 import 'moment/locale/zh-cn';
+import { AxiosSourceManage } from "@/implements/AxiosSourceManage";
 moment.locale('zh-cn');
 // import 'echarts/map/js/province/xinjiang.js';
 const prev = process.env.NODE_ENV === "development"? "/xinjiang": "";
