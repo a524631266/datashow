@@ -64,22 +64,22 @@ export default class BaseChartFactory extends Vue {
     }
     @Watch("option.change",{deep: true})
     private redrawChart(newVal: updatestate, oldVal: updatestate) {
-    //    console.log("options变化",newVal, oldVal,this.id);
-       if(newVal !== oldVal && this.chartLibrary === ChartLibrary.highchart) {
+       console.log("options变化",newVal, oldVal,this.id);
+       if(this.chartLibrary === ChartLibrary.highchart) {
             if (this.chartInstance) {
                 // console.log("1");
                 // (this.chartInstance as any).reflow();
-                if(oldVal === updatestate.redraw) { // 前一次数据为undefined的时候，为新的option因此需要重画
+                if(newVal === updatestate.redraw) { // 前一次数据为undefined的时候，为新的option因此需要重画
                     // this.destroyed();
                     this.chartInstance = Highcharts.chart(this.id, this.option) as any;
                     this.showLoading = false;
                 } else { // highchart增量更新数据的时候操作
-                    this.showLoading = false;
+                    // this.showLoading = false;
                     this.$emit("updateData",this.chartInstance,this.option);
                 }
             } else {
                 this.chartInstance = Highcharts.chart(this.id, this.option) as any;
-                this.showLoading = false;
+                // this.showLoading = false;
             }
             this.toggleHighChartLegend();
             if (this.id === "chart-heatmap") {

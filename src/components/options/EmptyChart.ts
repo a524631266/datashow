@@ -19,7 +19,7 @@ export const highchartEmptyOption = () => {
         credits: {
             enabled: false
         },
-        change: updatestate.redraw,
+        // change: updatestate.redraw,
     };
 };
 
