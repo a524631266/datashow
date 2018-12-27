@@ -74,12 +74,12 @@ export default class BaseChartFactory extends Vue {
                     this.chartInstance = Highcharts.chart(this.id, this.option) as any;
                     this.showLoading = false;
                 } else { // highchart增量更新数据的时候操作
-                    this.showLoading = true;
+                    this.showLoading = false;
                     this.$emit("updateData",this.chartInstance,this.option);
                 }
             } else {
                 this.chartInstance = Highcharts.chart(this.id, this.option) as any;
-                this.showLoading = true;
+                this.showLoading = false;
             }
             this.toggleHighChartLegend();
             if (this.id === "chart-heatmap") {
