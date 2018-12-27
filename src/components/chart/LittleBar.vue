@@ -36,7 +36,7 @@
                                 <option label="1d" value="86400" selected="true"></option>
                             </select>
                         <div class="input-group-addon">
-                            <button class="btn btn-secondary btn-sm" type="submit" @click.prevent="updatepostparams">查询</button>
+                            <button class="btn btn-secondary btn-sm" type="submit" @click.prevent="queryInitWebSocket">查询</button>
                         </div>
                     </div>
                 </form>
@@ -44,7 +44,7 @@
                     <h3 class="section-heading">时段范围</h3>
                     <div class="card-group">
                         <ul v-for="(data,index) in rangeselectlist" :key="index" class="card list-group list-group-flush">
-                            <li v-for="(item,index) in data" :key="index" class="list-group-item small" @click="licktimeselectrange(item.value)">{{item.day}}</li>
+                            <li v-for="(item,index) in data" :key="index" class="list-group-item h6" :class="item.day===activeitem?'active':''" @click="licktimeselectrange(item)">{{item.day}}</li>
                         </ul>
                     </div>
                     
@@ -73,7 +73,7 @@
         <!-- </transition> -->
         <!-- <transition name="fade" > -->
              <div v-if="showprogress" :style="{ width: '30%',position: 'absolute',bottom:0,right:0, border: '1px solid #d9d9d9', borderRadius: '2px' }">
-                <a-calendar @select="onSelect" :fullscreen="false" @panelChange="onPanelChange" v-model="showday" mode="month"/>
+                <a-calendar @select="onSelect" :fullscreen="false" @panelChange="onPanelChange" v-model="showdayLocal" mode="month"/>
              </div>
         <!-- </transition> -->
     </div>
@@ -85,18 +85,18 @@
 import { Component, Vue, Prop, Watch, Emit, Model } from "vue-property-decorator";
 import { PostParams,Dimension, PositionClass } from "@/types/index.ts";
 import moment,{ DurationInputObject, Moment } from "moment";
-import Ant from "ant-design-vue";
+import Antd from "ant-design-vue";
 import 'moment/locale/zh-cn';
 moment.locale('zh-cn');
 // (window as any).moment = moment;
 @Component({
     components: {
-        AProgress: Ant.Progress,
-        ASlider: Ant.Slider,
-        ARow: Ant.Row,
-        ACol: Ant.Col,
-        AButton: Ant.Button,
-        ACalendar: Ant.Calendar,
+        AProgress: Antd.Progress,
+        ASlider: Antd.Slider,
+        ARow: Antd.Row,
+        ACol: Antd.Col,
+        AButton: Antd.Button,
+        ACalendar: Antd.Calendar,
     },
     computed:{
         percent(): number {
@@ -121,6 +121,8 @@ export default class LittleBar extends Vue {
     // @Prop({default: "fa-sort-down"}) public showdownicon!: string;
     // @Model("changepostparams2") postparms2!: PostParams;
     @Model("changepostparams") public postparms!: PostParams;
+    private showdayLocal = this.showday;
+    private activeitem = "";
     private highlightbarclass = "";
     private totaltimelen = 0;
     private show = true;
@@ -150,8 +152,12 @@ export default class LittleBar extends Vue {
     private rangeselectlist = [
         [{day:" Last 2 days ",value: [2,'d']},{day:"Last 7 days ",value: [7,'d']},{day:"Last 30 days",value: [30,'d']},{day:"Last 90 days",value: [90,'d']},{day:"Last 6 months",value: [6,'M']},{day:"Last 1 year",value: [1,'y']},{day:"Last 2 years",value: [2,'y']},{day:"Last 5 years",value: [5,'y']},],
         [{day:"Yesterday ",value: [1,'d']},{day:"Day before yesterday",value: [2,'d']},{day:"This day last week ",value: [1,'w']},{day:"last month ",value: [1,'M']},{day:"last year ",value: [1,'y']},],
-        [{day:"Today ",value: [1,'d']},{day:"This week ",value: [1,'w']},{day:"This month ",value: [1,'M']},{day:"This year ",value: [1,'y']}],
+        [{day:"Today ",value: [0,'d'],type: "this"},{day:"This week ",value: [1,'w'],type: "this"},{day:"This month ",value: [1,'M'],type: "this"},{day:"This year ",value: [1,'y'],type: "this"}],
     ];
+    @Watch("showday")
+    public setShowdayLocal(newval: any) {
+        this.showdayLocal = newval;
+    }
     @Watch("innershowInterval")
     public setInterval(newval: any,oldval: any) {
         // console.log("newval:",newval,"oldval：",oldval);
@@ -177,10 +183,16 @@ export default class LittleBar extends Vue {
         this.highlightbarclass = show ? "table-dark":"";
     }
     @Emit()
-    public licktimeselectrange(value: [any,string]) {
-        this.data.starttime = moment().subtract(value[0],value[1]).format("YYYY-MM-DD HH:mm:ss");
-        this.data.endtime = moment().format("YYYY-MM-DD HH:mm:ss");
+    public licktimeselectrange(item: {value: [any,string],day: string,type: string}) {
+        if (item.type === "this") {
+            this.data.starttime = moment().startOf(item.value[1] as any).format("YYYY-MM-DD HH:mm:ss");
+            this.data.endtime = moment().format("YYYY-MM-DD HH:mm:ss");
+        } else {
+            this.data.starttime = moment().subtract(item.value[0],item.value[1]).startOf("day").format("YYYY-MM-DD HH:mm:ss");
+            this.data.endtime = moment().format("YYYY-MM-DD HH:mm:ss");
+        }
         // moment().subtract()
+        this.activeitem = item.day;
     }
     private mounted() {
         // console.log("111111","加载");
@@ -194,9 +206,11 @@ export default class LittleBar extends Vue {
     private destroyed() {
         // console.log((this as any).some);
     }
-    private updatepostparams(value: any) {
+    @Emit()
+    private queryInitWebSocket(value: any) {
         // this.$emit("changepostparams", this.data);
         this.$emit("redraw");
+        this.show = true;
     }
     private formatter(value: any) {
         if (value/20 < 1) {
@@ -236,7 +250,7 @@ export default class LittleBar extends Vue {
 
     private onSelect(date: Moment) {
         const querydate = moment(date,"YYYY-MM-DD").startOf("day").valueOf();
-        this.$emit("querydate",querydate);
+        this.$emit("querydate",querydate,true);
     }
 }
 </script>

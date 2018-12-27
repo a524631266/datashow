@@ -6,12 +6,12 @@
 
 <script lang='ts'>
 import { Component, Vue, Prop, Emit, Watch } from 'vue-property-decorator';
-import Ant from "ant-design-vue";
+import Antd from "ant-design-vue";
 import PubSub from 'pubsub-js';
 @Component({
     components: {
-        AButton:Ant.Button,
-        AIcon: Ant.icon,
+        AButton:Antd.Button,
+        AIcon: Antd.icon,
     },
 })
 export default class FloatBotton extends Vue {

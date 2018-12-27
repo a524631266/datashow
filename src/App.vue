@@ -28,9 +28,8 @@ import SlotBar from "@/components/SlotBar.vue";
 // import FloatBotton from "@/components/bar/FloatBotton.vue";
 import LeftBar from "@/components/bar/LeftBar.vue";
 import PubSub from 'pubsub-js';
-import Ant from "ant-design-vue";
+import Antd from "ant-design-vue";
 import TooltipRoute from '@/components/bar/TooltipRoute.vue';
-// import Ant from "ant-design-vue";
 // tslint:disable-next-line:no-var-requires
 // const { Button, message }  = require('ant-design-vue');
 // tslint:disable-next-line:no-var-requires
@@ -40,10 +39,10 @@ import TooltipRoute from '@/components/bar/TooltipRoute.vue';
     // AButton:Button,
     // AMessage:message
     LeftBar,
-    ALayout: Ant.Layout,
-    ALayoutSider: Ant.Layout.Sider,
-    ALayoutHeader: Ant.Layout.Header,
-    ALayoutContent: Ant.Layout.Content,
+    ALayout: Antd.Layout,
+    ALayoutSider: Antd.Layout.Sider,
+    ALayoutHeader: Antd.Layout.Header,
+    ALayoutContent: Antd.Layout.Content,
     TooltipRoute
   }
 })

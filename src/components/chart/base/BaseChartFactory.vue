@@ -1,17 +1,28 @@
 <template>
-    <div class="innerChart" ref="id" :id="id" style="absolute">
+    <div style="absolute" class="innerChart">
+        <div  ref="id" :id="id" class="innerChart">
+        </div>
+        <a-spin tip="Loading..." v-show="showLoading" :style="{position:'absolute',top: '50%',left: '50%',transform: 'translateY(-50%) translateX(-50%)' }">
+            <div class="spin-content">
+                正在获取中
+            </div>
+        </a-spin>
     </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop, Emit, Model, Watch, Inject } from 'vue-property-decorator';
 import Highcharts, { Options , HeatMapSeriesOptions} from 'highcharts';
-import echarts from "echarts";
+import echarts,{ ECharts } from "echarts";
 import { PositionClass , PostParams, ChartLibrary } from '@/types/index';
-import "echarts/map/js/china";
+// import "echarts/map/js/china";
 import 'echarts/lib/chart/heatmap';
+import Antd from "ant-design-vue";
 import { updatestate } from '@/types/updateState';
 @Component({
+    components: {
+        ASpin: Antd.Spin,
+    }
 })
 export default class BaseChartFactory extends Vue {
     @Prop() public id!: string;
@@ -26,6 +37,7 @@ export default class BaseChartFactory extends Vue {
     // @Prop() public updateData!: Function;
     private data = [];
     private chartInstance = null;
+    private showLoading = false;
     public mounted() {
         // console.log("1111111")
     }
@@ -34,7 +46,7 @@ export default class BaseChartFactory extends Vue {
      */
     @Watch("urlparas.entity",{deep:true})
     private initChart(newVal: object, oldVal: object) {
-        console.log("entity变化了 :new entity",this.id,newVal,";oldeVal",oldVal);
+        // console.log("entity变化了 :new entity",this.id,newVal,";oldeVal",oldVal);
         // 如果之前有图表的话直接销毁图表
         if (this.chartInstance && this.chartLibrary === ChartLibrary.highchart) {
             // (this.chartInstance as any).showLoading();
@@ -45,13 +57,14 @@ export default class BaseChartFactory extends Vue {
             (this.chartInstance as any).dispose();
             this.chartInstance = null;
         }
+        this.showLoading = true;
         // this.redrawChart(newVal, oldVal);
         // this.$emit("getData");
         // tslint:disable-next-line:no-unused-expression
     }
     @Watch("option.change",{deep: true})
     private redrawChart(newVal: updatestate, oldVal: updatestate) {
-       console.log("options变化",newVal, oldVal,this.id);
+    //    console.log("options变化",newVal, oldVal,this.id);
        if(newVal !== oldVal && this.chartLibrary === ChartLibrary.highchart) {
             if (this.chartInstance) {
                 // console.log("1");
@@ -59,11 +72,14 @@ export default class BaseChartFactory extends Vue {
                 if(oldVal === updatestate.redraw) { // 前一次数据为undefined的时候，为新的option因此需要重画
                     // this.destroyed();
                     this.chartInstance = Highcharts.chart(this.id, this.option) as any;
+                    this.showLoading = true;
                 } else { // highchart增量更新数据的时候操作
+                    this.showLoading = true;
                     this.$emit("updateData",this.chartInstance,this.option);
                 }
             } else {
                 this.chartInstance = Highcharts.chart(this.id, this.option) as any;
+                this.showLoading = true;
             }
             this.toggleHighChartLegend();
             if (this.id === "chart-heatmap") {
@@ -74,10 +90,10 @@ export default class BaseChartFactory extends Vue {
             if (this.chartInstance) { // echart增量更新数据的时候操作
                 // console.log("Echart111111111111111111");
                 this.$emit("updateData",this.chartInstance,this.option);
-
+                this.showLoading = false; // 因为echart是默认先加载地图，数据还没有返回的情况下
                 // this.updateData(this.chartInstance,this.option); //
             } else {
-                console.log("resechart");
+                // console.log("resechart");
                 const nodeid = document.getElementById(this.id);
                 const mychart = echarts.init(nodeid as any);
                 mychart.setOption(JSON.parse(JSON.stringify(this.option)));
@@ -122,7 +138,7 @@ export default class BaseChartFactory extends Vue {
     @Watch('positionClass',{deep: true})
     private reflowChart(newVal: object, oldVal: object) {
         // console.log("posiontClass Change");
-        console.log("positionClass",this.id,this.chartInstance,this.chartLibrary);
+        // console.log("positionClass",this.id,this.chartInstance,this.chartLibrary);
         if (this.chartInstance && this.chartLibrary === ChartLibrary.highchart) {
             this.toggleHighChartLegend();
             if (this.id === "chart-heatmap") {
@@ -146,7 +162,7 @@ export default class BaseChartFactory extends Vue {
             (this.chartInstance as any).dispose();
         }
         this.chartInstance = null;
-        console.log("路由切换的时候是否销毁组件","111111",this.id);
+        // console.log("路由切换的时候是否销毁组件","111111",this.id);
     }
 }
 </script>

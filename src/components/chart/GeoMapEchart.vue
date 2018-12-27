@@ -13,7 +13,7 @@ import { Component, Vue, Prop, Emit, Watch, Model, Provide} from 'vue-property-d
 import LittleBar from "@/components/chart/LittleBar.vue";
 import BaseChartFactory from "@/components/chart/base/BaseChartFactory.vue";
 import { PositionClass , PostParams , ChartLibrary, MeasureName,ReturnGeoData,GeoTransData,ChartStorePool, ReturnGeoDataWsHead,ReturnGeoDataWsBody} from '@/types/index';
-import { getGeoChinaProvinceOptionConfig, getGeoCityOptionConfig, GeoData, provinceMap,ProvinceMapData, Points, testPointsdata, cityMap,getCityMapIdByName, getProvinceMapIdByName, GeoTestData, GeoLimiter} from '@/components/options/GeoOptions.ts';
+import { getGeoChinaProvinceOptionConfig, getGeoCityOptionConfig, GeoData, provinceMap,ProvinceMapData, Points, testPointsdata, cityMap,getCityMapIdByName, getProvinceMapIdByName, GeoTestData, GeoLimiter, GeoMapPictureFormat, GeoMapPictureFeatureFormat, GeoMapPictureFeaturePropertiesFormat} from '@/components/options/GeoOptions.ts';
 import echarts,{ ECharts, EChartOption, EChartsOptionConfig } from "echarts";
 import { provincedata} from '@/components/options/ProvinceOptions.ts';
 import Axios,{AxiosPromise} from "axios";
@@ -29,7 +29,7 @@ const websocketurlhost = process.env.NODE_ENV === "development"? "192.168.10.63:
 @Component({
     components: {
         LittleBar,
-        BaseChartFactory
+        BaseChartFactory,
     },
     computed: {
         nowtime() {
@@ -62,6 +62,7 @@ export default class GeoMapEchart extends Vue {
     private redrawcount = 0;
     private timeoutcount = 0;
     private appendtimelist: number[] = [];
+    private mapnames: GeoMapPictureFeaturePropertiesFormat[]= [];
     private showday!: Moment;
     private geolimiter: GeoLimiter = {
         limit: 3,
@@ -186,6 +187,21 @@ export default class GeoMapEchart extends Vue {
     //     );
     // }
     /**
+     * 重新复制name以及数据
+     */
+    private preInsertUnfindMapData(childlabel: string[]): ProvinceMapData[] {
+        const result: ProvinceMapData[] = [];
+        console.log("this.mapnames",this.mapnames);
+        this.mapnames.forEach(
+            (item)=> {
+                if(!childlabel.includes(item.name)) {
+                    result.push({id: "",name: item.name,coord: item.cp,value: -1});
+                }
+            }
+        );
+        return result;
+    }
+    /**
      * 处理数据的函数，用来把source数据源变成target目标数据源的结构
      * 等级在小于4的情况下，也即是大于区的时候
      */
@@ -200,8 +216,7 @@ export default class GeoMapEchart extends Vue {
         if (childlabel !== undefined) {
             childlabel.forEach(
                 (name: string,index: number) => {
-                    result.provinceArray.push({id: childid[index],name,coord: fathercoord[index],value:1});
-                    // data.provinceArray.push({id: childid[index],name,coord: [0,0],value:0});
+                    result.provinceArray.push({id: childid[index]+"",name,coord: fathercoord[index],value:1});
                 }
             );
         } else {
@@ -210,11 +225,12 @@ export default class GeoMapEchart extends Vue {
             const {childlabel: childlabel2,childid: childid2,coord: fathercoord2} = this.geoheaddata.geomap;
             childlabel2.forEach(
                 (name: string,index: number) => {
-                    result.provinceArray.push({id: childid2[index],name,coord: fathercoord2[index],value:1});
-                    // data.provinceArray.push({id: childid[index],name,coord: [0,0],value:0});
+                    result.provinceArray.push({id: childid2[index]+"",name,coord: fathercoord2[index],value:1});
                 }
             );
         }
+        // 置换数据
+        result.provinceArray = [...this.preInsertUnfindMapData(childlabel),...result.provinceArray];
         // if (point !== undefined) {
         const {coord,value:pointvalue} = point;
         coord.forEach(
@@ -305,6 +321,7 @@ export default class GeoMapEchart extends Vue {
         this.appendtimelist = [];
         this.geoBodydata = {};
         this.geoheaddata= {geomap:{}} as any;
+        this.mapnames = [];
     }
     private mounted() {
         console.log("geo 加载");
@@ -452,7 +469,15 @@ export default class GeoMapEchart extends Vue {
             // const data: Points[]= this.randomlastdata(100);
             // newoption.series[1].data = data;
             // console.log("oldoption",newoption);
+            //  222222
+            // const oldoption = chart.getOption();
+            // oldoption.series[0].data =  JSON.parse(JSON.stringify(newoption.series[0].data));
+            // oldoption.series[1].data =  JSON.parse(JSON.stringify(newoption.series[1].data));
+            // (chart as any).setOption(oldoption);
+            // (chart as any).setOption(newoption);
+            newoption =  JSON.parse(JSON.stringify(newoption));
             (chart as any).setOption(newoption);
+            console.log("this.newoption",newoption);
         }
     }
     @Emit()
@@ -468,6 +493,13 @@ export default class GeoMapEchart extends Vue {
             async (result)=> {
             // console.log(result)
             await echarts.registerMap(name,result.data);
+            const featureslist: GeoMapPictureFeatureFormat[] = result.data.features as any;
+            this.mapnames = [];
+            featureslist.forEach(
+                (value) => {
+                    this.mapnames.push(value.properties);
+                }
+            );
             return "success";
         }).catch(
             (err) => {
@@ -527,8 +559,8 @@ export default class GeoMapEchart extends Vue {
      * 地图下钻的时候触发的事件
      */
     private handleclick(params: any) {
-        if ( params.data === undefined) {
-                alert('无数据无法向下钻取');
+        if ( params.data === undefined || params.data.id === "") {
+                this.$message.error('数据库后台暂时没有指定的组织id', 2);
                 return ;
         } else {
             const { name , id , coord} = params.data as any;
@@ -549,18 +581,23 @@ export default class GeoMapEchart extends Vue {
         const count = 0;
         this.setTimeoutdraw(count,true);
     }
+
     /**
      * 一旦时间没有，要重新获取数据
      */
     @Emit()
-    private querydate(ts: number) {
+    private querydate(ts: number,send: boolean) {
         this.clearIntervalnow();
-        console.log("tsts",ts);
+        console.log("tsts",ts,send);
         const index = this.appendtimelist.indexOf(ts);
         if( index >= 0) {
             this.setTimeoutdraw(index,false);
         } else {
-            this.websocket.send(ts+"");
+            if(send) {
+                this.websocket.send(ts+"");
+            }
+            // 等待一秒看看是否有数据，没有数据就再等
+            setTimeout(()=>this.querydate(ts,false),1000);
         }
     }
 }

@@ -150,5 +150,9 @@ export default class BoxHighChart extends Vue {
 </script>
 
 <style scoped>
-
+.spin-content{
+    border: 1px solid #91d5ff;
+    background-color: #e6f7ff;
+    padding: 30px;
+  }
 </style>

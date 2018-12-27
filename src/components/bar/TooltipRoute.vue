@@ -23,11 +23,11 @@
 
 <script lang='ts'>
 import { Component, Vue, Prop, Emit, Watch } from 'vue-property-decorator';
-import Ant from "ant-design-vue";
+import Antd from "ant-design-vue";
 import { ChildrenValue } from "@/components/bar/LeftBar.vue";
 @Component({
     components: {
-        APopover: Ant.Popover
+        APopover: Antd.Popover
     },
 })
 export default class TooltipRoute extends Vue {

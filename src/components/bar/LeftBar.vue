@@ -45,7 +45,7 @@
 <script lang='ts'>
 import { Component, Vue, Prop, Emit, Watch } from 'vue-property-decorator';
 const prev = process.env.NODE_ENV === "development"? "/tree": "";
-import Ant from "ant-design-vue";
+import Antd from "ant-design-vue";
 import Axios from "axios";
 import { entity,name,level } from "@/actions/initOptions.ts";
 export interface ChildrenValue {
@@ -70,10 +70,10 @@ export interface ChildrenValue {
 
 @Component({
     components: {
-        ATree:Ant.Tree,
-        // ATreeSelect: Ant.TreeSelect,
-        // ATooltip: Ant.Tooltip,
-        // APopover: Ant.Popover
+        ATree:Antd.Tree,
+        // ATreeSelect: Antd.TreeSelect,
+        // ATooltip: Antd.Tooltip,
+        // APopover: Antd.Popover
     },
 })
 export default class LeftBar extends Vue {
