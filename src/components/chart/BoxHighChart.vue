@@ -49,6 +49,8 @@ export default class BoxHighChart extends Vue implements AxiosSourceManage {
     @Emit()
     public cancelAxios() {
       this.axiosSource.cancel("删除组织box");
+      // new source
+      this.axiosSource = Axios.CancelToken.source();
     }
     @Emit()
     public getData() {

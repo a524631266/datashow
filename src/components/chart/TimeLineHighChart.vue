@@ -43,6 +43,8 @@ export default class TimeLineHighChart extends Vue implements AxiosSourceManage 
     @Emit()
     public cancelAxios() {
       this.axiosSource.cancel("关闭timeline");
+      // new source
+      this.axiosSource = Axios.CancelToken.source();
     }
     @Emit()
     public getData() {

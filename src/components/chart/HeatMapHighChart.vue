@@ -41,6 +41,8 @@ export default class HeatMapHighChart extends Vue implements AxiosSourceManage {
     @Emit()
     public cancelAxios() {
       this.axiosSource.cancel("删除HeatMap");
+      // new source
+      this.axiosSource = Axios.CancelToken.source();
     }
     @Emit()
     public getData() {

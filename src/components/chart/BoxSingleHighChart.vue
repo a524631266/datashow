@@ -49,6 +49,8 @@ export default class BoxSingleHighChart extends Vue implements AxiosSourceManage
     @Emit()
     public cancelAxios() {
       this.axiosSource.cancel("destroy singebox");
+      // new source
+      this.axiosSource = Axios.CancelToken.source();
     }
     @Emit()
     public getData() {

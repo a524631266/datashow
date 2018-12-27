@@ -42,6 +42,8 @@ export default class TrendHighChart extends Vue implements AxiosSourceManage {
     @Emit()
     public cancelAxios() {
       this.axiosSource.cancel("趋势图关闭");
+      // new source
+      this.axiosSource = Axios.CancelToken.source();
     }
     @Emit()
     public getData() {

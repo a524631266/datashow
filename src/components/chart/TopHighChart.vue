@@ -43,6 +43,8 @@ export default class TopHighChart extends Vue implements AxiosSourceManage {
     @Emit()
     public cancelAxios() {
       this.axiosSource.cancel("关闭重点图表");
+      // new source
+      this.axiosSource = Axios.CancelToken.source();
     }
     @Emit()
     public getData() {
