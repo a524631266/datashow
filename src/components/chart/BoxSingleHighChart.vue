@@ -20,6 +20,7 @@ import { RegionBoxChart, SingleBoxChart, BoxChartTrans } from '@/types/postretur
 import echarts from "echarts";
 import "echarts/dist/extension/dataTool.min.js";
 import {highchartEmptyOption} from "@/components/options/EmptyChart.ts";
+import { updatestate } from '@/types/updateState';
 // import { Component } from "vue-property-decorator";
 // @Component({
 //     components:{
@@ -36,7 +37,7 @@ export default class BoxSingleHighChart extends Vue {
     @Prop() public id!: string;
     @Prop() public urlparas!: PostParams;
     @Prop() public positionClass!: PositionClass;
-    @Prop() public data!: object;
+    // @Prop() public data!: object;
     @Model("changepostparams") public postparms!: PostParams;
     // @Provide('option')
     public option: Options = highchartEmptyOption();
@@ -62,7 +63,7 @@ export default class BoxSingleHighChart extends Vue {
           if ( typeof data !== "string") {
             const change = (this.option as any).change;
             const option2 =  drawBoxOptions(data.boxchart, data.xAxis , this.id);
-            (option2 as any).change = !change;
+            (option2 as any).change = updatestate.redraw;
             this.option = option2 as any;
             // console.log("BoxSingleHighChart",this.option);
           }

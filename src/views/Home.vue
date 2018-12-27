@@ -81,7 +81,6 @@
                     :positionClass="one.positionClass"
                     :key="index"
                     :id="one.id"
-                    :data="one"
                     v-model="one.urlparas"
                     :is="one.chartName"
                     ></component>
@@ -93,7 +92,6 @@
                     :positionClass="one.positionClass"
                     :key="index"
                     :id="one.id"
-                    :data="one"
                     v-model="one.urlparas"
                     :is="one.chartName"
                     >

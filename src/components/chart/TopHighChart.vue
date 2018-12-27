@@ -18,6 +18,7 @@ import { getDataPromise, PostPath } from "@/actions/axiosProxy.ts";
 import PubSub from 'pubsub-js';
 import { TopChart, TopChartTrans } from '@/types/postreturnform';
 import {highchartEmptyOption} from "@/components/options/EmptyChart.ts";
+import { updatestate } from '@/types/updateState';
 @Component({
     components: {
         BaseChartFactory,
@@ -28,7 +29,7 @@ export default class TopHighChart extends Vue {
     @Prop() public id!: string;
     @Prop() public urlparas!: PostParams;
     @Prop() public positionClass!: PositionClass;
-    @Prop() public data!: object;
+    // @Prop() public data!: object;
     @Model("changepostparams") public postparms!: PostParams;
     @Provide('option')
     public option: Options = highchartEmptyOption();
@@ -55,7 +56,7 @@ export default class TopHighChart extends Vue {
           if ( typeof data !== "string") {
             const change = (this.option as any).change;
             const option2 = drawTopOptions(data, "重点","",this.showTooltiop);
-            (option2 as any).change = !change;
+            (option2 as any).change = updatestate.redraw;
             this.option = option2 as any;
             // console.log("TopHighChartdata",this.option);
           }

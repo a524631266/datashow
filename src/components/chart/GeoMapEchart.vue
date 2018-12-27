@@ -44,15 +44,13 @@ export default class GeoMapEchart extends Vue {
     @Prop() public id!: string;
     @Prop() public urlparas!: PostParams;
     @Prop() public positionClass!: PositionClass;
-    @Prop() public data!: object;
+    // @Prop() public data!: object;
     @Model("changepostparams") public postparms!: PostParams;
     // @Provide('option')
     // geoheaddata为第一帧数据，geoBodydata 为之后客户端传递过来的身体数据
     public geoBodydata: ChartStorePool<ReturnGeoDataWsBody> = {};
     public geoheaddata: ReturnGeoDataWsHead = {geomap:{}} as any;
     public option = {};
-    // public showinterval =  1000 ;
-    public entity =  "";
     public titlename = "Geo";
     private intervalid: number[] = [];
     private chartLibrary = ChartLibrary.echart;

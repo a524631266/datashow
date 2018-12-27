@@ -18,6 +18,7 @@ import { getDataPromise, PostPath } from "@/actions/axiosProxy.ts";
 import { TimeLineChart,TimeLineChartTrans } from "@/types/postreturnform.ts";
 import {highchartEmptyOption} from "@/components/options/EmptyChart.ts";
 import PubSub from 'pubsub-js';
+import { updatestate } from '@/types/updateState';
 @Component({
     components: {
         BaseChartFactory,
@@ -28,7 +29,7 @@ export default class TimeLineHighChart extends Vue {
     @Prop() public id!: string;
     @Prop() public urlparas!: PostParams;
     @Prop() public positionClass!: PositionClass;
-    @Prop() public data!: object;
+    // @Prop() public data!: object;
     @Model("changepostparams") public postparms!: PostParams;
     @Provide('option')
     public option: Options = highchartEmptyOption();
@@ -58,7 +59,7 @@ export default class TimeLineHighChart extends Vue {
           if ( typeof data !== "string") {
             const change = (this.option as any).change;
             const option2 = drawActionOptions(data, "异常");
-            (option2 as any).change = !change;
+            (option2 as any).change = updatestate.redraw;
             this.option = option2;
             // console.log("timelinedata",this.option);
           }

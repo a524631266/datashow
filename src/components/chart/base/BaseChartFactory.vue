@@ -72,7 +72,7 @@ export default class BaseChartFactory extends Vue {
                 if(oldVal === updatestate.redraw) { // 前一次数据为undefined的时候，为新的option因此需要重画
                     // this.destroyed();
                     this.chartInstance = Highcharts.chart(this.id, this.option) as any;
-                    this.showLoading = true;
+                    this.showLoading = false;
                 } else { // highchart增量更新数据的时候操作
                     this.showLoading = true;
                     this.$emit("updateData",this.chartInstance,this.option);
