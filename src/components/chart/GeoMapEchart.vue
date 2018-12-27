@@ -502,7 +502,7 @@ export default class GeoMapEchart extends Vue {
             return "success";
         }).catch(
             (err) => {
-                alert("找不到地图文件");
+                this.$message.error("找不到地图文件");
                 return Promise.reject("err");
             }
         );
