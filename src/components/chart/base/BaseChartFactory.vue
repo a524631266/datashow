@@ -86,7 +86,7 @@ export default class BaseChartFactory extends Vue {
                 this.toggleHighChartAxis();
             }
        }
-       if(newVal !== oldVal && this.chartLibrary === ChartLibrary.echart) {
+       if(this.chartLibrary === ChartLibrary.echart) {
             if (this.chartInstance) { // echart增量更新数据的时候操作
                 // console.log("Echart111111111111111111");
                 this.$emit("updateData",this.chartInstance,this.option);
