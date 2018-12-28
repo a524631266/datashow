@@ -25,6 +25,7 @@
 import { Component, Vue, Prop, Emit, Watch } from 'vue-property-decorator';
 import Antd from "ant-design-vue";
 import { ChildrenValue } from "@/components/bar/LeftBar.vue";
+import PubSub from 'pubsub-js';
 @Component({
     components: {
         APopover: Antd.Popover
@@ -112,13 +113,18 @@ export default class TooltipRoute extends Vue {
             },params: { entity: this.nodedataref.key}});
     }
     private router2info() {
-        this.$router.push({name: "node",query: {
-            entity: this.nodedataref.key,
-            name: this.nodedataref.name as any,
-            level:this.nodedataref.level as any,
-            isLeaf:this.nodedataref.isLeaf as any,
-            coord:this.nodedataref.coord as any,
-            },params: { entity: this.nodedataref.key}});
+        // this.$router.push({name: "entityinfo",
+        //     query: {
+        //         entity: this.nodedataref.key,
+        //         name: this.nodedataref.name,
+        //         other:"123456"},
+        //     params: {
+        //         entity: this.nodedataref.key,
+        //     }});
+        PubSub.publish("showUserinfo",{
+                entity: this.nodedataref.key,
+                name: this.nodedataref.name}
+                );
     }
     @Emit()
     private tooltipmouseenter() {

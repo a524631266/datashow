@@ -4,7 +4,6 @@ import router from '@/router';
 import store from '@/store';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.min.js";
-import "bootstrap/dist/js/bootstrap.min.js";
 import "font-awesome/css/font-awesome.min.css";
 import App from './App.vue';
 console.log("是否为本地",process.env.NODE_ENV);

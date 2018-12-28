@@ -97,6 +97,11 @@
                     >
         </component>
     </div>
+    <!-- <transition name="slide-right">
+        <router-view></router-view>
+    </transition> -->
+    <!-- <entity-info></entity-info> -->
+    <component :is="'EntityInfo'"></component>
   </div>
 </template>
 
@@ -111,7 +116,7 @@ import TrendHighChart from "@/components/chart/TrendHighChart.vue";
 import TopHighChart from "@/components/chart/TopHighChart.vue";
 import GeoMapEchart from "@/components/chart/GeoMapEchart.vue";
 import BoxSingleHighChart from "@/components/chart/BoxSingleHighChart.vue";
-
+import EntityInfo from "@/components/EntityInfo.vue";
 import PubSub from 'pubsub-js';
 
 import { PositionClass , PostParams , Dimension } from "@/types/index.ts";
@@ -136,7 +141,8 @@ const geo = Object.assign({},InitGeomapUrlProps);
     TrendHighChart,
     TopHighChart,
     GeoMapEchart,
-    BoxSingleHighChart
+    BoxSingleHighChart,
+    EntityInfo
   },
 })
 export default class Home extends Vue {

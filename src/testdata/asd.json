@@ -1,0 +1,48 @@
+{
+    "config": {
+        "transformRequest": {},
+        "transformResponse": {},
+        "timeout": 0,
+        "xsrfCookieName": "XSRF-TOKEN",
+        "xsrfHeaderName": "X-XSRF-TOKEN",
+        "maxContentLength": -1,
+        "headers": {
+            "Accept": "application/json, text/plain, */*",
+            "Content-Type": "application/json;charset=utf-8"
+        },
+        "method": "post",
+        "url": "/user/info",
+        "data": "{\"entityid\":\"\",\"pname\":\"\",\"sex\":\"male\",\"phone\":\"\",\"address\":\"\",\"other\":\"\",\"deviceinfo\":[{\"dename\":\"\",\"devolt\":\"\",\"denum\":\"\",\"deinfo\":\"\"}]}"
+    },
+    "request": {},
+    "response": {
+        "data": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot POST /user/info</pre>\n</body>\n</html>\n",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+            "content-security-policy": "default-src 'self'",
+            "x-content-type-options": "nosniff",
+            "connection": "keep-alive",
+            "x-powered-by": "Express",
+            "content-length": "149",
+            "date": "Fri, 28 Dec 2018 04:56:10 GMT",
+            "content-type": "text/html; charset=utf-8"
+        },
+        "config": {
+            "transformRequest": {},
+            "transformResponse": {},
+            "timeout": 0,
+            "xsrfCookieName": "XSRF-TOKEN",
+            "xsrfHeaderName": "X-XSRF-TOKEN",
+            "maxContentLength": -1,
+            "headers": {
+                "Accept": "application/json, text/plain, */*",
+                "Content-Type": "application/json;charset=utf-8"
+            },
+            "method": "post",
+            "url": "/user/info",
+            "data": "{\"entityid\":\"\",\"pname\":\"\",\"sex\":\"male\",\"phone\":\"\",\"address\":\"\",\"other\":\"\",\"deviceinfo\":[{\"dename\":\"\",\"devolt\":\"\",\"denum\":\"\",\"deinfo\":\"\"}]}"
+        },
+        "request": {}
+    }
+}
