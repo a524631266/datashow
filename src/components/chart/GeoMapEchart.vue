@@ -1,6 +1,6 @@
 <template>
-  <div :class="positionClass" draggable="true" @dblclick="handledoubleclick">
-       <LittleBar @redraw="start" :positionClass="positionClass" :showday="showday" @querydate="querydate" @restarttodraw="restarttodraw" :appendtimelist="appendtimelist" :titlename="titlename" :show="positionClass === 'center'?false:true" v-model="postparms">
+  <div :class="positionClass" :draggable="candraggable" @dblclick="handledoubleclick">
+       <LittleBar @toggledrag="toggledrag" @redraw="start" :positionClass="positionClass" :date="date" @querydate="querydate" @restarttodraw="restarttodraw" :appendtimelist="appendtimelist" :titlename="titlename" :show="positionClass === 'center'?false:true" v-model="postparms">
             <BaseChartFactory :urlparas="urlparas" :positionClass="positionClass" :id="id" :option="option" :chartLibrary="chartLibrary" :handleclick="handleclick" @updateData="way2UpdateData" slot="chart"/>
         </LittleBar>
         <div v-text="nowtime" style="position:absolute;bottom:0;right:0;">
@@ -53,6 +53,7 @@ export default class GeoMapEchart extends Vue {
     public geoheaddata: ReturnGeoDataWsHead = {geomap:{}} as any;
     public option = {};
     public titlename = "Geo";
+    private candraggable = false;
     private intervalid: number[] = [];
     private chartLibrary = ChartLibrary.echart;
     private websocket!: WebSocket;
@@ -62,7 +63,7 @@ export default class GeoMapEchart extends Vue {
     private timeoutcount = 0;
     private appendtimelist: number[] = [];
     private mapnames: GeoMapPictureFeaturePropertiesFormat[]= [];
-    private showday!: Moment;
+    private date: Moment = moment();
     private geolimiter: GeoLimiter = {
         limit: 3,
         positive: true,
@@ -252,7 +253,6 @@ export default class GeoMapEchart extends Vue {
                         cityname: name,
                         measurename: MeasureName.Elec,
                         points: [],
-                        // points:testPointsdata.map((data)=>[data[0],data[1],this.redrawcount%2?-data[2]:data[2]] as any),
                     };
         } else {
             const {coord, value} = data.geomap.point;
@@ -261,7 +261,6 @@ export default class GeoMapEchart extends Vue {
                         cityname: name,
                         measurename: MeasureName.Elec,
                         points: coord.map((data,index)=>[data[0],data[1],value[index]] as any)
-                        // points:testPointsdata.map((data)=>[data[0],data[1],this.redrawcount%2?-data[2]:data[2]] as any),
                     };
         }
         return result;
@@ -289,7 +288,7 @@ export default class GeoMapEchart extends Vue {
     private setTimeoutdraw(count: number,loop: boolean) {
         // console.log(count);
         const nowtime = this.appendtimelist[count];
-        this.showday = moment(nowtime);
+        this.date = moment(nowtime);
         const {length: timelen} = this.appendtimelist;
         if (timelen)  {
             this.timeoutcount = count;
@@ -598,6 +597,10 @@ export default class GeoMapEchart extends Vue {
             // 等待一秒看看是否有数据，没有数据就再等
             setTimeout(()=>this.querydate(ts,false),1000);
         }
+    }
+    @Emit()
+    private toggledrag(val: boolean) {
+        this.candraggable = val;
     }
 }
 </script>

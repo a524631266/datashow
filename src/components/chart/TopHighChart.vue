@@ -1,7 +1,7 @@
 
 <template>
-  <div :class="positionClass" draggable="true" @dblclick="handledoubleclick">
-        <LittleBar :titlename="titlename" :show="positionClass === 'center'?false:true" v-model="postparms">
+  <div :class="positionClass" :draggable="candraggable" @dblclick="handledoubleclick">
+        <LittleBar :date="date"  @redraw="start" @toggledrag="toggledrag" :titlename="titlename" :show="positionClass === 'center'?false:true" v-model="postparms">
             <BaseChartFactory :positionClass="positionClass" :id="id" :option="option" :urlparas="urlparas" :chartLibrary="chartLibrary" slot="chart" />
         </LittleBar>
   </div>
@@ -21,6 +21,7 @@ import {highchartEmptyOption} from "@/components/options/EmptyChart.ts";
 import { updatestate } from '@/types/updateState';
 import Axios from "axios";
 import { AxiosSourceManage } from "@/implements/AxiosSourceManage";
+import moment,{ Moment } from "moment";
 @Component({
     components: {
         BaseChartFactory,
@@ -34,10 +35,12 @@ export default class TopHighChart extends Vue implements AxiosSourceManage {
     // @Prop() public data!: object;
     @Model("changepostparams") public postparms!: PostParams;
     @Provide('option')
-    public option: Options = highchartEmptyOption();
+    public option: Options = highchartEmptyOption(undefined);
     public axiosSource = Axios.CancelToken.source();
     private chartLibrary = ChartLibrary.highchart;
     private titlename = "重点";
+    private candraggable = false;
+    private date: Moment = moment();
     // private mounted() {
     // }
     @Emit()
@@ -63,9 +66,12 @@ export default class TopHighChart extends Vue implements AxiosSourceManage {
       );
     }
     @Watch("urlparas.entity",  {deep : true})
-    private redraw(val: boolean) {
+    private redraw(entity: string) {
       this.cancelAxios();
-      this.option = highchartEmptyOption();
+      // this.option = highchartEmptyOption();
+      const option: any = highchartEmptyOption(entity);
+      option.change = updatestate.redraw;
+      this.option = option;
       console.log("上层图表  TopHighChart",this.postparms,this.id);
       this.getData();
       // 在这里开始做长轮询 定时从后台传数据
@@ -93,6 +99,15 @@ export default class TopHighChart extends Vue implements AxiosSourceManage {
       PubSub.publish("doubleclick2changecenter",this.id);
       // this.resizeChart();
       // (this.option as any).change = !(this.option as any).change;
+    }
+    @Emit()
+    private toggledrag(val: boolean) {
+        this.candraggable = val;
+    }
+    @Emit()
+    private start() {
+      // 重新画图
+      this.redraw(this.postparms.entity);
     }
 }
 </script>

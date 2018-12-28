@@ -107,7 +107,7 @@ moment.locale('zh-cn');
             // return parseInt(0.5 +"") * 100;
         },
         showprogress(): boolean {
-            console.log("showprogress",(this as any).percent);
+            // console.log("showprogress",(this as any).percent);
             // return (this as any).appendtimelist!==undefined?(this as any).percent===100?false:true:false;
             return (this as any).appendtimelist!==undefined && (this as any).positionClass===PositionClass.Center?true:false;
         }
@@ -116,12 +116,10 @@ moment.locale('zh-cn');
 export default class LittleBar extends Vue {
     @Prop({default: ""}) public titlename!: string;
     @Prop() public appendtimelist!: number[];
-    @Prop({default: moment()}) public showday!: Moment;
+    @Prop() public date!: Moment;
     @Prop() public positionClass!: PositionClass;
-    // @Prop({default: "fa-sort-down"}) public showdownicon!: string;
-    // @Model("changepostparams2") postparms2!: PostParams;
     @Model("changepostparams") public postparms!: PostParams;
-    private showdayLocal = this.showday;
+    private showdayLocal: Moment = moment();
     private activeitem = "";
     private highlightbarclass = "";
     private totaltimelen = 0;
@@ -154,7 +152,7 @@ export default class LittleBar extends Vue {
         [{day:"Yesterday ",value: [1,'d']},{day:"Day before yesterday",value: [2,'d']},{day:"This day last week ",value: [1,'w']},{day:"last month ",value: [1,'M']},{day:"last year ",value: [1,'y']},],
         [{day:"Today ",value: [0,'d'],type: "this"},{day:"This week ",value: [1,'w'],type: "this"},{day:"This month ",value: [1,'M'],type: "this"},{day:"This year ",value: [1,'y'],type: "this"}],
     ];
-    @Watch("showday")
+    @Watch("date")
     public setShowdayLocal(newval: any) {
         this.showdayLocal = newval;
     }
@@ -181,6 +179,7 @@ export default class LittleBar extends Vue {
     @Emit()
     public highlightbar(show: boolean | any) {
         this.highlightbarclass = show ? "table-dark":"";
+        this.$emit("toggledrag",show);
     }
     @Emit()
     public licktimeselectrange(item: {value: [any,string],day: string,type: string}) {
@@ -200,8 +199,9 @@ export default class LittleBar extends Vue {
         const end = moment(this.postparms.endtime);
         const {scale} = this.postparms;
         this.totaltimelen = end.diff(start,scale===3600?"h":scale===86000?"d":"d");
-        console.log("计算日期",this.totaltimelen);
+        // console.log("计算日期",this.totaltimelen);
         this.innershowInterval = this.postparms.showinterval / 1000 * 20 ;
+        this.showdayLocal = this.date;
     }
     private destroyed() {
         // console.log((this as any).some);
@@ -228,7 +228,7 @@ export default class LittleBar extends Vue {
      * 更新其父亲的数据
      */
     private talktofather() {
-        console.log("talktofather");
+        // console.log("talktofather");
         this.$emit("changepostparams", this.data);
     }
     // tslint:disable-next-line:no-empty
@@ -245,7 +245,7 @@ export default class LittleBar extends Vue {
     }
 
     private onPanelChange(value: any, mode: any) {
-      console.log(value, mode);
+    //   console.log(value, mode);
     }
 
     private onSelect(date: Moment) {

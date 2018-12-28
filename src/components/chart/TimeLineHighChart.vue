@@ -1,7 +1,7 @@
 
 <template>
-  <div :class="positionClass" draggable="true" @dblclick="handledoubleclick">
-        <LittleBar :titlename="titlename" :show="positionClass === 'center'?false:true" v-model="postparms">
+  <div :class="positionClass" :draggable="candraggable" @dblclick="handledoubleclick">
+        <LittleBar :date="date" @redraw="start" @toggledrag="toggledrag" :titlename="titlename" :show="positionClass === 'center'?false:true" v-model="postparms">
             <BaseChartFactory :positionClass="positionClass" :urlparas="urlparas" :id="id" :option="option" :chartLibrary="chartLibrary" @getData="getData" slot="chart" />
         </LittleBar>
   </div>
@@ -21,6 +21,7 @@ import PubSub from 'pubsub-js';
 import { updatestate } from '@/types/updateState';
 import Axios from "axios";
 import { AxiosSourceManage } from "@/implements/AxiosSourceManage";
+import moment,{ Moment } from "moment";
 @Component({
     components: {
         BaseChartFactory,
@@ -34,10 +35,12 @@ export default class TimeLineHighChart extends Vue implements AxiosSourceManage 
     // @Prop() public data!: object;
     @Model("changepostparams") public postparms!: PostParams;
     @Provide('option')
-    public option: Options = highchartEmptyOption();
+    public option: Options = highchartEmptyOption(undefined);
     public axiosSource = Axios.CancelToken.source();
     private chartLibrary = ChartLibrary.highchart;
     private titlename = "异常";
+    private candraggable = false;
+    private date: Moment = moment();
     // private mounted() {
     // }
     @Emit()
@@ -63,9 +66,9 @@ export default class TimeLineHighChart extends Vue implements AxiosSourceManage 
       );
     }
     @Watch("urlparas.entity",  {deep : true})
-    private redraw(val: boolean) {
+    private redraw(entity: string) {
       this.cancelAxios();
-      this.option = highchartEmptyOption();
+      this.option = highchartEmptyOption(entity);
       console.log("上层图表 TimeLineHighChart",this.postparms,this.id);
       this.getData();
       // 在这里开始做长轮询 定时从后台传数据
@@ -81,6 +84,15 @@ export default class TimeLineHighChart extends Vue implements AxiosSourceManage 
     @Emit()
     private handledoubleclick() {
       PubSub.publish("doubleclick2changecenter",this.id);
+    }
+    @Emit()
+    private toggledrag(val: boolean) {
+        this.candraggable = val;
+    }
+    @Emit()
+    private start() {
+      // 重新画图
+      this.redraw(this.postparms.entity);
     }
 }
 </script>

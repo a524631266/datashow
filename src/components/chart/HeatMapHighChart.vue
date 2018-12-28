@@ -1,7 +1,7 @@
 
 <template>
-  <div :class="positionClass" draggable="true" @dblclick="handledoubleclick">
-        <LittleBar :titlename="titlename" :show="positionClass === 'center'?false:true" v-model="postparms">
+  <div :class="positionClass" :draggable="candraggable" @dblclick="handledoubleclick">
+        <LittleBar :date="date" @redraw="start" @toggledrag="toggledrag" :titlename="titlename" :show="positionClass === 'center'?false:true" v-model="postparms">
             <BaseChartFactory :positionClass="positionClass" :urlparas="urlparas" :id="id" :option="option" @updateData="way2UpdateData" :chartLibrary="chartLibrary" slot="chart"/>
         </LittleBar>
   </div>
@@ -21,6 +21,7 @@ import {highchartEmptyOption} from "@/components/options/EmptyChart.ts";
 import { updatestate } from '@/types/updateState';
 import Axios from "axios";
 import { AxiosSourceManage } from "@/implements/AxiosSourceManage";
+import moment,{ Moment } from "moment";
 @Component({
     components: {
         BaseChartFactory,
@@ -34,10 +35,12 @@ export default class HeatMapHighChart extends Vue implements AxiosSourceManage {
     // @Prop() public data!: object;
     @Model("changepostparams") public postparms!: PostParams;
     // @Provide('option')
-    public option: Options = highchartEmptyOption();
+    public option: Options = highchartEmptyOption(undefined);
     public axiosSource = Axios.CancelToken.source();
     private chartLibrary = ChartLibrary.highchart;
     private titlename = "热力图";
+    private candraggable = false;
+    private date: Moment = moment();
     @Emit()
     public cancelAxios() {
       this.axiosSource.cancel("删除HeatMap");
@@ -72,10 +75,10 @@ export default class HeatMapHighChart extends Vue implements AxiosSourceManage {
       // );
     }
     @Watch("urlparas.entity",  {deep : true})
-    private redraw(val: boolean) {
+    private redraw(entity: string) {
       this.cancelAxios();
       // this.option = drawHeatmapOptions([{x: "0",name: "",y: 0,value: 0}], "HeatMap","" ,this.showTooltiop) as any;
-      this.option = highchartEmptyOption();
+      this.option = highchartEmptyOption(entity);
       console.log("上层图表 HeatMapHighCHart",this.postparms,this.id);
       this.getData();
       // 在这里开始做长轮询 定时从后台传数据
@@ -104,7 +107,15 @@ export default class HeatMapHighChart extends Vue implements AxiosSourceManage {
     private async way2UpdateData(chart: any,oldoption: any) {
       // chart.setOptions(this.option);
     }
-
+    @Emit()
+    private toggledrag(val: boolean) {
+        this.candraggable = val;
+    }
+    @Emit()
+    private start() {
+      // 重新画图
+      this.redraw(this.postparms.entity);
+    }
 }
 </script>
 

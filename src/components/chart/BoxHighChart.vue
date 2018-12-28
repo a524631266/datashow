@@ -1,7 +1,7 @@
 
 <template>
-  <div :class="positionClass" draggable="true" @dblclick="handledoubleclick">
-        <LittleBar :titlename="titlename" :show="positionClass === 'center'?false:true" v-model="postparms">
+  <div :class="positionClass" :draggable="candraggable" @dblclick="handledoubleclick">
+        <LittleBar :date="date" @redraw="start" @toggledrag="toggledrag" :titlename="titlename" :show="positionClass === 'center'?false:true" v-model="postparms">
           <BaseChartFactory :positionClass="positionClass" :id="id" :urlparas="urlparas" :option="option" :chartLibrary="chartLibrary" slot="chart" />
         </LittleBar>
   </div>
@@ -23,6 +23,7 @@ import {highchartEmptyOption} from "@/components/options/EmptyChart.ts";
 import { updatestate } from '@/types/updateState';
 import Axios from "axios";
 import { AxiosSourceManage } from "@/implements/AxiosSourceManage";
+import moment,{ Moment } from "moment";
 // import { Component } from "vue-property-decorator";
 // @Component({
 //     components:{
@@ -42,10 +43,12 @@ export default class BoxHighChart extends Vue implements AxiosSourceManage {
     // @Prop() public data!: object;
     @Model("changepostparams") public postparms!: PostParams;
     // @Provide('option')
-    public option: Options = highchartEmptyOption();
+    public option: Options = highchartEmptyOption(undefined);
     public axiosSource = Axios.CancelToken.source();
     private chartLibrary = ChartLibrary.highchart;
     private titlename = "统计";
+    private candraggable = false;
+    private date: Moment = moment();
     @Emit()
     public cancelAxios() {
       this.axiosSource.cancel("删除组织box");
@@ -70,7 +73,7 @@ export default class BoxHighChart extends Vue implements AxiosSourceManage {
       );
     }
     @Watch("urlparas.entity",  {deep : true})
-    private redraw(val: boolean) {
+    private redraw(entity: string) {
       this.cancelAxios();
       // this.option = {} as any;
       this.option = drawBoxOptions([], [] , this.id) as any;
@@ -110,34 +113,7 @@ export default class BoxHighChart extends Vue implements AxiosSourceManage {
       return result;
     }
     private mounted() {
-      // this.intervalid = setTimeout(
-      //   () => {
-      //       console.log("11111");
-      //       // Highcharts.chart((this as any).id, (this as any).option as Options);
-      //       // 1.时间timeline配置
-      //       //  drawActionOptions(inout, "1111"));
-      //       // console.log((this as any).changedata(),"this.$props.");
-      //       // 2.箱线图配置
-      //       const option2 =  drawBoxOptions(boxchart3, xAxis3 , this.id) as Options;
-      //       (option2 as any).change = false;
-      //       this.option = option2;
-      //       // console.log(this.option);
-      //       // (this as any).$emit("ajaxFunc", this.$props.urlparas);
-      //   },
-      //   this.showinterval
-      // );
-      // 通过change来获取定义属性的变化
-      // setInterval(
-      //     () => {
-      //         console.log("第二次变化");
-      //         // boxchart3[1].data[0][1] = 133333000;
-      //         (this.option as any).series[1].data[0][1] = Math.random()*10000;
-      //         (this.option as any).change = !(this.option as any).change ;
-      //         // this.option =  drawBoxOptions(boxchart3, xAxis3 , this.id) as Options;
-      //         console.log(this.option);
-      //     },
-      //     this.showinterval+3000
-      // );
+      console.log("加载BoxHighChart");
     }
     private destroyed() {
       // console.log("destory (this as any).intervalid", (this as any).intervalid);
@@ -154,6 +130,15 @@ export default class BoxHighChart extends Vue implements AxiosSourceManage {
     private resizeChart() {
       const change = !(this.option as any).change;
       (this.option as any).change = change;
+    }
+    @Emit()
+    private toggledrag(val: boolean) {
+        this.candraggable = val;
+    }
+    @Emit()
+    private start() {
+      // 重新画图
+      this.redraw(this.postparms.entity);
     }
 }
 </script>

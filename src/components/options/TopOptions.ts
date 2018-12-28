@@ -55,7 +55,7 @@ function getTwoDirectBarOption(positive_id: string[],datalist: TwoNumberList[],n
               // tslint:disable-next-line:one-variable-per-declaration
               const clientX = e.clientX,clientY = e.clientY;
               console.log("topevent",(e.target as any).point);
-              const entity = (e.target as any).point.series.index === 1 ? positive_id[(e.target as any).point.index]:negative_id[(e.target as any).point.index]
+              const entity = (e.target as any).point.series.index === 1 ? positive_id[(e.target as any).point.index]:negative_id[(e.target as any).point.index];
               openInfo(entity,(e.target as any).point.name,clientX,clientY,(e.target as any).getBoundingClientRect());
               // infoObject.createNewInfoDiv(e.target.point.name,e.target.point.name,clientX,clientY,redrawEntityFunc,openInfo)
             });

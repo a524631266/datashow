@@ -1,7 +1,7 @@
 
 <template>
-  <div :class="positionClass" draggable="true" @dblclick="handledoubleclick">
-        <LittleBar :titlename="titlename" :show="positionClass === 'center'?false:true" v-model="postparms">
+  <div :class="positionClass" :draggable="candraggable" @dblclick="handledoubleclick">
+        <LittleBar :date="date" @redraw="start" @toggledrag="toggledrag" :titlename="titlename" :show="positionClass === 'center'?false:true" v-model="postparms">
             <BaseChartFactory :positionClass="positionClass" :id="id" :option="option" :urlparas="urlparas" :chartLibrary="chartLibrary" slot="chart"/>
         </LittleBar>
         
@@ -22,6 +22,7 @@ import {highchartEmptyOption} from "@/components/options/EmptyChart.ts";
 import { updatestate } from '@/types/updateState';
 import Axios from "axios";
 import { AxiosSourceManage } from "@/implements/AxiosSourceManage";
+import moment,{ Moment } from "moment";
 @Component({
     components: {
         BaseChartFactory,
@@ -35,10 +36,12 @@ export default class TrendHighChart extends Vue implements AxiosSourceManage {
     // @Prop() public data!: object;
     @Model("changepostparams") public postparms!: PostParams;
     @Provide('option')
-    public option: Options = highchartEmptyOption();
+    public option: Options = highchartEmptyOption(undefined);
     public axiosSource = Axios.CancelToken.source();
     private chartLibrary = ChartLibrary.highchart;
     private titlename = "趋势";
+    private candraggable = false;
+    private date: Moment = moment();
     @Emit()
     public cancelAxios() {
       this.axiosSource.cancel("趋势图关闭");
@@ -62,9 +65,9 @@ export default class TrendHighChart extends Vue implements AxiosSourceManage {
       );
     }
     @Watch("urlparas.entity",  {deep : true})
-    private redraw(val: boolean) {
+    private redraw(entity: string) {
       this.cancelAxios();
-      this.option = highchartEmptyOption();
+      this.option = highchartEmptyOption(entity);
       console.log("上层图表 TrendHighChart",this.postparms,this.id);
       this.getData();
       // 在这里开始做长轮询 定时从后台传数据
@@ -111,6 +114,15 @@ export default class TrendHighChart extends Vue implements AxiosSourceManage {
       PubSub.publish("doubleclick2changecenter",this.id);
       // this.resizeChart();
       // (this.option as any).change = !(this.option as any).change;
+    }
+    @Emit()
+    private toggledrag(val: boolean) {
+        this.candraggable = val;
+    }
+    @Emit()
+    private start() {
+      // 重新画图
+      this.redraw(this.postparms.entity);
     }
 }
 </script>

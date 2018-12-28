@@ -1,6 +1,9 @@
 import { updatestate } from '@/types/updateState';
-
-export const highchartEmptyOption = () => {
+/**
+ * 初始化的时候不是redraw
+ * @param redraw true/false
+ */
+export const highchartEmptyOption = (redraw: string | undefined) => {
     return {
         chart: {
             type: 'line',
@@ -19,7 +22,7 @@ export const highchartEmptyOption = () => {
         credits: {
             enabled: false
         },
-        // change: updatestate.redraw,
+        change: redraw?updatestate.redraw:undefined,
     };
 };
 
