@@ -4,11 +4,11 @@
             <a :href="'/home/'+nodedataref.key" target="_self" @click.prevent="router2home" class="btn btn-sm">图表</a>
             <a :href="'/info/'+nodedataref.key" target="_self" @click.prevent="router2info" class="btn btn-sm">用户信息</a>
         </template> -->
+        <!-- @mouseenter="showtooltip"
+            @mouseleave="hidetooltip" -->
         <a-tree
             :treeData="treeData"
             :expandedKeys="expandedKeys"
-            @mouseenter="showtooltip"
-            @mouseleave="hidetooltip"
             @select="onSelect"
             showIcon
         >]
@@ -83,6 +83,7 @@ export interface ChildrenValue {
     districtLnglat: string;
     slots: {icon: string};
     hover: boolean;
+    scopedSlots: {title: string};
 }
 
 @Component({
@@ -166,6 +167,9 @@ export default class LeftBar extends Vue {
                                                     :[0,0];
                             children.slots = {
                                     icon: value.isEntity?'user':'org',
+                            };
+                            children.scopedSlots =  {
+                                title: 'custom'
                             };
                             childrenlist.push(children);
                         }
