@@ -4,12 +4,13 @@
             <a :href="'/home/'+nodedataref.key" target="_self" @click.prevent="router2home" class="btn btn-sm">图表</a>
             <a :href="'/info/'+nodedataref.key" target="_self" @click.prevent="router2info" class="btn btn-sm">用户信息</a>
         </template> -->
-        <!-- @mouseenter="showtooltip"
-            @mouseleave="hidetooltip" -->
+        
         <a-tree
             :treeData="treeData"
             :expandedKeys="expandedKeys"
             @select="onSelect"
+            @mouseenter="showtooltip"
+            @mouseleave="hidetooltip"
             showIcon
         >]
             <a-icon slot="org" type="home" />
@@ -242,26 +243,30 @@ export default class LeftBar extends Vue {
     //     });
     // }
     private showtooltip(e: any) {
-        // const {key,name} = e.node.dataRef;
-        const {clientX,clientY}  = e.event;
-        // this.entity = key;
-        // this.tooltiptitlename = name;
-        const mouseleft = clientX + "px";
-        const mousetop = clientY + "px";
-        // console.log("111111",e);
-        // 记录当前的target用来保管数据
-        // this.selectnode = e.event.target;
-        this.nodedataref = e.node.dataRef;
-        const {key,name,isLeaf,level,coord} = e.node.dataRef;
+        // // ##########版本1
+        // // const {key,name} = e.node.dataRef;
+        // const {clientX,clientY}  = e.event;
+        // // this.entity = key;
+        // // this.tooltiptitlename = name;
+        // const mouseleft = clientX + "px";
+        // const mousetop = clientY + "px";
+        // // console.log("111111",e);
+        // // 记录当前的target用来保管数据
+        // // this.selectnode = e.event.target;
+        // this.nodedataref = e.node.dataRef;
+        // const {key,name,isLeaf,level,coord} = e.node.dataRef;
+        // console.log(e.node.dataRef);
+        // // this.autoresizetooltip();
+        // PubSub.publish("showtooltip",{entity: key,name,isLeaf,level,clientX,clientY,target: e.event.target.getBoundingClientRect(),coord});
+        // 版本2
         e.node.dataRef.hover = true;
-        console.log(e.node.dataRef);
-        // this.autoresizetooltip();
-        PubSub.publish("showtooltip",{entity: key,name,isLeaf,level,clientX,clientY,target: e.event.target.getBoundingClientRect(),coord});
     }
     private hidetooltip(e: any) {
+        // ##############1
         // console.log("levetree");
-        e.node.dataRef.hover = false;
         // PubSub.publish("hidetooltip","none");
+        // ##############2
+        e.node.dataRef.hover = false;
     }
     private router2home(data: ChildrenValue) {
         this.$router.push({name: "node",query: {
