@@ -174,10 +174,10 @@ export default class LeftBar extends Vue {
                             children.scopedSlots =  {
                                 title: 'custom'
                             };
-                            children.on= {
-                                mouseenter:this.showtooltip,
-                                mouseleave: this.hidetooltip,
-                            };
+                            // children.on= {
+                            //     mouseenter:this.showtooltip,
+                            //     mouseleave: this.hidetooltip,
+                            // };
                             children.hover = false;
                             childrenlist.push(children);
                         }
@@ -202,7 +202,9 @@ export default class LeftBar extends Vue {
             this.expandedKeys.push(val[0]);
         } else {
             this.expandedKeys.splice(this.expandedKeys.indexOf(val),1);
+            this.expandedKeys = [...this.expandedKeys]
         }
+        console.log("expandedKeys",this.expandedKeys);
     }
     // private onLoadData(treeNode: any) {
     //     const {eventKey: postid } = treeNode;
@@ -266,7 +268,7 @@ export default class LeftBar extends Vue {
         // // this.autoresizetooltip();
         // PubSub.publish("showtooltip",{entity: key,name,isLeaf,level,clientX,clientY,target: e.event.target.getBoundingClientRect(),coord});
         // 版本2
-        console.log("sssssss");
+        // console.log("sssssss");
         e.node.dataRef.hover = true;
     }
     private hidetooltip(e: any) {
@@ -275,7 +277,7 @@ export default class LeftBar extends Vue {
         // PubSub.publish("hidetooltip","none");
         // ##############2
         e.node.dataRef.hover = false;
-        console.log("hhhhhh");
+        // console.log("hhhhhh");
     }
     private router2home(data: ChildrenValue) {
         this.$router.push({name: "node",query: {
