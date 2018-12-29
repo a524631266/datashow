@@ -307,6 +307,7 @@ export default class Home extends Vue {
 :global(.ant-checkbox-wrapper span) {
   color: white ;
 }
+
 :global(.ant-fullcalendar-column-header-inner) {
   color: white ;
 }

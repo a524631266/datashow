@@ -9,6 +9,7 @@
             :treeData="treeData"
             @mouseenter="showtooltip"
             @mouseleave="hidetooltip"
+            @select="onSelect"
         />
   <!-- </a-popover> -->
   <!-- <a-tree-select
@@ -152,6 +153,10 @@ export default class LeftBar extends Vue {
             );
             resolve("111");
         });
+    }
+    private onSelect(val: any,e: any) {
+        console.log("object1",val,e);
+        this.onLoadData(e.node);
     }
     // private onLoadData(treeNode: any) {
     //     const {eventKey: postid } = treeNode;
