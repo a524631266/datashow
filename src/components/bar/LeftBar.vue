@@ -7,10 +7,15 @@
         <a-tree
             :loadData="onLoadData"
             :treeData="treeData"
+            :expandedKeys="expandedKeys"
             @mouseenter="showtooltip"
             @mouseleave="hidetooltip"
             @select="onSelect"
-        />
+            showIcon
+        >]
+            <a-icon slot="org" type="home" />
+            <a-icon slot="user" type="user" />
+        </a-tree>
   <!-- </a-popover> -->
   <!-- <a-tree-select
     showSearch
@@ -67,6 +72,7 @@ export interface ChildrenValue {
     lnglat: string;
     cityLnglat: string;
     districtLnglat: string;
+    slots: {icon: string};
 }
 
 @Component({
@@ -75,6 +81,7 @@ export interface ChildrenValue {
         // ATreeSelect: Antd.TreeSelect,
         // ATooltip: Antd.Tooltip,
         // APopover: Antd.Popover
+        AIcon: Antd.icon,
     },
 })
 export default class LeftBar extends Vue {
@@ -95,8 +102,12 @@ export default class LeftBar extends Vue {
                     label: name,
                     key: "99998999",
                     value: "99998999",
+                    slots: {
+                        icon: 'org',
+                    },
                 }
             ];
+    private expandedKeys: string[] = [];
     private tooltipShow = false;
     private tooltipplacement = "leftTop";
     private nodedataref: ChildrenValue = {} as any;
@@ -138,6 +149,9 @@ export default class LeftBar extends Vue {
                                                     :value.cityLnglat?[parseFloat(value.cityLnglat.split(",")[0]),parseFloat(value.cityLnglat.split(",")[1])]
                                                     :value.districtLnglat?[parseFloat(value.districtLnglat.split(",")[0]),parseFloat(value.districtLnglat.split(",")[1])]
                                                     :[0,0];
+                            children.slots = {
+                                    icon: value.isEntity?'user':'org',
+                            };
                             childrenlist.push(children);
                         }
                     );
@@ -154,9 +168,14 @@ export default class LeftBar extends Vue {
             resolve("111");
         });
     }
-    private onSelect(val: any,e: any) {
+    private onSelect(val: string,e: any) {
         console.log("object1",val,e);
         this.onLoadData(e.node);
+        if(e.selected) {
+            this.expandedKeys.push(val[0]);
+        } else {
+            this.expandedKeys.splice(this.expandedKeys.indexOf(val),1);
+        }
     }
     // private onLoadData(treeNode: any) {
     //     const {eventKey: postid } = treeNode;
