@@ -5,7 +5,6 @@
             <a :href="'/info/'+nodedataref.key" target="_self" @click.prevent="router2info" class="btn btn-sm">用户信息</a>
         </template> -->
         <a-tree
-            :loadData="onLoadData"
             :treeData="treeData"
             :expandedKeys="expandedKeys"
             @mouseenter="showtooltip"
@@ -15,6 +14,15 @@
         >]
             <a-icon slot="org" type="home" />
             <a-icon slot="user" type="user" />
+            <template slot="custom" slot-scope="data">
+                <!-- {{data.dataRef.title}}
+                <a v-if="data.dataRef.hover" class="btn btn-sm right">图表</a>
+                <a v-if="data.dataRef.hover" class="btn btn-sm right">用户信息</a> -->
+                {{data.title}}
+                <a v-if="data.hover" class="btn btn-sm" @click.prevent.stop="router2home(data)" style="position:relative;color:#007bff;text-decoration:underline">图表</a>
+                <a v-if="data.hover" class="btn btn-sm" @click.prevent.stop="router2info(data)" style="position:relative;color:#007bff;text-decoration:underline">用户信息</a>
+            </template>
+            <!-- <a href="#" slot="entity">123</a> -->
         </a-tree>
   <!-- </a-popover> -->
   <!-- <a-tree-select
@@ -54,6 +62,7 @@ const prev = process.env.NODE_ENV === "development"? "/tree": "";
 import Antd from "ant-design-vue";
 import Axios from "axios";
 import { entity,name,level } from "@/config/initOptions.ts";
+import PubSub from 'pubsub-js';
 export interface ChildrenValue {
     id: number ;
     pId: number;
@@ -73,6 +82,7 @@ export interface ChildrenValue {
     cityLnglat: string;
     districtLnglat: string;
     slots: {icon: string};
+    hover: boolean;
 }
 
 @Component({
@@ -104,7 +114,12 @@ export default class LeftBar extends Vue {
                     value: "99998999",
                     slots: {
                         icon: 'org',
+                        // title: 'custom',
                     },
+                    scopedSlots: {
+                        title: 'custom'
+                    },
+                    hover: false,
                 }
             ];
     private expandedKeys: string[] = [];
@@ -234,12 +249,38 @@ export default class LeftBar extends Vue {
         // this.selectnode = e.event.target;
         this.nodedataref = e.node.dataRef;
         const {key,name,isLeaf,level,coord} = e.node.dataRef;
+        e.node.dataRef.hover = true;
+        console.log(e.node.dataRef);
         // this.autoresizetooltip();
         PubSub.publish("showtooltip",{entity: key,name,isLeaf,level,clientX,clientY,target: e.event.target.getBoundingClientRect(),coord});
     }
-    private hidetooltip() {
+    private hidetooltip(e: any) {
         // console.log("levetree");
-        PubSub.publish("hidetooltip","none");
+        e.node.dataRef.hover = false;
+        // PubSub.publish("hidetooltip","none");
+    }
+    private router2home(data: ChildrenValue) {
+        this.$router.push({name: "node",query: {
+            entity: data.key,
+            name: data.name as any,
+            level:data.level as any,
+            isLeaf:data.isLeaf as any,
+            coord:data.coord as any,
+            },params: { entity: data.key}});
+    }
+    private router2info(data: ChildrenValue) {
+        // this.$router.push({name: "entityinfo",
+        //     query: {
+        //         entity: data.key,
+        //         name: data.name,
+        //         other:"123456"},
+        //     params: {
+        //         entity: data.key,
+        //     }});
+        PubSub.publish("showUserinfo",{
+                entity: data.key,
+                name: data.name}
+                );
     }
 }
 </script>
