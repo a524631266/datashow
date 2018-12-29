@@ -1,3 +1,3 @@
-import "@/app/antdv.ts";
-import "@/app/components.ts";
+import "@/app/antdv";
+import "@/app/components";
 

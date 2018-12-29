@@ -1,12 +1,13 @@
 <template>
-    <div class="container-fluid  rangeselect"  @mouseenter="showdownincon(true)" @mouseleave="showdownincon(false)">
-        <div class="littlebar" :class="highlightbarclass"   @click="changeShow" @mouseenter="highlightbar(true)" @mouseleave="highlightbar(false)">
-            <div class="row">
-                <div class="charttitletext"> {{titlename }} </div>
-                <div class="fa icondown middlebutton" :class="showdownicon"></div>
-                <div class="charttitletime" v-show="false"> {{data.starttime + "" + data.endtime }} </div>
+    <div class="container-fluid  chartheader"  @mouseenter="showdownincon(true)" @mouseleave="showdownincon(false)">
+        <div class="littlebar" >
+            <div :style="{position:'relative'}">
+                <!-- <div class="fa icondown middlebutton" :class="showdownicon"></div> -->
+                <div class="fa button fa-clock-o chartrange"  @click="changeShow" v-html="dayrange" v-show="showclockbutton" @mouseenter="highlightbar(true)" @mouseleave="highlightbar(false)"></div>
+                <!-- <time-botton :class="middlebutton"></time-botton> -->
+                <!-- <div class="charttitletime" v-show="false"> {{data.starttime + "" + data.endtime }} </div> -->
             </div>
-            <div class="row options1 table-dark" v-show="!show" @click.stop="donothing" >
+            <div class="row options1 table-dark" v-show="showrange" @click.stop="donothing" >
                 <form class="col-4">
                     <h3 class="section-heading">用户选项</h3>
                     <label class="small">From:</label>
@@ -32,8 +33,8 @@
                                 <option label="4s" value="4000"></option>
                                 <option label="15min" value="15000"></option>
                                 <option label="1h" value="60000"></option> -->
-                                <option label="1h" value="3600"></option>
-                                <option label="1d" value="86400" selected="true"></option>
+                                <option label="1h" value="3600">1h</option>
+                                <option label="1d" value="86400" selected="true">1d</option>
                             </select>
                         <div class="input-group-addon">
                             <button class="btn btn-secondary btn-sm" type="submit" @click.prevent="queryInitWebSocket">查询</button>
@@ -47,39 +48,39 @@
                             <li v-for="(item,index) in data" :key="index" class="list-group-item h6" :class="item.day===activeitem?'active':''" @click="licktimeselectrange(item)">{{item.day}}</li>
                         </ul>
                     </div>
-                    
                 </div>
             </div>
         </div>
+        <div class="charttitletext" :class="titlesize"> {{titlename }} </div>
         <div class="barBody">
             <slot name="chart">无数据</slot>
         </div>
         <!-- <transition name="fade"> -->
             <!-- :defaultValue="1" -->
-            <a-row v-if="showprogress" class="siberbar">
-                <a-col :span="24">
-                    <a-slider  :tipFormatter="formatter" :marks="slidermarks"  v-model="innershowInterval" />
-                    <a-button shape="circle" icon="play-circle" size="small" @click="restarttodraw"/>
-                </a-col>
-                <!-- <a-col :span="4">
-                    <div>
-                    
-                    </div>
-                </a-col> -->
-            </a-row>
+        <a-row v-if="showprogress" class="siberbar" v-show="showclockbutton">
+            <a-col :span="24">
+                <span class="badge badge-secondary">阈值</span>
+                <a-checkbox v-model="thresholder.positive">正</a-checkbox>
+                <a-checkbox v-model="thresholder.negative">负</a-checkbox>
+                <a-slider  :tipFormatter="thresholdformatter" :marks="thresholdslidermarks"  v-model="thresholder.threshold" />
+                <span class="badge badge-secondary">进度条</span>
+                <a-slider  :tipFormatter="formatter" :marks="slidermarks"  v-model="innershowInterval" />
+                <a-button shape="circle" icon="play-circle" size="small" @click="restarttodraw"/>
+            </a-col>
+        </a-row>
         <!-- </transition> -->
         <!-- <transition name="fade"> -->
-            <a-progress v-if="showprogress" :format="progressformat" strokeLinecap="square" :percent="percent" />
+        <a-progress v-if="showprogress" :format="progressformat" strokeLinecap="square" :percent="percent" />
         <!-- </transition> -->
         <!-- <transition name="fade" > -->
-             <div v-if="showprogress" :style="{ width: '30%',position: 'absolute',bottom:0,right:0, border: '1px solid #d9d9d9', borderRadius: '2px' }">
-                <a-calendar @select="onSelect" :fullscreen="false" @panelChange="onPanelChange" v-model="showdayLocal" mode="month"/>
-             </div>
+        <div v-show="showclockbutton" v-if="showprogress" :style="{ width: '30%',position: 'absolute',bottom:0,right:0, border: '1px solid #d9d9d9', borderRadius: '2px' }">
+            <a-calendar @select="onSelect" :fullscreen="false" @panelChange="onPanelChange" v-model="showdayLocal" mode="month"/>
+        </div>
         <!-- </transition> -->
     </div>
 </template>
 <script lang="ts">
-
+import TimeBotton from "@/components/bar/TimeBotton.vue";
 // import Vue from 'vue'
 // import Component from 'vue-class-component'
 import { Component, Vue, Prop, Watch, Emit, Model } from "vue-property-decorator";
@@ -87,6 +88,7 @@ import { PostParams,Dimension, PositionClass } from "@/types/index.ts";
 import moment,{ DurationInputObject, Moment } from "moment";
 import Antd from "ant-design-vue";
 import 'moment/locale/zh-cn';
+import { GeoLimiter } from '@/components/options/GeoOptions';
 moment.locale('zh-cn');
 // (window as any).moment = moment;
 @Component({
@@ -97,6 +99,8 @@ moment.locale('zh-cn');
         ACol: Antd.Col,
         AButton: Antd.Button,
         ACalendar: Antd.Calendar,
+        TimeBotton,
+        ACheckbox: Antd.checkbox,
     },
     computed:{
         percent(): number {
@@ -110,7 +114,11 @@ moment.locale('zh-cn');
             // console.log("showprogress",(this as any).percent);
             // return (this as any).appendtimelist!==undefined?(this as any).percent===100?false:true:false;
             return (this as any).appendtimelist!==undefined && (this as any).positionClass===PositionClass.Center?true:false;
+        },
+        titlesize(): string {
+            return (this as any).positionClass === PositionClass.Center?"titlelarge":"titlemiddle";
         }
+
     },
 })
 export default class LittleBar extends Vue {
@@ -120,6 +128,8 @@ export default class LittleBar extends Vue {
     @Prop() public positionClass!: PositionClass;
     @Model("changepostparams") public postparms!: PostParams;
     private showdayLocal: Moment = moment();
+    private showclockbutton: boolean = false; // 显示日期小图标
+    private showrange = false;// 点击日期小图标显示选择日期框
     private activeitem = "";
     private highlightbarclass = "";
     private totaltimelen = 0;
@@ -127,6 +137,7 @@ export default class LittleBar extends Vue {
     private data: PostParams = this.postparms;
     private showdownicon: string = "";
     private innershowInterval = 0;
+    private thresholder: GeoLimiter = {threshold:0,negative:true,positive:true}; // 阈值为0的时候为不过滤
     private slidermarks = {
         0: {
           style: {
@@ -147,11 +158,40 @@ export default class LittleBar extends Vue {
           label: "5s",
         }
     };
+    private thresholdslidermarks = {
+        0: {
+          style: {
+            color: 'white',
+          },
+          label: "0",
+        },
+        50: {
+          style: {
+            color: 'white',
+          },
+          label: "5",
+        },
+        100: {
+          style: {
+            color: 'white',
+          },
+          label: "10",
+        }
+    };
     private rangeselectlist = [
         [{day:" Last 2 days ",value: [2,'d']},{day:"Last 7 days ",value: [7,'d']},{day:"Last 30 days",value: [30,'d']},{day:"Last 90 days",value: [90,'d']},{day:"Last 6 months",value: [6,'M']},{day:"Last 1 year",value: [1,'y']},{day:"Last 2 years",value: [2,'y']},{day:"Last 5 years",value: [5,'y']},],
         [{day:"Yesterday ",value: [1,'d']},{day:"Day before yesterday",value: [2,'d']},{day:"This day last week ",value: [1,'w']},{day:"last month ",value: [1,'M']},{day:"last year ",value: [1,'y']},],
         [{day:"Today ",value: [0,'d'],type: "this"},{day:"This week ",value: [1,'w'],type: "this"},{day:"This month ",value: [1,'M'],type: "this"},{day:"This year ",value: [1,'y'],type: "this"}],
     ];
+    get dayrange(): string {
+        if (this.data.scale * 1 === 86400) {
+            return this.data.starttime.split(" ")[0] + " to " + this.data.endtime.split(" ")[0];
+        } else if (this.data.scale * 1 === 3600) {
+            return this.data.starttime + " to " + this.data.endtime;
+        } else {
+            return this.data.starttime + " to " + this.data.endtime;
+        }
+    }
     @Watch("date")
     public setShowdayLocal(newval: any) {
         this.showdayLocal = newval;
@@ -162,9 +202,17 @@ export default class LittleBar extends Vue {
         // tslint:disable-next-line:radix
         this.data.showinterval = parseInt(newval / 100 * 5000+"");
     }
+    @Watch("thresholder",{deep: true})
+    public setThreshold(newval: GeoLimiter) {
+        // console.log("newval:",newval,"oldval：",oldval);
+        // parseFloat(newval / 10 +"");
+        const data = JSON.parse(JSON.stringify(newval));
+        data.threshold = parseFloat(newval.threshold / 10 + "");
+        this.data.thresholder = data;
+    }
     @Emit()
     public changeShow(showv: boolean | Event) {
-        this.show = showv instanceof Event ? !this.show : showv;
+        this.showrange = showv instanceof Event ? !this.showrange : showv;
         // console.log(this.show,showv , showv instanceof Event);
     }
     // @Emit()
@@ -198,7 +246,7 @@ export default class LittleBar extends Vue {
         const start = moment(this.postparms.starttime);
         const end = moment(this.postparms.endtime);
         const {scale} = this.postparms;
-        this.totaltimelen = end.diff(start,scale===3600?"h":scale===86000?"d":"d");
+        this.totaltimelen = end.diff(start,scale===3600?"h":scale===86400?"d":"d");
         // console.log("计算日期",this.totaltimelen);
         this.innershowInterval = this.postparms.showinterval / 1000 * 20 ;
         this.showdayLocal = this.date;
@@ -219,6 +267,14 @@ export default class LittleBar extends Vue {
             return `${value/20}s`;
         }
     }
+    private thresholdformatter(value: any) {
+        // if (value/20 < 1) {
+        //     return `${value/20 * 1000}`;
+        // } else {
+        //     return `${value/20}s`;
+        // }
+        return value / 10;
+    }
     private progressformat(value: any) {
         return `${value}%`;
     }
@@ -235,10 +291,14 @@ export default class LittleBar extends Vue {
     private donothing() {
         console.log("1111111111");
     }
+    @Emit()
     private showdownincon(show: boolean) {
         // console.log("sssssssssssss");
-        this.showdownicon = show?"fa-sort-down":"";
-        // console.log("showdownicon",show,this.showdownicon,this.postparms.entity);
+        // this.showdownicon = show?"fa-sort-down":"";
+        // this.showdownicon = show?"fa-clock-o":"";
+        if (!this.showrange) {
+            this.showclockbutton = this.positionClass === PositionClass.Center?show:false;
+        }
     }
     private restarttodraw() {
         this.$emit("restarttodraw");
@@ -307,7 +367,7 @@ $littlebarheight: 24px;
         box-shadow: 0px 0px 2px rgba(0,0,0,0);
     }
 }
-.rangeselect{
+.chartheader{
     // box-shadow: 0 0 30px 0 #000;
     text-align: left;
     position: relative;
@@ -315,35 +375,54 @@ $littlebarheight: 24px;
     height: 100%;
     background: transparent;
 }
+.chartrange {
+    float: right;
+    position: relative;
+}
 .icondown{
     left: 50%;
     position: relative;
     cursor: pointer;
+}
+.fa-clock-o {
+    left: 50%;
+    position: relative;
+    cursor: pointer;
+    vertical-align: middle;
+    color: white;
 }
 .timepicker-relative-section{
     min-height: 270px;
     
 }
 .options1{
-    position: absolute;
+    position: relative;
     width: 100%;
     z-index: 300;
 }
 .littlebar{
     width: 100%;
+    position: absolute;
 }
 .container-fluid,.row{
     padding: 0px;
     margin: 0px;
 }
 .barBody{
+    position: relative;
     height:calc(100% - 24px);
 }
 .anchorBL{
     display:none;
 }
 .charttitletext{
-    float: left;
+    // float: left;
+    position: relative;
+    left:50%;
+    margin-left: -10%;
+    width: 20%;
+    text-align: center;
+    // margin-left: 25%;
 }
 .middlebutton{
     position: absolute;
@@ -351,7 +430,7 @@ $littlebarheight: 24px;
 .ant-progress{
     position: absolute;
     top: 0;
-    left: 10%;
+    // left: 10%;
     width: 30%;
     // margin-left: -25%; 
     
@@ -362,8 +441,6 @@ $littlebarheight: 24px;
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0;
 }
-
- 
 .siberbar {
     position: absolute;
     width: 33%;
@@ -373,6 +450,33 @@ $littlebarheight: 24px;
         border: 0;
     }
 }
+.button {
+    // position: absolute;
+    z-index: 500;
+    left: 0;
+    height: 100%;
+    //   background: transparent;
+    //   border: 0px transparent;
+    color: #8e8e8e;
+    text-shadow: 0 1px 0 rgba(0,0,0,.1);
+    background-color: #2a2a2c;
+    background-image: linear-gradient(180deg,#262628,#303032);
+    background-repeat: repeat-x;
+    border-color: #262628;
+    // padding: 6px 11px;
+    line-height: 16px;
+    border: 1px solid #2f2f32;
+    margin-right: 3px;
+    white-space: nowrap;
+    border-radius: 0.25rem;
+    padding:0.1em 0.2em;
+}
 
+.titlelarge{
+    font-size: large;
+}
+.titlemiddle {
+    font-size: medium;
+}
 </style>
 

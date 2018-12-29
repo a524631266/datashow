@@ -1,3 +1,4 @@
+import { Points } from '@/components/options/GeoOptions';
 import { MeasureName, ReturnGeoData } from '@/types';
 import 'echarts/extension/bmap/bmap.js';
 // import 'echarts/dist/extension/bmap.min.js';
@@ -738,18 +739,18 @@ export interface GeoData {
     points: Points[]; // 由经纬度值构成的打点数据
 }
 export interface GeoLimiter {
-    limit: number;
+    threshold: number; // 阈值为0的时候为不过滤
     positive: boolean;
     negative: boolean;
 }
 function filterPoint(points: Points,geolimiter: GeoLimiter ): Points {
     const data: Points = points;
     if (geolimiter.negative && geolimiter.positive) {
-        data[2] = data[2] >0? 1:data[2]<0?-1:0;
+        data[2] = data[2] > geolimiter.threshold ? 1:(data[2]< geolimiter.threshold?-1:0);
     } else if( geolimiter.negative && !geolimiter.positive) {
-        data[2] = data[2] <0?-1:0;
+        data[2] = data[2] < geolimiter.threshold ? -1: 0;
     } else if ( !geolimiter.negative && geolimiter.positive) {
-        data[2] = data[2] >0?1:0;
+        data[2] = data[2] > geolimiter.threshold ? 1: 0;
     }
     return data;
 }
@@ -760,6 +761,10 @@ export const getGeoCityOptionConfig = (data: GeoData,geolimiter: GeoLimiter) => 
         (point: Points) => {
             const p = filterPoint(point,geolimiter);
             return p as any;
+        }
+    ).filter(
+        (point: Points) => {
+            return point[2] !== 0;
         }
     );
     return {

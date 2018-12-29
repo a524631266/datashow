@@ -149,6 +149,7 @@ body{
 }
 .ant-layout-header{
   padding: 0px;
+  background: radial-gradient(circle at center,#000066 0%,#000000 200%);
 }
 .ant-layout{
   background: transparent;

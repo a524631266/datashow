@@ -80,7 +80,7 @@ import TopHighChart from "@/components/chart/TopHighChart.vue";
 import { PositionClass , PostParams , Dimension } from "@/types/index.ts";
 
 import { InitBoxUrlProps,InitHeatMapUrlProps,InitTimeLineUrlProps,
-        InitTopUrlProps,InitTrendUrlProps,InitGeomapUrlProps } from "@/actions/initOptions.ts";
+        InitTopUrlProps,InitTrendUrlProps,InitGeomapUrlProps } from "@/config/initOptions.ts";
 const orgbox = Object.assign({},InitBoxUrlProps);
 const entbox = Object.assign({},InitBoxUrlProps);
 const enttrend = Object.assign({},InitTrendUrlProps);

@@ -122,7 +122,7 @@ import PubSub from 'pubsub-js';
 import { PositionClass , PostParams , Dimension } from "@/types/index.ts";
 
 import { InitBoxUrlProps,InitHeatMapUrlProps,InitTimeLineUrlProps,
-        InitTopUrlProps,InitTrendUrlProps,InitGeomapUrlProps } from "@/actions/initOptions.ts";
+        InitTopUrlProps,InitTrendUrlProps,InitGeomapUrlProps } from "@/config/initOptions.ts";
 const orgbox = Object.assign({},InitBoxUrlProps);
 const entbox = Object.assign({},InitBoxUrlProps,{isLeaf:true});
 const enttrend = Object.assign({},InitTrendUrlProps,{isLeaf:true});
@@ -270,8 +270,8 @@ export default class Home extends Vue {
     /* border: 30px; */
     /* margin:5px; */
     /* margin: 1px 1px 1px 1px; */
-    border: 2px solid #000050;
-    box-shadow: 0 2px 10px #000000;
+    /* border: 2px solid #000050;
+    box-shadow: 0 2px 10px #000000; */
 }
 #tooltip::after{
     content: '';
@@ -304,15 +304,18 @@ export default class Home extends Vue {
 :global(.ant-progress-text) {
   color: white ;
 }
+:global(.ant-checkbox-wrapper span) {
+  color: white ;
+}
 :global(.ant-fullcalendar-column-header-inner) {
   color: white ;
 }
-:global(.ant-fullcalendar-last-month-cell .ant-fullcalendar-value) {
+/* :global(.ant-fullcalendar-last-month-cell .ant-fullcalendar-value) {
     color: darkcyan;
 }
 :global(.ant-fullcalendar-next-month-btn-day .ant-fullcalendar-value){
     color: darkcyan;
-}
+} */
 :global(.ant-fullcalendar-value) {
     color: white;
 }
@@ -373,8 +376,10 @@ export default class Home extends Vue {
     position:absolute;
     left:20%;
     width: 60%;
-    height: 99%;
+    height: calc(99% + 24px);
     top:0%;
+    z-index: 400;
+    transform: translateY(-24px);
 }
 
 #left-title{

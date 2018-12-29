@@ -47,7 +47,7 @@ import { Component, Vue, Prop, Emit, Watch } from 'vue-property-decorator';
 const prev = process.env.NODE_ENV === "development"? "/tree": "";
 import Antd from "ant-design-vue";
 import Axios from "axios";
-import { entity,name,level } from "@/actions/initOptions.ts";
+import { entity,name,level } from "@/config/initOptions.ts";
 export interface ChildrenValue {
     id: number ;
     pId: number;

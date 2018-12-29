@@ -1,3 +1,4 @@
+import { GeoLimiter } from './../components/options/GeoOptions';
 import { ProvinceMapData ,Points } from '@/components/options/GeoOptions';
 enum PositionClass {
     LeftTop = "left-top",
@@ -19,6 +20,7 @@ enum Dimension {
     geomap = "geomap",
     none = "none"
 }
+
 interface PostParams {
     entity: string;
     starttime: string;
@@ -33,6 +35,7 @@ interface PostParams {
     showinterval: number;
     isLeaf: boolean;
     coord: [number,number];
+    thresholder: GeoLimiter;
 }
 // function Test (firstName:String, lastName:String) {
 //     let firstName2:String = firstName

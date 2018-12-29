@@ -82,7 +82,7 @@ export default class SlotBar extends Vue {
     border-right: 1px solid radial-gradient(circle at center,#000066 0%,#000000 200%);
     /* overflow: hidden; */
     /* background-image: linear-gradient(180deg,#262628,#303032); */
-    box-shadow: 0 2px 8px #000000;
+    /* box-shadow: 0 2px 8px #000000; */
 }
 .headinnerbody{
     width: 100%;

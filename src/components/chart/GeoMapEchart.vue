@@ -65,7 +65,7 @@ export default class GeoMapEchart extends Vue {
     private mapnames: GeoMapPictureFeaturePropertiesFormat[]= [];
     private date: Moment = moment();
     private geolimiter: GeoLimiter = {
-        limit: 3,
+        threshold: 0,
         positive: true,
         negative: true,
     };
@@ -408,6 +408,13 @@ export default class GeoMapEchart extends Vue {
         this.setTimeoutdraw(count,true);
         // this.option = {change:"redraw"};
     }
+    /**
+     * 监听子组件中的阈值是否有变化，一旦变化就更新当前的threshold
+     */
+    @Watch("postparms.thresholder",{deep:true})
+    private setThreshold(val: GeoLimiter) {
+        this.geolimiter = val;
+    }
     private destroyed() {
       // console.log("destory (this as any).intervalid", (this as any).intervalid);
       this.clearIntervalnow();
@@ -517,7 +524,7 @@ export default class GeoMapEchart extends Vue {
         // this.chartstorepool = {};
         this.geoBodydata = {};
         this.geoheaddata = {} as any;
-        const websocketurl = `ws://${websocketurlhost}/websocket?entity=${urlparas.entity}&start=${urlparas.starttime.split(" ")[0]}&end=${urlparas.endtime.split(" ")[0]}`;
+        const websocketurl = `ws://${websocketurlhost}/websocket?entity=${urlparas.entity}&start=${urlparas.starttime.split(" ")[0]}&end=${urlparas.endtime.split(" ")[0]}&scale=${urlparas.scale}`;
         console.log("initWebSocket",websocketurl);
         this.websocket = new WebSocket(websocketurl);
         this.websocket.onopen = this.wsonopen;

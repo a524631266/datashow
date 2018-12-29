@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import './app/index'; // 导入并动态载入antd中的message
+import '@/app/index.ts'; // 导入并动态载入antd中的message
 import router from '@/router';
 import store from '@/store';
 import "bootstrap/dist/css/bootstrap.min.css";

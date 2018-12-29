@@ -1,5 +1,7 @@
 import { PostParams ,Dimension} from "@/types";
-
+import moment,{ DurationInputObject, Moment } from "moment";
+const starttime = moment().subtract(3,"d").format("YYYY-MM-DD HH:mm:ss");
+const endtime = moment().format("YYYY-MM-DD HH:mm:ss");
 export const entity = "";
 export const level = 2;
 export const name = "新疆维吾尔自治区";
@@ -16,8 +18,8 @@ export const coord: [number,number] = [0,0];
 
 const InitBoxUrlProps: PostParams = {
     entity,
-    starttime: "2018-12-15 00:00:00",
-    endtime: "2018-12-18 00:00:00",
+    starttime,
+    endtime,
     entitynums: 20,
     scale: 60 * 60,
     winlen: 30 * 24 * 60 * 60,
@@ -27,12 +29,17 @@ const InitBoxUrlProps: PostParams = {
     name,
     showinterval: 1000 * 15,
     isLeaf: false,
-    coord
+    coord,
+    thresholder: {
+        threshold : 0,
+        negative: true,
+        positive: true
+    }
 };
 const InitHeatMapUrlProps: PostParams = {
     entity,
-    starttime: "2018-12-15 00:00:00",
-    endtime: "2018-12-18 00:00:00",
+    starttime,
+    endtime,
     entitynums: 20,
     scale: 60 * 60,
     winlen: 30 * 24 * 60 * 60,
@@ -42,13 +49,18 @@ const InitHeatMapUrlProps: PostParams = {
     name,
     showinterval: 1000 * 15,
     isLeaf: false,
-    coord
+    coord,
+    thresholder: {
+        threshold : 0,
+        negative: true,
+        positive: true
+    }
 };
 
 const InitTimeLineUrlProps: PostParams = {
     entity: "",
-    starttime: "2018-12-15 00:00:00",
-    endtime: "2018-12-18 00:00:00",
+    starttime,
+    endtime,
     entitynums: 20,
     scale: 60 * 60,
     winlen: 30 * 24 * 60 * 60,
@@ -58,13 +70,18 @@ const InitTimeLineUrlProps: PostParams = {
     name,
     showinterval: 1000 * 15,
     isLeaf: false,
-    coord
+    coord,
+    thresholder: {
+        threshold : 0,
+        negative: true,
+        positive: true
+    }
 };
 
 const InitTopUrlProps: PostParams = {
     entity,
-    starttime: "2018-12-15 00:00:00",
-    endtime: "2018-12-18 00:00:00",
+    starttime,
+    endtime,
     entitynums: 20,
     scale: 60 * 60,
     winlen: 30 * 24 * 60 * 60,
@@ -74,12 +91,17 @@ const InitTopUrlProps: PostParams = {
     name,
     showinterval: 1000 * 15,
     isLeaf: false,
-    coord
+    coord,
+    thresholder: {
+        threshold : 0,
+        negative: true,
+        positive: true
+    }
 };
 const InitTrendUrlProps: PostParams = {
     entity,
-    starttime: "2018-12-15 00:00:00",
-    endtime: "2018-12-18 00:00:00",
+    starttime,
+    endtime,
     entitynums: 20,
     scale: 60 * 60,
     winlen: 30 * 24 * 60 * 60,
@@ -89,12 +111,17 @@ const InitTrendUrlProps: PostParams = {
     name,
     showinterval: 1000 * 15,
     isLeaf: false,
-    coord
+    coord,
+    thresholder: {
+        threshold : 0,
+        negative: true,
+        positive: true
+    }
 };
 const InitGeomapUrlProps: PostParams = {
     entity,
-    starttime: "2018-12-15 00:00:00",
-    endtime: "2018-12-18 00:00:00",
+    starttime,
+    endtime,
     entitynums: 20,
     scale: 60 * 60 * 24,
     winlen: 30 * 24 * 60 * 60,
@@ -104,7 +131,12 @@ const InitGeomapUrlProps: PostParams = {
     name,
     showinterval: 1000 * 1,
     isLeaf: false,
-    coord
+    coord,
+    thresholder: {
+        threshold : 0,
+        negative: true,
+        positive: true
+    }
 };
 
 export {

@@ -1,6 +1,6 @@
 import Highcharts, { Options } from 'highcharts';
 import "./dependentjs/xrange";
-import { TimeLineChart,TimeLineChartTrans } from "@/types/postreturnform.ts";
+import { TimeLineChart,TimeLineChartTrans } from "@/types/postreturnform";
 export const inout2 = [
 {starttime: 1542681155000, endtime: 1542695555000, id: '881675', type: '减少', value: -16},
     {starttime: 1542798935000, endtime: 1542807515000, id: '881675', type: '减少', value: -21},
