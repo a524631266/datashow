@@ -153,6 +153,7 @@ body{
 }
 .ant-layout{
   background: transparent;
+  overflow-y: hidden;
 }
 
 </style>

@@ -19,20 +19,17 @@
             </LittleBar>
         </div>
         <div  class="rightslot">{{rightbarname}}</div>
-        <FloatBotton />
   </div>
 </template>
 
 <script lang='ts'>
 import { Component, Vue, Prop, Emit } from 'vue-property-decorator';
-import FloatBotton from "@/components/bar/FloatBotton.vue";
 import PubSub from 'pubsub-js';
 import LittleBar from "@/components/chart/LittleBar.vue";
 import { PositionClass , PostParams, ChartLibrary } from '@/types/index';
 @Component({
     components: {
         LittleBar,
-        FloatBotton
     },
 })
 export default class SlotBar extends Vue {

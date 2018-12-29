@@ -73,7 +73,7 @@
         <a-progress v-if="showprogress" :format="progressformat" strokeLinecap="square" :percent="percent" />
         <!-- </transition> -->
         <!-- <transition name="fade" > -->
-        <div v-show="showclockbutton" v-if="showprogress" :style="{ width: '30%',position: 'absolute',bottom:0,right:0, border: '1px solid #d9d9d9', borderRadius: '2px' }">
+        <div v-show="showclockbutton" v-if="showprogress" :style="{ width: '150px',height: '192px',position: 'absolute',bottom:0,right:'0px', border: '0px solid #d9d9d9', borderRadius: '2px' }">
             <a-calendar @select="onSelect" :fullscreen="false" @panelChange="onPanelChange" v-model="showdayLocal" mode="month"/>
         </div>
         <!-- </transition> -->

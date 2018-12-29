@@ -1,6 +1,7 @@
 <template>
-    <a-button draggable ref="floatbutton" class="floatbutton" :class="movelock?'':'ondrag'" type="primary" @mouseleave="handlefloatLeaveButton" @click="showLeftBar" style="margin-bottom: 16px"  @mousedown="handlefloatdownButton" @mouseup="handlefloatupButton">
-      <a-icon :type="collapsed ? 'menu-unfold' : 'menu-fold'" /> 
+    <a-button draggable ref="floatbutton" class="floatbutton" :class="movelock?'':'ondrag'" type="primary" @mouseleave="handlefloatLeaveButton" @click="showLeftBar"  @mousedown="handlefloatdownButton" @mouseup="handlefloatupButton">
+      <!-- <a-icon :type="collapsed ? 'menu-unfold' : 'menu-fold'" />  -->
+      <a-icon :type="collapsed ? 'right' : 'left'" style="color:white"/> 
     </a-button>
 </template>
 
@@ -68,18 +69,21 @@ export default class FloatBotton extends Vue {
 
 <style lang='scss' scoped>
 .floatbutton {
-    position: absolute;
-    z-index: 500;
+    position: fixed;
+    z-index: 600;
+    top:0px;
     left: 0;
-    height: 100%;
-    //   background: transparent;
-    //   border: 0px transparent;
+    // height: 100%;
+
+    height: 24px;
     color: #8e8e8e;
     text-shadow: 0 1px 0 rgba(0,0,0,.1);
     background-color: #2a2a2c;
     background-image: linear-gradient(180deg,#262628,#303032);
     background-repeat: repeat-x;
     border-color: #262628;
+          background: transparent;
+    //   border: 0px transparent;
     // padding: 6px 11px;
     line-height: 16px;
     border: 1px solid #2f2f32;

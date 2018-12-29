@@ -1,5 +1,6 @@
 <template>
   <div class="home">
+      <FloatBotton />
     <!-- <HeatMapHighChart :urlparas="datalist[2].urlparas" 
         :positionClass="datalist[2].positionClass" 
         :key="2" 
@@ -117,6 +118,7 @@ import TopHighChart from "@/components/chart/TopHighChart.vue";
 import GeoMapEchart from "@/components/chart/GeoMapEchart.vue";
 import BoxSingleHighChart from "@/components/chart/BoxSingleHighChart.vue";
 import EntityInfo from "@/components/EntityInfo.vue";
+import FloatBotton from "@/components/bar/FloatBotton.vue";
 import PubSub from 'pubsub-js';
 
 import { PositionClass , PostParams , Dimension } from "@/types/index.ts";
@@ -142,7 +144,8 @@ const geo = Object.assign({},InitGeomapUrlProps);
     TopHighChart,
     GeoMapEchart,
     BoxSingleHighChart,
-    EntityInfo
+    EntityInfo,
+    FloatBotton
   },
 })
 export default class Home extends Vue {
@@ -300,7 +303,10 @@ export default class Home extends Vue {
     height: 90vh;
     position: relative;
 }
-
+:global(.ant-fullcalendar table ){
+    height: auto;
+    font-size: 10px;
+}
 :global(.ant-progress-text) {
   color: white ;
 }
@@ -311,6 +317,9 @@ export default class Home extends Vue {
 :global(.ant-fullcalendar-column-header-inner) {
   color: white ;
 }
+:global(.ant-tree li .ant-tree-node-content-wrapper:hover){
+    background-color: transparent!important;
+}
 /* :global(.ant-fullcalendar-last-month-cell .ant-fullcalendar-value) {
     color: darkcyan;
 }
@@ -319,6 +328,9 @@ export default class Home extends Vue {
 } */
 :global(.ant-fullcalendar-value) {
     color: white;
+    width: auto!important;
+    height:auto!important;
+    line-height:11px!important;
 }
 :global(.ant-btn-circle) {
     background: transparent;
