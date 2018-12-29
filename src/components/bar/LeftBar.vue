@@ -196,15 +196,15 @@ export default class LeftBar extends Vue {
         });
     }
     private onSelect(val: string,e: any) {
-        console.log("object1",val,e);
+        // console.log("object1",val,e);
         this.onLoadData(e.node);
-        if(e.selected) {
+        if(this.expandedKeys.indexOf(val) < 0 ) {
             this.expandedKeys.push(val[0]);
         } else {
             this.expandedKeys.splice(this.expandedKeys.indexOf(val),1);
             this.expandedKeys = [...this.expandedKeys]
         }
-        console.log("expandedKeys",this.expandedKeys);
+        // console.log("expandedKeys",this.expandedKeys);
     }
     // private onLoadData(treeNode: any) {
     //     const {eventKey: postid } = treeNode;
