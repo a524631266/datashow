@@ -3,7 +3,7 @@
         <div class="littlebar" >
             <div :style="{position:'relative'}">
                 <!-- <div class="fa icondown middlebutton" :class="showdownicon"></div> -->
-                <div class="fa button fa-clock-o chartrange"  @click="changeShow" v-html="dayrange" v-show="showclockbutton" @mouseenter="highlightbar(true)" @mouseleave="highlightbar(false)"></div>
+                <div class="fa button fa-clock-o chartrange" style="{color:white}" @click="changeShow" v-html="dayrange" v-show="showclockbutton" @mouseenter="highlightbar(true)" @mouseleave="highlightbar(false)"></div>
                 <!-- <time-botton :class="middlebutton"></time-botton> -->
                 <!-- <div class="charttitletime" v-show="false"> {{data.starttime + "" + data.endtime }} </div> -->
             </div>
@@ -378,6 +378,7 @@ $littlebarheight: 24px;
 .chartrange {
     float: right;
     position: relative;
+    color:white;
 }
 .icondown{
     left: 50%;
@@ -457,7 +458,7 @@ $littlebarheight: 24px;
     height: 100%;
     //   background: transparent;
     //   border: 0px transparent;
-    color: #8e8e8e;
+    color:white;
     text-shadow: 0 1px 0 rgba(0,0,0,.1);
     background-color: #2a2a2c;
     background-image: linear-gradient(180deg,#262628,#303032);
