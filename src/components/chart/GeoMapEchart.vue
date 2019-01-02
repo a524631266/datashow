@@ -494,7 +494,7 @@ export default class GeoMapEchart extends Vue {
     private getMapSource(entity: string,name: string): Promise<string> {
         return Axios({
             method:"get",
-            url:`${baseurl}/js/china-main-city/${entity}.json`
+            url:`/${baseurl}/js/china-main-city/${entity}.json`
         }).then(
             async (result)=> {
             // console.log(result)
