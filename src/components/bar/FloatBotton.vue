@@ -89,6 +89,9 @@ export default class FloatBotton extends Vue {
     border: 1px solid #2f2f32;
     margin-right: 3px;
     white-space: nowrap;
+    &:hover {
+      background: linear-gradient(180deg,#262628,#303032);
+    }
 }
 .ondrag{
     background: transparent;
