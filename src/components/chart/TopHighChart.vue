@@ -70,7 +70,6 @@ export default class TopHighChart extends Vue implements AxiosSourceManage {
       this.cancelAxios();
       // this.option = highchartEmptyOption();
       const option: any = highchartEmptyOption(entity);
-      option.change = updatestate.redraw;
       this.option = option;
       console.log("上层图表  TopHighChart",this.postparms,this.id);
       this.getData();

@@ -70,7 +70,6 @@ $headerbarheight:24px;
 $vheight:100vh; 
 body{
     /* background-color: gray; */
-    background-image: url("/xinjiang/img/background4.jpg");
     /* background-repeat: no-repeat; */
     /* background-size: cover; */
     background-attachment: fixed; 

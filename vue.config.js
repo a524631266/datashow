@@ -2,6 +2,7 @@ module.exports = {
     outputDir: process.env.NODE_ENV === 'production'
         ? 'dist'
         : 'dist',//默认为dist
+    baseUrl: "/popudist/",// 设置tomcat中的根目录即顶级项目不如eap/popudist项目下
     devServer: {
         proxy: {
             '/tree': {
