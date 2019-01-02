@@ -23,10 +23,11 @@ import { updatestate } from "@/types/updateState.ts";
 import moment,{ Moment } from "moment";
 import 'moment/locale/zh-cn';
 import { AxiosSourceManage } from "@/implements/AxiosSourceManage";
+import { baseurl } from "@/util/getRootPath.ts";
 moment.locale('zh-cn');
 // import 'echarts/map/js/province/xinjiang.js';
 const prev = process.env.NODE_ENV === "development"? "/xinjiang": "";
-const websocketurlhost = process.env.NODE_ENV === "development"? "192.168.10.63:8088": "localhost:8088";
+const websocketurlhost = process.env.NODE_ENV === "development"? "192.168.10.63:8088": "192.168.10.63:8088";
 @Component({
     components: {
         LittleBar,
@@ -493,7 +494,7 @@ export default class GeoMapEchart extends Vue {
     private getMapSource(entity: string,name: string): Promise<string> {
         return Axios({
             method:"get",
-            url:`/js/china-main-city/${entity}.json`
+            url:`${baseurl}/js/china-main-city/${entity}.json`
         }).then(
             async (result)=> {
             // console.log(result)

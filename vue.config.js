@@ -20,6 +20,14 @@ module.exports = {
                 pathRewrite: {
                     '^/xinjiang': ''
                 }
+            },
+            '/map': {
+                target: 'http://192.168.10.63:8088/popudist/',
+                secure:false,
+                changeOrigin: true,
+                pathRewrite: {
+                    '^/map': ''
+                }
             }
         }
     }
