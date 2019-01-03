@@ -73,8 +73,14 @@
         <a-progress v-if="showprogress" :format="progressformat" strokeLinecap="square" :percent="percent" />
         <!-- </transition> -->
         <!-- <transition name="fade" > -->
-        <div v-show="showclockbutton" v-if="showprogress" :style="{ width: '150px',height: '192px',position: 'absolute',bottom:0,right:'0px', border: '0px solid #d9d9d9', borderRadius: '2px' }">
-            <a-calendar @select="onSelect" :fullscreen="false" @panelChange="onPanelChange" v-model="showdayLocal" mode="month"/>
+        <div v-show="showclockbutton" v-if="showprogress" :style="{ width: '180px',height: '230px',position: 'absolute',bottom:0,right:'0px', border: '0px solid #d9d9d9', borderRadius: '2px' }">
+            <a-icon type="left" class="floatleft"></a-icon>
+            <a-icon type="right" class="floatright"></a-icon>
+            <a-calendar :validRange="validRange" @select="onSelect" :fullscreen="false" @panelChange="onPanelChange" v-model="showdayLocal" mode="month" >
+                <template slot="dateFullCellRender" slot-scope="value">
+                    <span style="color:white" class="showpointer" v-if="showCalendar(value)">{{getDayNum(value)}}</span>
+                </template>
+            </a-calendar>
         </div>
         <!-- </transition> -->
     </div>
@@ -87,9 +93,7 @@ import { Component, Vue, Prop, Watch, Emit, Model } from "vue-property-decorator
 import { PostParams,Dimension, PositionClass } from "@/types/index.ts";
 import moment,{ DurationInputObject, Moment } from "moment";
 import Antd from "ant-design-vue";
-import 'moment/locale/zh-cn';
 import { GeoLimiter } from '@/components/options/GeoOptions';
-moment.locale('zh-cn');
 // (window as any).moment = moment;
 @Component({
     components: {
@@ -101,6 +105,7 @@ moment.locale('zh-cn');
         ACalendar: Antd.Calendar,
         TimeBotton,
         ACheckbox: Antd.checkbox,
+        AIcon: Antd.Icon,
     },
     computed:{
         percent(): number {
@@ -117,8 +122,7 @@ moment.locale('zh-cn');
         },
         titlesize(): string {
             return (this as any).positionClass === PositionClass.Center?"titlelarge":"titlemiddle";
-        }
-
+        },
     },
 })
 export default class LittleBar extends Vue {
@@ -158,6 +162,9 @@ export default class LittleBar extends Vue {
           label: "5s",
         }
     };
+    get validRange(): [Moment,Moment] {
+        return [moment(this.postparms.starttime),moment(this.postparms.endtime)];
+    }
     private thresholdslidermarks = {
         0: {
           style: {
@@ -254,11 +261,17 @@ export default class LittleBar extends Vue {
     private destroyed() {
         // console.log((this as any).some);
     }
+    private getDayNum(date: string): string {
+        return moment(date).format("D");
+    }
+    private showCalendar(date: string): boolean {
+        return moment(this.postparms.starttime).startOf("day").valueOf()<=moment(date).valueOf() && moment(this.postparms.endtime).startOf("day").valueOf()>=moment(date).valueOf();
+    }
     @Emit()
     private queryInitWebSocket(value: any) {
         // this.$emit("changepostparams", this.data);
         this.$emit("redraw");
-        this.show = true;
+        this.showrange = false;
     }
     private formatter(value: any) {
         if (value/20 < 1) {
@@ -478,6 +491,29 @@ $littlebarheight: 24px;
 }
 .titlemiddle {
     font-size: medium;
+}
+.showpointer:hover{
+    cursor: pointer;
+    text-decoration: underline;
+    color:magenta;
+}
+.floatleft{
+    float: left;
+    top: 17px;
+    left: 10px;
+    position: absolute;
+    &:hover {
+        cursor: pointer;
+    }
+}
+.floatright{
+    float: right;
+    top: 17px;
+    right: 5px;
+    position: absolute;
+    &:hover {
+        cursor: pointer;
+    }
 }
 </style>
 

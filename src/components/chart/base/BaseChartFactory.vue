@@ -3,9 +3,9 @@
         <div  ref="id" :id="id" class="innerChart">
         </div>
         <a-spin tip="Loading..." v-show="showLoading" :style="{position:'absolute',top: '50%',left: '50%',transform: 'translateY(-50%) translateX(-50%)' }">
-            <div class="spin-content">
-                正在获取中
-            </div>
+            <!-- <div class="spin-content">
+                {{""}}
+            </div> -->
         </a-spin>
     </div>
 </template>

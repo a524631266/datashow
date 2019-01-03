@@ -1,6 +1,6 @@
 <template>
   <a-layout id="app" class="panel">
-    <a-layout-sider class="treeselect" v-show="openLeftBar">
+    <a-layout-sider class="treeselect" v-show="openLeftBar" >
       <LeftBar />
     </a-layout-sider>
     <!-- <div style="{display:inline-block}">
@@ -9,6 +9,7 @@
     <a-layout >
     <a-layout-header id="nav" class="layoutheader">
       <SlotBar>
+          <bread-crumb slot="leftbar"></bread-crumb>
       </SlotBar>
     </a-layout-header>
     <a-layout-content class="panel-body">
@@ -30,6 +31,7 @@ import LeftBar from "@/components/bar/LeftBar.vue";
 import PubSub from 'pubsub-js';
 import Antd from "ant-design-vue";
 import TooltipRoute from '@/components/bar/TooltipRoute.vue';
+import BreadCrumb from '@/components/bar/BreadCrumb.vue';
 // tslint:disable-next-line:no-var-requires
 // const { Button, message }  = require('ant-design-vue');
 // tslint:disable-next-line:no-var-requires
@@ -43,7 +45,8 @@ import TooltipRoute from '@/components/bar/TooltipRoute.vue';
     ALayoutSider: Antd.Layout.Sider,
     ALayoutHeader: Antd.Layout.Header,
     ALayoutContent: Antd.Layout.Content,
-    TooltipRoute
+    TooltipRoute,
+    BreadCrumb
   }
 })
 export default class App extends Vue {
@@ -56,6 +59,10 @@ export default class App extends Vue {
       PubSub.subscribe("openLeftBar",(mesg: any,action: boolean) => {
         this.openLeftBar = action;
       });
+      PubSub.subscribe("toggleLeftBar",(mesg: any) => {
+        this.openLeftBar = !this.openLeftBar;
+      });
+      // 初始化tree高低
     }
     @Emit()
     private toggleCollapsed() {
@@ -112,16 +119,7 @@ body{
     width: 100%;
 }
 
-.ant-tree{
-    z-index: 499;//小于 floatbotton;
-    position: relative;
-    color: white !important;
-    text-align: left;
-    background: radial-gradient(circle at center,#000066 0%,#000000 200%);
-}
-.ant-tree li span[class~="ant-tree-node-content-wrapper"]{
-    color: white !important;
-}
+
 
 #components-layout-demo-basic .ant-layout-sider {
   background: #3ba0e9;
@@ -130,16 +128,17 @@ body{
   z-index:401;
 }
 .ant-layout-sider{
-  top:0;
+  // top:24px;
   z-index:401;
-  // position: fixed;
-  height: 100vh !important;
+  position: fixed;
+  // height: calc(100vh-24px) !important;
   overflow-y: auto;
   width: auto !important;
   max-width: 100vw !important;
   // min-width: 200px !important;
   flex: none!important;
   box-shadow: 0 2px 8px #000000;
+  background-color: #2f4050;
 }
 .layoutheader{
   height: $headerbarheight;

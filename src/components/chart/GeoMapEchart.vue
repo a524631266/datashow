@@ -21,10 +21,8 @@ import PubSub from 'pubsub-js';
 import { getDataPromise, PostPath } from "@/actions/axiosProxy.ts";
 import { updatestate } from "@/types/updateState.ts";
 import moment,{ Moment } from "moment";
-import 'moment/locale/zh-cn';
 import { AxiosSourceManage } from "@/implements/AxiosSourceManage";
 import { baseurl } from "@/util/getRootPath.ts";
-moment.locale('zh-cn');
 // import 'echarts/map/js/province/xinjiang.js';
 const prev = process.env.NODE_ENV === "development"? "/xinjiang": "";
 const websocketurlhost = process.env.NODE_ENV === "development"? "192.168.10.63:8088": "192.168.10.63:8088";
@@ -599,11 +597,13 @@ export default class GeoMapEchart extends Vue {
         if( index >= 0) {
             this.setTimeoutdraw(index,false);
         } else {
-            if(send) {
-                this.websocket.send(ts+"");
-            }
+            // if(send) {
+            //     this.websocket.send(ts+"");
+            // }
             // 等待一秒看看是否有数据，没有数据就再等
-            setTimeout(()=>this.querydate(ts,false),1000);
+            // setTimeout(()=>this.querydate(ts,false),1000);
+            //  方式2
+            this.$message.warning("没有数据请重新选择时间",1);
         }
     }
     @Emit()

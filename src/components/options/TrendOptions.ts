@@ -72,7 +72,7 @@ export const drawLineOptions = (listdata: TrendChartTrans,title: string) => {
           },
 
         },
-        // min: 0,//删除因为有负值
+        min: 0,// 删除因为有负值
         gridLineWidth: 0
       }],
     tooltip : {

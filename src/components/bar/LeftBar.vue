@@ -4,6 +4,7 @@
             <a :href="'/home/'+nodedataref.key" target="_self" @click.prevent="router2home" class="btn btn-sm">图表</a>
             <a :href="'/info/'+nodedataref.key" target="_self" @click.prevent="router2info" class="btn btn-sm">用户信息</a>
         </template> -->
+        <div class="treepanel" :style="{height:treeheight}">
         <a-tree
             :treeData="treeData"
             :expandedKeys="expandedKeys"
@@ -11,7 +12,7 @@
             @mouseenter="showtooltip"
             @mouseleave="hidetooltip"
             showIcon 
-        >]
+        >
             <a-icon slot="org" type="home" />
             <a-icon slot="user" type="user" />
             <template slot="custom" slot-scope="data">
@@ -24,6 +25,7 @@
             </template>
             <!-- <a href="#" slot="entity">123</a> -->
         </a-tree>
+        </div>
   <!-- </a-popover> -->
   <!-- <a-tree-select
     showSearch
@@ -64,7 +66,7 @@ import Axios from "axios";
 import { entity,name,level } from "@/config/initOptions.ts";
 import PubSub from 'pubsub-js';
 export interface ChildrenValue {
-    id: number ;
+    id: string ;
     pId: number;
     name: string;
     key: string;
@@ -100,7 +102,8 @@ export interface ChildrenValue {
 })
 export default class LeftBar extends Vue {
     private openLeftBar = false;
-    private treeData = [
+    private treeheight = "1000px";
+    private treeData: ChildrenValue[] = [
                 {
                     id: "99998999",
                     pId: 0,
@@ -108,8 +111,8 @@ export default class LeftBar extends Vue {
                     title:name,
                     mapname:name,
                     icon: `${prev}/css/img/diy/building.png`,
-                    open: true,
-                    nocheck:true,
+                    // open: true,
+                    // nocheck:true,
                     level,
                     coord:[0,0],// [87.62781199999995,43.793028],
                     isLeaf: false,
@@ -125,11 +128,13 @@ export default class LeftBar extends Vue {
                     },
                     hover: false,
                 }
-            ];
+            ] as any;
+    private historytreeSelectData: { [key: string]: ChildrenValue} = {[this.treeData[0].key]: JSON.parse(JSON.stringify(this.treeData[0]))};
     private expandedKeys: string[] = [];
     private tooltipShow = false;
     private tooltipplacement = "leftTop";
     private nodedataref: ChildrenValue = {} as any;
+    private rootlevel = 2; // 根等级
     // @Emit()// 不能用，否则无法找到Promise
     private onLoadData(treeNode: any) {
         // console.log("treeNode",treeNode);
@@ -196,15 +201,27 @@ export default class LeftBar extends Vue {
         });
     }
     private onSelect(val: string,e: any) {
-        console.log("object1",val,e.node,e.node.dataRef.key);
-        this.onLoadData(e.node);
+        // console.log("object1",val,e.node,e.node.dataRef.key);
+        const {node,node:{dataRef:{level},dataRef}} = e ;
+        // console.log("this.treeData",this.treeData);
+        this.onLoadData(node);
+        this.historytreeSelectData[val+""] = dataRef;
         // tslint:disable-next-line:no-debugger
-        debugger;
-        if(this.expandedKeys.indexOf(e.node.dataRef.key) < 0 ) {
-            this.expandedKeys.push(e.node.dataRef.key);
+        // debugger;
+        if(this.expandedKeys.indexOf(val+"") < 0 ) {
+            // 先消除其他节点
+            this.expandedKeys.splice(level - this.rootlevel);
+            this.expandedKeys.push(val+"");
         } else {
-            this.expandedKeys.splice(this.expandedKeys.indexOf(e.node.dataRef.key),1);
+            this.expandedKeys.splice(this.expandedKeys.indexOf(val+""));
         }
+        // console.log("this.expandedKeys",this.expandedKeys)
+        const data: ChildrenValue[] = this.expandedKeys.map(
+            (key: string)=> {
+                return this.historytreeSelectData[key];
+            }
+        );
+        PubSub.publish("updateBread",data);
         // console.log("expandedKeys",this.expandedKeys);
     }
     // private onLoadData(treeNode: any) {
@@ -288,6 +305,7 @@ export default class LeftBar extends Vue {
             isLeaf:data.isLeaf as any,
             coord:data.coord as any,
             },params: { entity: data.key}});
+        PubSub.publish("openLeftBar",false);
     }
     private router2info(data: ChildrenValue) {
         // this.$router.push({name: "entityinfo",
@@ -302,10 +320,55 @@ export default class LeftBar extends Vue {
                 entity: data.key,
                 name: data.name}
                 );
+        PubSub.publish("openLeftBar",false);
+    }
+    private mounted() {
+        this.treeheight = (document.body.clientHeight - 24) + 'px';
+        // PubSub.publishSync("updateBread",this.treeData);
     }
 }
 </script>
 
 <style lang='scss' scoped>
-
+:global(.ant-tree){
+    z-index: 499;//小于 floatbotton;
+    position: relative;
+    color: white !important;
+    text-align: left;
+    // background: radial-gradient(circle at center,#000066 0%,#000000 200%);
+    background-color: #2f4050;
+}
+:global(.ant-tree ant-tree-title) {
+    font-size: 12px;
+}
+:global(.ant-tree li span[class~="ant-tree-node-content-wrapper"]){
+    color: white !important;
+}
+:global(.ant-tree li .ant-tree-node-content-wrapper:hover){
+    background-color: transparent!important;
+}
+:global(.ant-tree li){
+  padding: 0px 0px;
+}
+.treepanel{
+    top:24px;
+    position: fixed;
+    min-width:360px;
+    overflow-y:auto;
+    background-color: #2f4050;
+    overflow-x: hidden;
+}
+.treepanel::-webkit-scrollbar{
+    width: 10px;     /*高宽分别对应横竖滚动条的尺寸*/
+    height: 10px;
+}
+.treepanel::-webkit-scrollbar-thumb {/*滚动条里面小方块*/
+    border-radius: 5px;
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    background: rgba(240, 212, 212, 0.8);
+}
+// https://www.lyblog.net/detail/314.html 滚动轮样式查看地址
+.treepanel::-webkit-scrollbar-corner{
+    background:#82AFFF;
+}
 </style>

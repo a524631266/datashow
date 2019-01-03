@@ -163,6 +163,7 @@ export const drawBoxOptions = (listdata: object[], xAxisList: string[], title: s
                 color: "white"
               }
             },
+            min:0,
             gridLineWidth: 0
         },
         tooltip: {

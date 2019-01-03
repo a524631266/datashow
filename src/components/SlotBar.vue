@@ -13,12 +13,18 @@
         <slot name="rightbar" class="rightslot">
             <div class="rightslot">右边</div>
         </slot> -->
-        <div  class="leftslot">{{leftbarname}}</div>
+        
+            <div  class="leftslot">
+                <slot name="leftbar">
+                    {{leftbarname}}
+                </slot>
+            </div>
+        
         <div  class="middleslot">
             <LittleBar :show="true" v-model="postparms">
             </LittleBar>
         </div>
-        <div  class="rightslot">{{rightbarname}}</div>
+        <div  class="rightslot" v-text="rightbarname"></div>
   </div>
 </template>
 
@@ -36,7 +42,7 @@ export default class SlotBar extends Vue {
     @Prop() public positionClass!: PositionClass;
     private postparms: PostParams = {} as any;
     private leftbarname = "新疆维吾尔族";
-    private rightbarname = "某某配电柜";
+    private rightbarname = "配电柜";
     private middlebarname = "";
     public mounted() {
         PubSub.subscribe("updateleftbarname",this.updateleftbarname);
@@ -67,6 +73,10 @@ export default class SlotBar extends Vue {
 }
 .leftslot,.rightslot{
     width: 20%;
+    font-size: medium;
+}
+.leftslot {
+    text-align: left;
 }
 .leftslot,.rightslot,.middleslot{
     height: 100%;

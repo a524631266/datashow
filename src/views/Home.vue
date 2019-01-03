@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-      <FloatBotton />
+      <!-- <FloatBotton /> -->
     <!-- <HeatMapHighChart :urlparas="datalist[2].urlparas" 
         :positionClass="datalist[2].positionClass" 
         :key="2" 
@@ -118,7 +118,7 @@ import TopHighChart from "@/components/chart/TopHighChart.vue";
 import GeoMapEchart from "@/components/chart/GeoMapEchart.vue";
 import BoxSingleHighChart from "@/components/chart/BoxSingleHighChart.vue";
 import EntityInfo from "@/components/EntityInfo.vue";
-import FloatBotton from "@/components/bar/FloatBotton.vue";
+// import FloatBotton from "@/components/bar/FloatBotton.vue";
 import PubSub from 'pubsub-js';
 
 import { PositionClass , PostParams , Dimension } from "@/types/index.ts";
@@ -145,7 +145,7 @@ const geo = Object.assign({},InitGeomapUrlProps);
     GeoMapEchart,
     BoxSingleHighChart,
     EntityInfo,
-    FloatBotton
+    // FloatBotton
   },
 })
 export default class Home extends Vue {
@@ -161,11 +161,11 @@ export default class Home extends Vue {
         {id: "chart-region-linechart", urlparas: orgtrend,
           option: {xAxis: "4"}, positionClass: PositionClass.RightMiddle,chartName:"TrendHighChart"},
           {id: "chart-heatmap", urlparas: orghp,
-        option: {xAxis: "4"}, positionClass: PositionClass.RightBottom,chartName:"HeatMapHighChart"},
+        option: {xAxis: "4"}, positionClass: PositionClass.Center,chartName:"HeatMapHighChart"},
         {id: "chart-geomap", urlparas: geo,
-        option: {xAxis: "1"}, positionClass: PositionClass.Center,chartName:"GeoMapEchart"},
+        option: {xAxis: "1"}, positionClass: PositionClass.RightBottom,chartName:"GeoMapEchart"},
     ];
-    private centerid = "chart-geomap";
+    private centerid = "chart-heatmap";
     private drawerlist = [
         {id: "chart-region-boxchart", urlparas: orgbox,
           option: {xAxis: "1"}, positionClass: PositionClass.Drawer,chartName:"BoxHighChart"},
@@ -305,7 +305,7 @@ export default class Home extends Vue {
 }
 :global(.ant-fullcalendar table ){
     height: auto;
-    font-size: 10px;
+    font-size: 13px;
 }
 :global(.ant-progress-text) {
   color: white ;
@@ -313,24 +313,30 @@ export default class Home extends Vue {
 :global(.ant-checkbox-wrapper span) {
   color: white ;
 }
-
+:global(.ant-breadcrumb-separator){
+    margin: 0px 0px !important;
+}
 :global(.ant-fullcalendar-column-header-inner) {
   color: white ;
 }
-:global(.ant-tree li .ant-tree-node-content-wrapper:hover){
-    background-color: transparent!important;
+:global(.ant-fullcalendar-selected-day span) {
+    background: rgb(83, 117, 228);
 }
+
 /* :global(.ant-fullcalendar-last-month-cell .ant-fullcalendar-value) {
-    color: darkcyan;
+    color: white;
 }
 :global(.ant-fullcalendar-next-month-btn-day .ant-fullcalendar-value){
-    color: darkcyan;
+    color: white;
 } */
+:global(.ant-fullcalendar-header > div:nth-child(3)) {
+    display: none;
+}
 :global(.ant-fullcalendar-value) {
     color: white;
     width: auto!important;
     height:auto!important;
-    line-height:11px!important;
+    line-height:19px!important;
 }
 :global(.ant-btn-circle) {
     background: transparent;

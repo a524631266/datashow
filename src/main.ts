@@ -6,6 +6,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.min.js";
 import "font-awesome/css/font-awesome.min.css";
 import App from './App.vue';
+import moment from 'moment';
+import 'moment/locale/zh-cn';
+moment.locale('zh-cn');
 console.log("是否为本地",process.env.NODE_ENV);
 Vue.config.productionTip = false;
 
