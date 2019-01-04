@@ -202,27 +202,21 @@ export default class LeftBar extends Vue {
     }
     private onSelect(val: string,e: any) {
         // console.log("object1",val,e.node,e.node.dataRef.key);
-        const {node,node:{dataRef:{level},dataRef}} = e ;
+        const {node,node:{dataRef:{level,isLeaf},dataRef}} = e ;
         // console.log("this.treeData",this.treeData);
-        this.onLoadData(node);
-        this.historytreeSelectData[val+""] = dataRef;
-        // tslint:disable-next-line:no-debugger
-        // debugger;
-        if(this.expandedKeys.indexOf(val+"") < 0 ) {
-            // 先消除其他节点
-            this.expandedKeys.splice(level - this.rootlevel);
-            this.expandedKeys.push(val+"");
-        } else {
-            this.expandedKeys.splice(this.expandedKeys.indexOf(val+""));
-        }
-        // console.log("this.expandedKeys",this.expandedKeys)
-        const data: ChildrenValue[] = this.expandedKeys.map(
-            (key: string)=> {
-                return this.historytreeSelectData[key];
+        if(!isLeaf) {
+            this.onLoadData(node);
+            this.historytreeSelectData[val+""] = dataRef;
+            // tslint:disable-next-line:no-debugger
+            // debugger;
+            if(this.expandedKeys.indexOf(val+"") < 0 ) {
+                // 先消除其他节点
+                this.expandedKeys.splice(level - this.rootlevel);
+                this.expandedKeys.push(val+"");
+            } else {
+                this.expandedKeys.splice(this.expandedKeys.indexOf(val+""));
             }
-        );
-        PubSub.publish("updateBread",data);
-        // console.log("expandedKeys",this.expandedKeys);
+        }
     }
     // private onLoadData(treeNode: any) {
     //     const {eventKey: postid } = treeNode;
@@ -298,6 +292,7 @@ export default class LeftBar extends Vue {
         // console.log("hhhhhh");
     }
     private router2home(data: ChildrenValue) {
+        // 1.  触发路由
         this.$router.push({name: "node",query: {
             entity: data.key,
             name: data.name as any,
@@ -305,7 +300,17 @@ export default class LeftBar extends Vue {
             isLeaf:data.isLeaf as any,
             coord:data.coord as any,
             },params: { entity: data.key}});
+        // 2. 自动关闭数
         PubSub.publish("openLeftBar",false);
+        // 3. 更新左标题 因为之前没有点击选择，是直接通过用户信息做的，所以需要更新
+        const keys = [...this.expandedKeys,data.key];
+        this.historytreeSelectData[data.key] = data;
+        const data2: ChildrenValue[] = keys.map(
+            (key: string)=> {
+                return this.historytreeSelectData[key];
+            }
+        );
+        PubSub.publish("updateBread",data2);
     }
     private router2info(data: ChildrenValue) {
         // this.$router.push({name: "entityinfo",
