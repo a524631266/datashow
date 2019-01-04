@@ -291,20 +291,25 @@ export default class LeftBar extends Vue {
         e.node.dataRef.hover = false;
         // console.log("hhhhhh");
     }
+    @Emit()
     private router2home(data: ChildrenValue) {
         // 1.  触发路由
-        this.$router.push({name: "node",query: {
-            entity: data.key,
-            name: data.name as any,
-            level:data.level as any,
-            isLeaf:data.isLeaf as any,
-            coord:data.coord as any,
-            },params: { entity: data.key}});
+        // this.$router.push({name: "node",query: {
+        //     entity: data.key,
+        //     name: data.name as any,
+        //     level:data.level as any,
+        //     isLeaf:data.isLeaf as any,
+        //     coord:data.coord as any,
+        //     },params: { entity: data.key}});
         // 2. 自动关闭数
         PubSub.publish("openLeftBar",false);
         // 3. 更新左标题 因为之前没有点击选择，是直接通过用户信息做的，所以需要更新
         if(!data.isLeaf) {
+            // 修正错位问题
+            this.expandedKeys.splice(data.level - this.rootlevel);
             const keys = [...this.expandedKeys,data.key];
+            // console.log("keys",keys,data,this.rootlevel);
+            // this.expandedKeys = keys;
             this.historytreeSelectData[data.key] = data;
             const data2: ChildrenValue[] = keys.map(
                 (key: string)=> {

@@ -71,7 +71,7 @@
                 <template v-else-if="showid === 2">
                     <a-row v-if="showprogress" class="siberbar" v-show="showclockbutton">
                         <a-col :span="24">
-                            <span class="badge badge-secondary">进度条</span>
+                            <span class="badge badge-secondary">播速</span>
                             <a-slider  :tipFormatter="formatter" :marks="slidermarks"  v-model="innershowInterval" />
                             <a-button shape="circle" icon="play-circle" size="small" @click="restarttodraw"/>
                         </a-col>

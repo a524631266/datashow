@@ -73,10 +73,13 @@ export default class SlotBar extends Vue {
 }
 .leftslot,.rightslot{
     width: 20%;
-    font-size: medium;
+    font-size: 14px;
 }
 .leftslot {
     text-align: left;
+}
+.rightslot {
+    text-align: right;
 }
 .leftslot,.rightslot,.middleslot{
     height: 100%;
