@@ -74,8 +74,8 @@
         <!-- </transition> -->
         <!-- <transition name="fade" > -->
         <div v-show="showclockbutton" v-if="showprogress" :style="{ width: '180px',height: '230px',position: 'absolute',bottom:0,right:'0px', border: '0px solid #d9d9d9', borderRadius: '2px' }">
-            <a-icon type="left" class="floatleft"></a-icon>
-            <a-icon type="right" class="floatright"></a-icon>
+            <a-icon type="left" class="floatleft" @click="preoneday"></a-icon>
+            <a-icon type="right" class="floatright" @click="postoneday"></a-icon>
             <a-calendar :validRange="validRange" @select="onSelect" :fullscreen="false" @panelChange="onPanelChange" v-model="showdayLocal" mode="month" >
                 <template slot="dateFullCellRender" slot-scope="value">
                     <span style="color:white" class="showpointer" v-if="showCalendar(value)">{{getDayNum(value)}}</span>
@@ -265,7 +265,7 @@ export default class LittleBar extends Vue {
         return moment(date).format("D");
     }
     private showCalendar(date: string): boolean {
-        return moment(this.postparms.starttime).startOf("day").valueOf()<=moment(date).valueOf() && moment(this.postparms.endtime).startOf("day").valueOf()>=moment(date).valueOf();
+        return moment(this.postparms.starttime).startOf("day").valueOf()<=moment(date).valueOf() && moment(this.postparms.endtime).endOf("day").valueOf()>=moment(date).valueOf();
     }
     @Emit()
     private queryInitWebSocket(value: any) {
@@ -320,7 +320,35 @@ export default class LittleBar extends Vue {
     private onPanelChange(value: any, mode: any) {
     //   console.log(value, mode);
     }
-
+    /**
+     * preoneday
+     */
+    @Emit()
+    private preoneday() {
+        // this.showdayLocal = this.showdayLocal.subtract(1,'days');
+        const now = this.showdayLocal.valueOf();
+        const preday = moment(now).startOf("day").subtract(1,'day');
+        console.log("now:",now,";preday:",preday);
+        if(preday.valueOf()< moment(this.postparms.starttime).startOf("day").valueOf()) {
+            this.$message.warning("请重新选择开始时间",1);
+        } else {
+            this.onSelect(preday);
+        }
+    }
+    @Emit()
+    private postoneday() {
+        const now = this.showdayLocal.valueOf();
+        const postday = moment(now).startOf("day").add(1,'day');
+        if(postday.valueOf()> moment(this.postparms.endtime).endOf("day").valueOf()) {
+            this.$message.warning("超过时间,请稍后",1);
+        } else {
+            this.onSelect(postday);
+            this.showdayLocal = postday;
+        }
+    }
+    /**
+     * 获取日期日期时间
+     */
     private onSelect(date: Moment) {
         const querydate = moment(date,"YYYY-MM-DD").startOf("day").valueOf();
         this.$emit("querydate",querydate,true);
