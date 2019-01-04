@@ -815,7 +815,7 @@ export const drawActionOptions = (objectlist: TimeLineChartTrans, title: string)
       }
       inlist.push({
           x: (objectlist[i].starttime + 8 * 60 * 60 * 1000) % (24 * 60 * 60 * 1000),
-          x2: (objectlist[i].endtime + 8 * 60 * 60 * 1000) % (24 * 60 * 60 * 1000),
+          x2: (objectlist[i].endtime + 8 * 60 * 60 * 1000 - 1) % (24 * 60 * 60 * 1000),
           y: yAxis.indexOf(day),
           name: objectlist[i].type,
           id: objectlist[i].id,
