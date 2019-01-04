@@ -69,13 +69,16 @@ export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, r
             inverted: true,
             backgroundColor: 'rgba(0,0,0,0)',
             events: {
-                load() {
+                render() {
                     const xAxis = (this as any).xAxis[0];
                     const chart = (this as any);
+                    console.log("1");
+                    console.log("xAxis",xAxis);
                     // console.log("11111111",xAxis.labelGroup)
                     // tslint:disable-next-line:only-arrow-functions
-                    Highcharts.addEvent(xAxis.labelGroup.element, 'mouseover',(e) => {
+                    const overlabel2showinfo = ()=> {Highcharts.addEvent(xAxis.labelGroup.element, 'mouseover',(e) => {
                         // 将原生事件添加上 chartX 和 chartY 值
+                        console.log("122222222222");
                         e = chart.pointer.normalize(e);
                         e.stopPropagation();
                         const categories = xAxis.categories;
@@ -120,20 +123,28 @@ export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, r
                         // console.log("e.target", (e as any).target.style.left,(e as any).target.style.top,(e as any).target.style.width,(e as any).target.style.height);
                         // console.log("e.target", (e as any).target.getBoundingClientRect(),e);
                         // 先隐藏 ###########
+                        console.log("11111111111");
                         openInfo(categories[index],namemap[xlist[index]],clientX,clientY,(e as any).target.getBoundingClientRect());
                         // infoObject.createNewInfoDiv(categories[index], namemap[xlist[index]], clientX, clientY, redrawEntityFunc, openInfo);
-                    });
-                    Highcharts.addEvent(xAxis.labelGroup.element, 'mouseleave', (e) => {
+                    });};
+                    const overlabel2hideinfo = ()=> {Highcharts.addEvent(xAxis.labelGroup.element, 'mouseleave', (e) => {
                         // 将原生事件添加上 chartX 和 chartY 值
                         // const timeoutid = setTimeout(() => { infoObject.hiddenInfo()}, 300);
                         // infoObject.setTimeoutId(timeoutid);
+                        // console.log("leave");
                         PubSub.publish("hidetooltip","none");
-                    });
+                    });};
+                    if(xAxis.visible) {
+                        overlabel2showinfo();
+                        overlabel2hideinfo();
+                        // setTimeout(overlabel2showinfo,20);
+                        // setTimeout(overlabel2hideinfo,20);
+                    }
                 },
-                render() {
-                    // 先隐藏 ###########
-                    // infoObject.hiddenInfo();
-                }
+                // render() {
+                //     // 先隐藏 ###########
+                //     // infoObject.hiddenInfo();
+                // }
             }
         },
         title: {

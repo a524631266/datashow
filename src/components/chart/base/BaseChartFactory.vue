@@ -64,7 +64,7 @@ export default class BaseChartFactory extends Vue {
     }
     @Watch("option.change",{deep: true})
     private redrawChart(newVal: updatestate, oldVal: updatestate) {
-       console.log("options变化",newVal, oldVal,this.id);
+    //    console.log("options变化",newVal, oldVal,this.id);
        if(this.chartLibrary === ChartLibrary.highchart) {
             if (this.chartInstance) {
                 // console.log("1");
@@ -125,6 +125,7 @@ export default class BaseChartFactory extends Vue {
      * highcart 显示x轴数据
      */
     private toggleHighChartAxis() {
+        console.log("(this.chartInstance as any).xAxis[0]",(this.chartInstance as any).xAxis[0]);
         if ( this.chartInstance && this.positionClass !== PositionClass.Center) {
             // (this.chartInstance as any).xAxis[0].update({labels:{enabled:false}});
             (this.chartInstance as any).xAxis[0].update({visible:false});

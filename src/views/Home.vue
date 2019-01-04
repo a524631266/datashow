@@ -322,6 +322,10 @@ export default class Home extends Vue {
 :global(.ant-fullcalendar-selected-day span) {
     background: rgb(83, 117, 228);
 }
+:global(.ant-select-selection--single){
+    background: transparent;
+    border: 0;
+}
 
 /* :global(.ant-fullcalendar-last-month-cell .ant-fullcalendar-value) {
     color: white;
