@@ -120,7 +120,7 @@ const InitTrendUrlProps: PostParams = {
 };
 const InitGeomapUrlProps: PostParams = {
     entity,
-    starttime,
+    starttime:moment().subtract(10,"d").format("YYYY-MM-DD HH:mm:ss"),
     endtime,
     entitynums: 20,
     scale: 60 * 60 * 24,

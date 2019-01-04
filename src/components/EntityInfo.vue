@@ -186,7 +186,7 @@ export default class EntityInfo extends Vue {
     // 一旦value辩护就设置值
     // @Emit()
     set totolvolt(val: any) {
-        console.log("info val: ",val);
+        // console.log("info val: ",val);
         this.setInfodata(val);
     }
     @Emit()

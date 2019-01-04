@@ -50,7 +50,7 @@ export default class SlotBar extends Vue {
         PubSub.subscribe("updatemiddledata",this.updatemiddledata);
     }
     public destroyed() {
-        console.log((this as any).some);
+        // console.log((this as any).some);
     }
     @Emit()
     private updateleftbarname(msg: any, name: string) {

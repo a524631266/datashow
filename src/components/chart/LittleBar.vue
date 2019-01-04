@@ -242,11 +242,11 @@ export default class LittleBar extends Vue {
     public changeShow(showv: boolean | Event,ind: number) {
         if(this.showid === ind) {
             this.showrange = showv instanceof Event ? !this.showrange : showv;
-            console.log("一样");
+            // console.log("一样");
         } else {
             this.showid = ind;
             this.showrange = true;
-            console.log("不一样");
+            // console.log("不一样");
         }
         // console.log(this.show,showv , showv instanceof Event);
     }
