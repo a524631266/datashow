@@ -3,52 +3,80 @@
         <div class="littlebar" >
             <div :style="{position:'relative'}">
                 <!-- <div class="fa icondown middlebutton" :class="showdownicon"></div> -->
-                <div class="fa button fa-clock-o chartrange" style="{color:white}" @click="changeShow" v-html="dayrange" v-show="showclockbutton" @mouseenter="highlightbar(true)" @mouseleave="highlightbar(false)"></div>
+                <div class="fa button fa-clock-o chartrange" style="{color:white}" @click="changeShow($event,0)" v-html="dayrange" v-show="showclockbutton" @mouseenter="highlightbar(true)" @mouseleave="highlightbar(false)"></div>
                 <!-- <time-botton :class="middlebutton"></time-botton> -->
                 <!-- <div class="charttitletime" v-show="false"> {{data.starttime + "" + data.endtime }} </div> -->
+                <div class="button chartrange" v-show="showclockbutton" @click="changeShow($event,1)"><i class="fa fa-underline"></i></div>
+                <div class="button chartrange" v-show="showclockbutton" @click="changeShow($event,2)">{{TimeProcess}}</div>
+                <div class="button chartrange" v-show="showclockbutton" @click="downloadchart(positionClass)"><a-icon type="download" /></div>
             </div>
             <div class="row options1 table-dark" v-show="showrange" @click.stop="donothing" >
-                <form class="col-4">
-                    <h3 class="section-heading">用户选项</h3>
-                    <label class="small">From:</label>
-                    <div class="input-group input-group-sm" >
-                        <input class="form-control" :placeholder="data.starttime" v-model="data.starttime" type="text" />
-                        <div class="input-group-addon">
-                            <button class="btn btn-outline-secondary btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                <template v-if="showid === 0">
+                    <form class="col-4">
+                        <h3 class="section-heading">用户选项</h3>
+                        <label class="small">From:</label>
+                        <div class="input-group input-group-sm" >
+                            <input class="form-control" :placeholder="data.starttime" v-model="data.starttime" type="text" />
+                            <div class="input-group-addon">
+                                <button class="btn btn-outline-secondary btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                            </div>
+                        </div>
+                        <label class="small">To:</label>
+                        <div class="input-group input-group-sm" >
+                            <input class="form-control" :placeholder="data.endtime" v-model="data.endtime" type="text"/>
+                            <div class="input-group-addon">
+                                <button class="btn btn-outline-secondary btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                            </div>
+                        </div>
+                        <label class="small">scale:</label>
+                        <div class="input-group input-group-sm">
+                            <!-- <select class="form-control" v-model="data.scale">
+                                    <option label="1h" value="3600">1h</option>
+                                    <option label="1d" value="86400" selected="true">1d</option>
+                                </select>
+                                
+                            <div class="input-group-addon">
+                                <button class="btn btn-secondary btn-sm" type="submit" @click.prevent="queryInitWebSocket">查询</button>
+                            </div> -->
+                            <a-radio-group v-model="data.scale">
+                                <a-radio :value="3600" :style="{color: 'white'}">1h</a-radio>
+                                <a-radio :value="86400" :style="{color: 'white'}">1d</a-radio>
+                            </a-radio-group>
+                        </div>
+                        <div class="input-group input-group-sm" >
+                            <div class="input-group-addon"  style="position: absolute;right:0">
+                                <button class="btn btn-secondary btn-sm" type="submit" @click.prevent="queryInitWebSocket">查询</button>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="col-8 timepicker-relative-section">
+                        <h3 class="section-heading">时段范围</h3>
+                        <div class="card-group">
+                            <ul v-for="(data,index) in rangeselectlist" :key="index" class="card list-group list-group-flush">
+                                <li v-for="(item,index) in data" :key="index" class="list-group-item h6" :class="item.day===activeitem?'active':''" @click="licktimeselectrange(item)">{{item.day}}</li>
+                            </ul>
                         </div>
                     </div>
-                    <label class="small">To:</label>
-                    <div class="input-group input-group-sm" >
-                        <input class="form-control" :placeholder="data.endtime" v-model="data.endtime" type="text"/>
-                        <div class="input-group-addon">
-                            <button class="btn btn-outline-secondary btn-sm" type="button"><i class="fa fa-calendar"></i></button>
-                        </div>
-                    </div>
-                    <label class="small">scale:</label>
-                    <div class="input-group input-group-sm">
-                        <select class="form-control" v-model="data.scale">
-                                <!-- <option label="200ms" value="200"></option>
-                                <option label="1s" value="1000"></option>
-                                <option label="2s" value="2000" selected="true"></option>
-                                <option label="4s" value="4000"></option>
-                                <option label="15min" value="15000"></option>
-                                <option label="1h" value="60000"></option> -->
-                                <option label="1h" value="3600">1h</option>
-                                <option label="1d" value="86400" selected="true">1d</option>
-                            </select>
-                        <div class="input-group-addon">
-                            <button class="btn btn-secondary btn-sm" type="submit" @click.prevent="queryInitWebSocket">查询</button>
-                        </div>
-                    </div>
-                </form>
-                <div class="col-8 timepicker-relative-section">
-                    <h3 class="section-heading">时段范围</h3>
-                    <div class="card-group">
-                        <ul v-for="(data,index) in rangeselectlist" :key="index" class="card list-group list-group-flush">
-                            <li v-for="(item,index) in data" :key="index" class="list-group-item h6" :class="item.day===activeitem?'active':''" @click="licktimeselectrange(item)">{{item.day}}</li>
-                        </ul>
-                    </div>
-                </div>
+                </template>
+                <template v-else-if="showid === 1">
+                    <a-row v-if="showprogress" class="siberbar" v-show="showclockbutton">
+                        <a-col :span="24">
+                            <span class="badge badge-secondary">阈值</span>
+                            <a-checkbox v-model="thresholder.positive">正</a-checkbox>
+                            <a-checkbox v-model="thresholder.negative">负</a-checkbox>
+                            <a-slider  :tipFormatter="thresholdformatter" :marks="thresholdslidermarks"  v-model="thresholder.threshold" />
+                        </a-col>
+                    </a-row>
+                </template>
+                <template v-else-if="showid === 2">
+                    <a-row v-if="showprogress" class="siberbar" v-show="showclockbutton">
+                        <a-col :span="24">
+                            <span class="badge badge-secondary">进度条</span>
+                            <a-slider  :tipFormatter="formatter" :marks="slidermarks"  v-model="innershowInterval" />
+                            <a-button shape="circle" icon="play-circle" size="small" @click="restarttodraw"/>
+                        </a-col>
+                    </a-row>
+                </template>
             </div>
         </div>
         <div class="charttitletext" :class="titlesize"> {{titlename }} </div>
@@ -57,17 +85,7 @@
         </div>
         <!-- <transition name="fade"> -->
             <!-- :defaultValue="1" -->
-        <a-row v-if="showprogress" class="siberbar" v-show="showclockbutton">
-            <a-col :span="24">
-                <span class="badge badge-secondary">阈值</span>
-                <a-checkbox v-model="thresholder.positive">正</a-checkbox>
-                <a-checkbox v-model="thresholder.negative">负</a-checkbox>
-                <a-slider  :tipFormatter="thresholdformatter" :marks="thresholdslidermarks"  v-model="thresholder.threshold" />
-                <span class="badge badge-secondary">进度条</span>
-                <a-slider  :tipFormatter="formatter" :marks="slidermarks"  v-model="innershowInterval" />
-                <a-button shape="circle" icon="play-circle" size="small" @click="restarttodraw"/>
-            </a-col>
-        </a-row>
+
         <!-- </transition> -->
         <!-- <transition name="fade"> -->
         <a-progress v-if="showprogress" :format="progressformat" strokeLinecap="square" :percent="percent" />
@@ -106,6 +124,8 @@ import { GeoLimiter } from '@/components/options/GeoOptions';
         TimeBotton,
         ACheckbox: Antd.checkbox,
         AIcon: Antd.Icon,
+        ARadioGroup: Antd.Radio.Group,
+        ARadio: Antd.Radio
     },
     computed:{
         percent(): number {
@@ -141,6 +161,7 @@ export default class LittleBar extends Vue {
     private data: PostParams = this.postparms;
     private showdownicon: string = "";
     private innershowInterval = 0;
+    private showid = 0;
     private thresholder: GeoLimiter = {threshold:0,negative:true,positive:true}; // 阈值为0的时候为不过滤
     private slidermarks = {
         0: {
@@ -218,8 +239,15 @@ export default class LittleBar extends Vue {
         this.data.thresholder = data;
     }
     @Emit()
-    public changeShow(showv: boolean | Event) {
-        this.showrange = showv instanceof Event ? !this.showrange : showv;
+    public changeShow(showv: boolean | Event,ind: number) {
+        if(this.showid === ind) {
+            this.showrange = showv instanceof Event ? !this.showrange : showv;
+            console.log("一样");
+        } else {
+            this.showid = ind;
+            this.showrange = true;
+            console.log("不一样");
+        }
         // console.log(this.show,showv , showv instanceof Event);
     }
     // @Emit()
@@ -280,6 +308,9 @@ export default class LittleBar extends Vue {
             return `${value/20}s`;
         }
     }
+    get TimeProcess(): string {
+        return this.formatter(this.innershowInterval);
+    }
     private thresholdformatter(value: any) {
         // if (value/20 < 1) {
         //     return `${value/20 * 1000}`;
@@ -311,6 +342,12 @@ export default class LittleBar extends Vue {
         // this.showdownicon = show?"fa-clock-o":"";
         if (!this.showrange) {
             this.showclockbutton = this.positionClass === PositionClass.Center?show:false;
+        }
+    }
+    @Watch("positionClass")
+    private dopostionClassChange(newvalue: string) {
+        if(newvalue !== PositionClass.Center) {
+            this.showrange = false;
         }
     }
     private restarttodraw() {
@@ -352,6 +389,16 @@ export default class LittleBar extends Vue {
     private onSelect(date: Moment) {
         const querydate = moment(date,"YYYY-MM-DD").startOf("day").valueOf();
         this.$emit("querydate",querydate,true);
+    }
+    // @Emit()
+    // private showthreshold(value: number) {
+    // }
+    // @Emit()
+    // private showprocess(value: number) {
+    // }
+    @Emit()
+    private downloadchart(positionClass: string) {
+        PubSub.publish("downloadchart",positionClass);
     }
 }
 </script>
@@ -471,9 +518,9 @@ $littlebarheight: 24px;
 }
 .ant-progress{
     position: absolute;
-    top: 0;
+    bottom: 0;
     // left: 10%;
-    width: 30%;
+    width: 100px;
     // margin-left: -25%; 
     
 }
@@ -484,9 +531,9 @@ $littlebarheight: 24px;
   opacity: 0;
 }
 .siberbar {
-    position: absolute;
+    position: relative;
     width: 33%;
-    bottom: 0;
+    top: 0;
     &.ant-btn {
         background: transparent;
         border: 0;
@@ -512,6 +559,9 @@ $littlebarheight: 24px;
     white-space: nowrap;
     border-radius: 0.25rem;
     padding:0.1em 0.2em;
+    &:hover{
+        cursor: pointer;
+    }
 }
 
 .titlelarge{

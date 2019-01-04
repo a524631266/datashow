@@ -19,6 +19,9 @@ import { PositionClass , PostParams, ChartLibrary } from '@/types/index';
 import 'echarts/lib/chart/heatmap';
 import Antd from "ant-design-vue";
 import { updatestate } from '@/types/updateState';
+import exportHighchart from 'highcharts/modules/exporting';
+import {downloadchart} from '@/util/downloadcanvas.ts';
+exportHighchart(Highcharts);
 @Component({
     components: {
         ASpin: Antd.Spin,
@@ -40,6 +43,7 @@ export default class BaseChartFactory extends Vue {
     private showLoading = false;
     public mounted() {
         // console.log("1111111")
+        PubSub.subscribe("downloadchart",this.downloadchart);
     }
     /**
      * 监控entity变化的时候，也就是当entityid真正变化的时候，就要更新视图
@@ -125,7 +129,7 @@ export default class BaseChartFactory extends Vue {
      * highcart 显示x轴数据
      */
     private toggleHighChartAxis() {
-        console.log("(this.chartInstance as any).xAxis[0]",(this.chartInstance as any).xAxis[0]);
+        // console.log("(this.chartInstance as any).xAxis[0]",(this.chartInstance as any).xAxis[0]);
         if ( this.chartInstance && this.positionClass !== PositionClass.Center) {
             // (this.chartInstance as any).xAxis[0].update({labels:{enabled:false}});
             (this.chartInstance as any).xAxis[0].update({visible:false});
@@ -168,6 +172,26 @@ export default class BaseChartFactory extends Vue {
         this.chartInstance = null;
         // console.log("路由切换的时候是否销毁组件","111111",this.id);
     }
+    @Emit()
+    private downloadchart(msg: any,positionClass: string) {
+        console.log("111111");
+        if(this.positionClass === positionClass) {
+            if (this.chartLibrary === ChartLibrary.highchart ) {
+                (this.chartInstance as any).exportChart({
+                    type: "image/jpeg",
+                    filename: this.positionClass
+                });
+                // 导出功能扩展
+                // chart.exportChart({
+                //     type: 'application/pdf',image/png -- image/jpeg -- image/svg+xml
+                //     filename: 'my-pdf'
+                // });
+            } else if(this.chartLibrary === ChartLibrary.echart ) {
+                console.log("地图下载");
+                downloadchart(this.chartInstance);
+            }
+        }
+    }
 }
 </script>
 
@@ -181,4 +205,5 @@ export default class BaseChartFactory extends Vue {
 .anchorBL{
     display:none;
 }
+
 </style>

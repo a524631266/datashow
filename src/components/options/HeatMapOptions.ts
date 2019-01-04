@@ -1,5 +1,6 @@
 import Highcharts, { Options ,HeatMapChart} from 'highcharts';
 import $ from "jquery";
+// import "highcharts/modules/exporting.js";
 import "./dependentjs/map";
 import PubSub from 'pubsub-js';
 import { HeatmapChart, HeatmapChartTrans } from '@/types/postreturnform';

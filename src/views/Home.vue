@@ -325,6 +325,7 @@ export default class Home extends Vue {
 :global(.ant-select-selection--single){
     background: transparent;
     border: 0;
+    color: white;
 }
 
 /* :global(.ant-fullcalendar-last-month-cell .ant-fullcalendar-value) {
@@ -452,6 +453,9 @@ export default class Home extends Vue {
 .draw {
     display: none;
 }
+.highcharts-exporting-group {
+    display: none!important;
+};
 
 </style>
 
