@@ -268,7 +268,8 @@ export default class Home extends Vue {
 
 .left-bottom,.left-middle,.left-top,.center,.right-bottom,.right-middle,.right-top{
     border-radius: 2px;
-    background-image: radial-gradient(circle at center,#000066 0%,#000048 100%);
+    /* background-image: radial-gradient(circle at center,#000066 0%,#000048 100%); */
+    background-image: radial-gradient(circle at center,#000066 0%,#000000 200%);
     color: white;   
     /* border: 30px; */
     /* margin:5px; */

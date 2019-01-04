@@ -20,7 +20,7 @@
                 </slot>
             </div>
         
-        <div  class="middleslot">
+        <div  class="middleslot" style="width: 60%;">
             <LittleBar :show="true" v-model="postparms">
             </LittleBar>
         </div>

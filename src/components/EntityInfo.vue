@@ -198,6 +198,7 @@ export default class EntityInfo extends Vue {
             // console.log(" data.entity", data.entity);
             this.entityid = data.entity as string;
             this.entityname = data.name as string;
+            this.infodata.entityid = data.entity;
             this.loadingdata(this.entityid);
             // this.showinfo = true;
         });
