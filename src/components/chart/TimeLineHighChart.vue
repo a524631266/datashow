@@ -9,13 +9,14 @@
 
 <script lang='ts'>
 import { Component, Vue, Prop, Emit, Model, Watch, Provide } from 'vue-property-decorator';
-import { PositionClass , PostParams ,ChartLibrary } from '@/types/index';
+import { PositionClass , PostParams ,ChartLibrary, ThresholdLimiter } from '@/types/index';
 import BaseChartFactory from "@/components/chart/base/BaseChartFactory.vue";
 import LittleBar from "@/components/chart/LittleBar.vue";
 import { Options , HeatMapSeriesOptions} from 'highcharts';
 import { inout, drawActionOptions} from "@/components/options/TimeLineOptions.ts";
 import { getDataPromise, PostPath } from "@/actions/axiosProxy.ts";
-import { TimeLineChart,TimeLineChartTrans } from "@/types/postreturnform.ts";
+import { TimeLineChart,TimeLineChartTrans, HeatmapChartTrans, TimeLineDataTrans } from "@/types/postreturnform.ts";
+import {listdata, drawHeatmapOptions } from "@/components/options/HeatMapOptions.ts";
 import {highchartEmptyOption} from "@/components/options/EmptyChart.ts";
 import PubSub from 'pubsub-js';
 import { updatestate } from '@/types/updateState';
@@ -41,6 +42,12 @@ export default class TimeLineHighChart extends Vue implements AxiosSourceManage 
     private titlename = "异常";
     private candraggable = false;
     private date: Moment = moment();
+    private thresholdlimiter: ThresholdLimiter = {
+        threshold: 0,
+        positive: true,
+        negative: true,
+        range:[-3,3],
+    };
     // private mounted() {
     // }
     @Emit()
@@ -57,19 +64,40 @@ export default class TimeLineHighChart extends Vue implements AxiosSourceManage 
         (data: string | TimeLineChartTrans) => {
           if ( typeof data !== "string") {
             const change = (this.option as any).change;
-            const option2 = drawActionOptions(data, "异常");
+            const option2 = drawActionOptions(data, "异常",this.thresholdlimiter);
+            // const newdata = this._TimeLine2Heatmap(data);
+            // const option2 = drawHeatmapOptions(newdata, "异常","" ,"" as any);
             (option2 as any).change = updatestate.redraw;
-            this.option = option2;
+            this.option = option2 as any;
             // console.log("timelinedata",this.option);
           }
         }
       );
     }
+
+    private _TimeLine2Heatmap(data: TimeLineChartTrans): HeatmapChartTrans {
+      // let newdata : HeatmapChartTrans = [];
+    //    x: string; // 代表 1201065
+    // name: string; // "8号",
+    // y: number; // 0,
+    // value: number; // 0,
+      const newdata: HeatmapChartTrans = Array.from(data as any).map(
+          (value: TimeLineDataTrans)=> {
+            return {
+              x: value.id,
+              name: moment(value.starttime).format("MM-DD"),
+              y: 1,
+              value: value.value
+            };
+          }
+      );
+      return newdata;
+    }
     @Watch("urlparas.entity",  {deep : true})
     private redraw(entity: string) {
       this.cancelAxios();
       this.option = highchartEmptyOption(entity);
-      console.log("上层图表 TimeLineHighChart",this.postparms,this.id);
+      // console.log("上层图表 TimeLineHighChart",this.postparms,this.id);
       this.getData();
       // 在这里开始做长轮询 定时从后台传数据
     }

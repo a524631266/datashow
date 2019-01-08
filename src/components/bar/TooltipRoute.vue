@@ -48,7 +48,7 @@ export default class TooltipRoute extends Vue {
           this.nodedataref.level = data.level;
           this.nodedataref.coord = data.coord;
           if( data.target) {
-              this.overlayStyle = {left: (data.target.x+data.target.width) + "px",top: data.target.y + "px"};
+              this.overlayStyle = {left: (data.target.left+data.target.width) + "px",top: data.target.top + "px"};
           } else {
               this.overlayStyle = {left: data.clientX+"px",top: data.clientY+"px"};
           }

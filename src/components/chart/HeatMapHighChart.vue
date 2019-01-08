@@ -91,6 +91,7 @@ export default class HeatMapHighChart extends Vue implements AxiosSourceManage {
     private showTooltiop(entity: string, name: string,clientX: number,clientY: number,target: DOMRect) {
       // 方法在 LeftBar中订阅
       const level = -1;
+      console.log("clientX:",clientX,";clientY",clientY,"target:",target);
       PubSub.publish("showtooltip",{entity,name,isLeaf:true,level,clientX,clientY,target});
     }
     private destroyed() {

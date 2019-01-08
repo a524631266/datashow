@@ -49,7 +49,7 @@ export default class HighchartFactory extends Vue {
             () => {
                 // Highcharts.chart((this as any).id, (this as any).option as Options);
                 // 1.时间timeline配置
-                Highcharts.chart(this.id, drawActionOptions(inout, "1111"));
+                // Highcharts.chart(this.id, drawActionOptions(inout, "1111","" as any));
                 // console.log((this as any).changedata(),"this.$props.");
                 // 2.箱线图配置
                 // Highcharts.chart((this as any).id, drawBoxOptions(boxchart3, xAxis3 , "222") as Options);

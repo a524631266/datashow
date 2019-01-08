@@ -69,17 +69,17 @@ export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, r
             type: 'heatmap',
             inverted: true,
             backgroundColor: 'rgba(0,0,0,0)',
+            zoomType: 'y',
             events: {
                 render() {
                     const xAxis = (this as any).xAxis[0];
                     const chart = (this as any);
-                    console.log("1");
-                    console.log("xAxis",xAxis);
+                    // console.log("1");
+                    // console.log("xAxis",xAxis);
                     // console.log("11111111",xAxis.labelGroup)
                     // tslint:disable-next-line:only-arrow-functions
                     const overlabel2showinfo = ()=> {Highcharts.addEvent(xAxis.labelGroup.element, 'mouseover',(e) => {
                         // 将原生事件添加上 chartX 和 chartY 值
-                        console.log("122222222222");
                         e = chart.pointer.normalize(e);
                         e.stopPropagation();
                         const categories = xAxis.categories;
@@ -124,7 +124,6 @@ export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, r
                         // console.log("e.target", (e as any).target.style.left,(e as any).target.style.top,(e as any).target.style.width,(e as any).target.style.height);
                         // console.log("e.target", (e as any).target.getBoundingClientRect(),e);
                         // 先隐藏 ###########
-                        console.log("11111111111");
                         openInfo(categories[index],namemap[xlist[index]],clientX,clientY,(e as any).target.getBoundingClientRect());
                         // infoObject.createNewInfoDiv(categories[index], namemap[xlist[index]], clientX, clientY, redrawEntityFunc, openInfo);
                     });};
@@ -198,6 +197,7 @@ export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, r
             gridLineWidth: 0,
             categories: xlist, // 这个要确保为[id,id,id] 而不是名字
             tickmarkPlacement: "on",
+            gridLineColor: 'rgba(0,0,0,0)'
             // type:"category",
             // tickPositioner:function(a,b,c){
             //   console.log(this,a,b,c)
@@ -234,7 +234,8 @@ export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, r
             tickWidth: 1,
             min: 0,
             max: 23,
-            gridLineWidth: 0
+            gridLineWidth: 0,
+            gridLineColor: 'rgba(0,0,0,0)',
         },
         tooltip: {
             headerFormat: title + '<br/>',

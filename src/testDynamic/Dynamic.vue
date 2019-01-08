@@ -48,7 +48,7 @@ import Third from '@/testDynamic/Third.vue';
         Third
     },
 })
-export default class HighchartFactory extends Vue {
+export default class Dynamic extends Vue {
 
     private name = 111;
     private currentView = "first";

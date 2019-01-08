@@ -13,7 +13,7 @@ import { Component, Vue, Prop, Emit, Watch, Model, Provide} from 'vue-property-d
 import LittleBar from "@/components/chart/LittleBar.vue";
 import BaseChartFactory from "@/components/chart/base/BaseChartFactory.vue";
 import { PositionClass , PostParams , ChartLibrary, MeasureName,ReturnGeoData,GeoTransData,ChartStorePool, ReturnGeoDataWsHead,ReturnGeoDataWsBody} from '@/types/index';
-import { getGeoChinaProvinceOptionConfig, getGeoCityOptionConfig, GeoData, provinceMap,ProvinceMapData, Points, testPointsdata, cityMap,getCityMapIdByName, getProvinceMapIdByName, GeoTestData, GeoLimiter, GeoMapPictureFormat, GeoMapPictureFeatureFormat, GeoMapPictureFeaturePropertiesFormat} from '@/components/options/GeoOptions.ts';
+import { getGeoChinaProvinceOptionConfig, getGeoCityOptionConfig, GeoData, provinceMap,ProvinceMapData, Points, testPointsdata, cityMap,getCityMapIdByName, getProvinceMapIdByName, GeoTestData, GeoMapPictureFormat, GeoMapPictureFeatureFormat, GeoMapPictureFeaturePropertiesFormat} from '@/components/options/GeoOptions';
 import echarts,{ ECharts, EChartOption, EChartsOptionConfig } from "echarts";
 import { provincedata} from '@/components/options/ProvinceOptions.ts';
 import Axios,{AxiosPromise} from "axios";
@@ -23,6 +23,7 @@ import { updatestate } from "@/types/updateState.ts";
 import moment,{ Moment } from "moment";
 import { AxiosSourceManage } from "@/implements/AxiosSourceManage";
 import { baseurl } from "@/util/getRootPath.ts";
+import { ThresholdLimiter } from '@/types';
 // import 'echarts/map/js/province/xinjiang.js';
 const prev = process.env.NODE_ENV === "development"? "/xinjiang": "";
 const websocketurlhost = process.env.NODE_ENV === "development"? "192.168.10.63:8088": "192.168.10.63:8088";
@@ -63,10 +64,11 @@ export default class GeoMapEchart extends Vue {
     private appendtimelist: number[] = [];
     private mapnames: GeoMapPictureFeaturePropertiesFormat[]= [];
     private date: Moment = moment();
-    private geolimiter: GeoLimiter = {
+    private geolimiter: ThresholdLimiter = {
         threshold: 0,
         positive: true,
         negative: true,
+        range: [0,0],
     };
     private initreturndata = {
                         geomap:{
@@ -190,7 +192,7 @@ export default class GeoMapEchart extends Vue {
      */
     private preInsertUnfindMapData(childlabel: string[]): ProvinceMapData[] {
         const result: ProvinceMapData[] = [];
-        console.log("this.mapnames",this.mapnames);
+        // console.log("this.mapnames",this.mapnames);
         this.mapnames.forEach(
             (item)=> {
                 if(!childlabel.includes(item.name)) {
@@ -411,7 +413,7 @@ export default class GeoMapEchart extends Vue {
      * 监听子组件中的阈值是否有变化，一旦变化就更新当前的threshold
      */
     @Watch("postparms.thresholder",{deep:true})
-    private setThreshold(val: GeoLimiter) {
+    private setThreshold(val: ThresholdLimiter) {
         this.geolimiter = val;
     }
     private destroyed() {
@@ -481,7 +483,7 @@ export default class GeoMapEchart extends Vue {
             // (chart as any).setOption(newoption);
             newoption =  JSON.parse(JSON.stringify(newoption));
             (chart as any).setOption(newoption);
-            console.log("this.newoption",newoption);
+            // console.log("this.newoption",newoption);
         }
     }
     @Emit()

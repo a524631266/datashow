@@ -2,7 +2,6 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import Home from './views/Home.vue';
 // import App from './App.vue';
-// import HighchartFactory from './components/HighchartFactory.vue';
 // import ChartPanel from '@/views/ChartPanel.vue';
 Vue.use(Router);
 export default new Router({

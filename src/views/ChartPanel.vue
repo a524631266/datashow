@@ -70,7 +70,6 @@
 
 <script lang="ts">
 import { Component, Vue, Emit } from 'vue-property-decorator';
-import HighchartFactory from "@/components/HighchartFactory.vue";
 import BoxHighChart from "@/components/chart/BoxHighChart.vue";
 import TimeLineHighChart from "@/components/chart/TimeLineHighChart.vue";
 import HeatMapHighChart from "@/components/chart/HeatMapHighChart.vue";
@@ -91,7 +90,6 @@ const orgtop = Object.assign({},InitTopUrlProps);
 
 @Component({
   components: {
-    HighchartFactory,
     BoxHighChart,
     TimeLineHighChart,
     HeatMapHighChart,

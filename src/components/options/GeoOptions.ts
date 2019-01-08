@@ -1,5 +1,7 @@
 import { Points } from '@/components/options/GeoOptions';
-import { MeasureName, ReturnGeoData } from '@/types';
+import moment from 'moment';
+// import { Points } from '@/types';
+import { MeasureName, ReturnGeoData, ThresholdLimiter } from '@/types';
 import 'echarts/extension/bmap/bmap.js';
 // import 'echarts/dist/extension/bmap.min.js';
 export const provinceMap = {
@@ -465,6 +467,40 @@ export interface ProvinceMapData {
     value: number; // 数量 //由于是[-,-3]==>-1 && [3,-]==>1
 }
 
+
+class TestTimer {
+    private starttime = 0;
+    private endtime = 0;
+    private avegetime = 0;
+    private step = 1000;
+    private pretotal = 0;
+    private table: {[value: number]: number}= {
+    };
+    public setTime(time: number, total: number) {
+        if(this.starttime === 0) {
+            this.starttime = time;
+        } else {
+            this.pretotal = total;
+            if(this.avegetime === 0 ) {
+                // this.avegetime = time - this.starttime;
+            } else {
+                // this.avegetime = ((time - this.starttime) + this.avegetime) / 2;
+            }
+            this.table[total + this.step] = time - this.starttime;
+            this.starttime = time;
+            this.endtime = time;
+        }
+    }
+    public getnextstep() {
+        return this.pretotal + this.step;
+    }
+    public getTable() {
+        console.log("table",this.table);
+        return this.table;
+    }
+}
+const timer = new TestTimer();
+
 /**
  * 后去全国与省级别的配置
  * @param provincesArray 经纬度,id,name,value,数据
@@ -472,7 +508,20 @@ export interface ProvinceMapData {
  * @param mapname 省或市的拼音
  * @param isCenter 是否是中心
  */
-export const getGeoChinaProvinceOptionConfig = (provincesArray: ProvinceMapData[], heatData: Points[], mapname: string, isCenter: boolean = true,geolimiter: GeoLimiter) => {
+export const getGeoChinaProvinceOptionConfig = (provincesArray: ProvinceMapData[], heatData: Points[], mapname: string, isCenter: boolean = true,geolimiter: ThresholdLimiter) => {
+    // console.log("开始导入",heatData.length);
+    // 测试刷新时间
+    //  tslint:disable-next-line:no-unused-expression
+    // heatData.length && timer.setTime(moment().valueOf(),timer.getnextstep());
+    // timer.getTable();
+    // let newdata: Points[]= [];
+    // // tslint:disable-next-line:no-bitwise
+    // for (let i = 0; i < (timer.getnextstep()/heatData.length | 0); i++) {
+    //     // data.points.push(...data.points);
+    //     newdata = [...newdata,...heatData];
+    //     // console.log("data",data.points);
+    // }
+    // heatData = newdata;
     const points: Points[] = heatData.map(
         (point: Points) => {
             const p = filterPoint(point,geolimiter);
@@ -738,12 +787,8 @@ export interface GeoData {
     // points: Points[]; // 由经纬度值构成的打点数据
     points: Points[]; // 由经纬度值构成的打点数据
 }
-export interface GeoLimiter {
-    threshold: number; // 阈值为0的时候为不过滤
-    positive: boolean;
-    negative: boolean;
-}
-function filterPoint(points: Points,geolimiter: GeoLimiter ): Points {
+
+function filterPoint(points: Points,geolimiter: ThresholdLimiter ): Points {
     const data: Points = points;
     if (geolimiter.negative && geolimiter.positive) {
         data[2] = data[2] > geolimiter.threshold ? 1:(data[2]< geolimiter.threshold?-1:0);
@@ -754,9 +799,18 @@ function filterPoint(points: Points,geolimiter: GeoLimiter ): Points {
     }
     return data;
 }
-// mapStyle 见 http://lbsyun.baidu.com/index.php?title=jspopular/guide/custom
+// mapStyle 见 http://lbsyun.baidu.com/i.php?title=jspopular/guide/custom
 // 获取样式 http://lbsyun.baidu.com/custom/
-export const getGeoCityOptionConfig = (data: GeoData,geolimiter: GeoLimiter) => {
+export const getGeoCityOptionConfig = (data: GeoData,geolimiter: ThresholdLimiter) => {
+    // test
+    // 循环一万遍
+    // tslint:disable-next-line:no-unused-expression
+    // console.log("打点总数据",data.points.length);
+    // for (let i = 0; i < 10; i++) {
+    //     // data.points.push(...data.points);
+    //     data.points = [...data.points,...data.points];
+    //     // console.log("data",data.points);
+    // }
     const points: Points[] = data.points.map(
         (point: Points) => {
             const p = filterPoint(point,geolimiter);
@@ -767,6 +821,7 @@ export const getGeoCityOptionConfig = (data: GeoData,geolimiter: GeoLimiter) => 
             return point[2] !== 0;
         }
     );
+    // console.log("打点总数据",data.points.length);
     return {
         title: {
             show: false,

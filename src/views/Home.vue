@@ -109,7 +109,7 @@
 <script lang="ts">
 import { appVue } from "@/main.ts";
 import { Component, Vue, Emit, Watch } from 'vue-property-decorator';
-import HighchartFactory from "@/components/HighchartFactory.vue";
+// import HighchartFactory from "@/components/HighchartFactory.vue";
 import BoxHighChart from "@/components/chart/BoxHighChart.vue";
 import TimeLineHighChart from "@/components/chart/TimeLineHighChart.vue";
 import HeatMapHighChart from "@/components/chart/HeatMapHighChart.vue";
@@ -136,7 +136,7 @@ const geo = Object.assign({},InitGeomapUrlProps);
 
 @Component({
   components: {
-    HighchartFactory,
+    // HighchartFactory,
     BoxHighChart,
     TimeLineHighChart,
     HeatMapHighChart,

@@ -1,4 +1,4 @@
-import { GeoLimiter } from './../components/options/GeoOptions';
+// import { ThresholdLimiter } from './../types';
 import { ProvinceMapData ,Points } from '@/components/options/GeoOptions';
 enum PositionClass {
     LeftTop = "left-top",
@@ -35,7 +35,7 @@ interface PostParams {
     showinterval: number;
     isLeaf: boolean;
     coord: [number,number];
-    thresholder: GeoLimiter;
+    thresholder: ThresholdLimiter;
 }
 // function Test (firstName:String, lastName:String) {
 //     let firstName2:String = firstName
@@ -108,6 +108,15 @@ enum ChartLibrary {
 }
 enum MeasureName {
     Elec = "Elec",
+}
+
+export interface ThresholdLimiter {
+    threshold: number; // 阈值为0的时候为不过滤
+    positive: boolean;
+    negative: boolean;
+    range: [number,number];
+    // negativethreshold: number;
+    // positivethreshold: number;
 }
 
 

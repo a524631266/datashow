@@ -117,7 +117,7 @@ interface TimeLineChart {
     action: TimeLineData[];
 }
 
-interface TimeLineDataTrans {
+export interface TimeLineDataTrans {
     endtime: number; // 1542938400000
     starttime: number;// 1542938400000,
     id: string;// "1329545",
@@ -170,10 +170,10 @@ interface HeatmapChart {
 }
 
 interface HeatmapDataTrans {
-    x: string;
-    name: string;
-    y: number;
-    value: number;
+    x: string; // 代表 1201065
+    name: string; // "8号",
+    y: number; // 0,
+    value: number; // 0,
 }
 interface HeatmapChartTrans {
     [index: number]: HeatmapDataTrans;

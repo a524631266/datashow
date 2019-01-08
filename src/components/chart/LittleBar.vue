@@ -1,5 +1,6 @@
 <template>
-    <div class="container-fluid  chartheader"  @mouseenter="showdownincon(true)" @mouseleave="showdownincon(false)">
+    <div class="container-fluid  chartheader"  >
+        <!-- @mouseenter="showdownincon(true)" @mouseleave="showdownincon(false)" -->
         <div class="littlebar" >
             <div :style="{position:'relative'}">
                 <!-- <div class="fa icondown middlebutton" :class="showdownicon"></div> -->
@@ -61,10 +62,10 @@
                 <template v-else-if="showid === 1">
                     <a-row v-if="showprogress" class="siberbar" v-show="showclockbutton">
                         <a-col :span="24">
-                            <span class="badge badge-secondary">阈值</span>
-                            <a-checkbox v-model="thresholder.positive">正</a-checkbox>
-                            <a-checkbox v-model="thresholder.negative">负</a-checkbox>
-                            <a-slider  :tipFormatter="thresholdformatter" :marks="thresholdslidermarks"  v-model="thresholder.threshold" />
+                            <span class="badge badge-secondary">限制</span>
+                            <!-- <a-checkbox v-model="thresholder.positive">正</a-checkbox>
+                            <a-checkbox v-model="thresholder.negative">负</a-checkbox> -->
+                            <a-slider range :step="5"  :tipFormatter="thresholdformatter" :marks="thresholdslidermarks"  v-model="thresholder.range" />
                         </a-col>
                     </a-row>
                 </template>
@@ -111,7 +112,7 @@ import { Component, Vue, Prop, Watch, Emit, Model } from "vue-property-decorator
 import { PostParams,Dimension, PositionClass } from "@/types/index.ts";
 import moment,{ DurationInputObject, Moment } from "moment";
 import Antd from "ant-design-vue";
-import { GeoLimiter } from '@/components/options/GeoOptions';
+import { ThresholdLimiter } from '@/types';
 // (window as any).moment = moment;
 @Component({
     components: {
@@ -162,11 +163,11 @@ export default class LittleBar extends Vue {
     private showdownicon: string = "";
     private innershowInterval = 0;
     private showid = 0;
-    private thresholder: GeoLimiter = {threshold:0,negative:true,positive:true}; // 阈值为0的时候为不过滤
+    private thresholder: ThresholdLimiter = {threshold:0,negative:true,positive:true,range: [(this.postparms.thresholder.range[0] + 10) * 5,(this.postparms.thresholder.range[1] + 10) * 5]}; // 阈值为0的时候为不过滤
     private slidermarks = {
         0: {
           style: {
-            color: 'white',
+            color: 'rgba(0,0,0)',
           },
           label: "0s",
         },
@@ -178,7 +179,7 @@ export default class LittleBar extends Vue {
         },
         100: {
           style: {
-            color: 'white',
+            color: 'rgba(0,0,0)',
           },
           label: "5s",
         }
@@ -191,13 +192,13 @@ export default class LittleBar extends Vue {
           style: {
             color: 'white',
           },
-          label: "0",
+          label: "-10",
         },
         50: {
           style: {
             color: 'white',
           },
-          label: "5",
+          label: "0",
         },
         100: {
           style: {
@@ -231,12 +232,51 @@ export default class LittleBar extends Vue {
         this.data.showinterval = parseInt(newval / 100 * 5000+"");
     }
     @Watch("thresholder",{deep: true})
-    public setThreshold(newval: GeoLimiter) {
-        // console.log("newval:",newval,"oldval：",oldval);
+    public setThreshold(newval: ThresholdLimiter) {
+        console.log("newval:",newval);
         // parseFloat(newval / 10 +"");
         const data = JSON.parse(JSON.stringify(newval));
-        data.threshold = parseFloat(newval.threshold / 10 + "");
+        let [start,end] = newval.range;
+        if(start > end ) {
+            [start,end] = [end,start];
+        }
+
+        data.range[0] = parseFloat((start / 5 -10) + "");
+        data.range[1] = parseFloat((end / 5 -10) + "");
+        const initmarks = {
+            0: {
+            style: {
+                color: 'white',
+            },
+            label: "-10",
+            },
+            50: {
+            style: {
+                color: 'white',
+            },
+            label: "0",
+            },
+            100: {
+            style: {
+                color: 'white',
+            },
+            label: "10",
+            }
+        };
+        (initmarks as any)[start] = {
+          style: {
+            color: 'white',
+          },
+          label: data.range[0],
+        };
+        (initmarks as any)[end] = {
+          style: {
+            color: 'white',
+          },
+          label: data.range[1],
+        };
         this.data.thresholder = data;
+        this.thresholdslidermarks = initmarks;
     }
     @Emit()
     public changeShow(showv: boolean | Event,ind: number) {
@@ -285,6 +325,7 @@ export default class LittleBar extends Vue {
         // console.log("计算日期",this.totaltimelen);
         this.innershowInterval = this.postparms.showinterval / 1000 * 20 ;
         this.showdayLocal = this.date;
+        this.dopostionClassChange(this.positionClass);
     }
     private destroyed() {
         // console.log((this as any).some);
@@ -317,7 +358,7 @@ export default class LittleBar extends Vue {
         // } else {
         //     return `${value/20}s`;
         // }
-        return value / 10;
+        return value / 5 - 10;
     }
     private progressformat(value: any) {
         return `${value}%`;
@@ -341,13 +382,16 @@ export default class LittleBar extends Vue {
         // this.showdownicon = show?"fa-sort-down":"";
         // this.showdownicon = show?"fa-clock-o":"";
         if (!this.showrange) {
-            this.showclockbutton = this.positionClass === PositionClass.Center?show:false;
+            this.showclockbutton = show ;// this.positionClass === PositionClass.Center?show:false;
         }
     }
     @Watch("positionClass")
     private dopostionClassChange(newvalue: string) {
         if(newvalue !== PositionClass.Center) {
             this.showrange = false;
+            this.showclockbutton = false;
+        } else {
+            this.showclockbutton = true;
         }
     }
     private restarttodraw() {

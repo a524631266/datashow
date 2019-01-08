@@ -1,6 +1,8 @@
+import { ThresholdLimiter } from '@/types';
 import Highcharts, { Options } from 'highcharts';
 import "./dependentjs/xrange";
 import { TimeLineChart,TimeLineChartTrans } from "@/types/postreturnform";
+import moment,{ DurationInputObject, Moment } from "moment";
 export const inout2 = [
 {starttime: 1542681155000, endtime: 1542695555000, id: '881675', type: '减少', value: -16},
     {starttime: 1542798935000, endtime: 1542807515000, id: '881675', type: '减少', value: -21},
@@ -787,22 +789,33 @@ interface inlist  {
 // tslint:disable-next-line:no-shadowed-variable
 const getInterData = (inlist: inlist[]) => {
     return {
-        borderColor: 'rgba(0,0,0,0)',
+        colorByPoint: true,
+        // borderColor: 'rgba(0,0,0,0)',
         data: inlist,
         borderRadius: 0,
         pointPadding: 0,
         groupPadding: 0,
-        // color:"black",
+        // colors:["red","yellow","blue"],
         dataLabels: {
-          enabled: true,
+          enabled: false,
           formatter(): string {
             return (this as any).key;
           },
         },
+        borderWidth: 0, // 矩形无边框
+        // colsize: 24 * 36e5, // one day
     };
 };
 
-export const drawActionOptions = (objectlist: TimeLineChartTrans, title: string) => {
+
+function endtimeMinusOne(time: number): number {
+    const result = moment(time).format("HH:mm:ss") === "00:00:00"?time-1:time;
+    return result;
+}
+
+
+
+export const drawActionOptions = (objectlist: TimeLineChartTrans, title: string,limiter: ThresholdLimiter) => {
     // tslint:disable-next-line:no-shadowed-variable
     const inlist: inlist[] = [];
     // tslint:disable-next-line:no-shadowed-variable
@@ -815,7 +828,7 @@ export const drawActionOptions = (objectlist: TimeLineChartTrans, title: string)
       }
       inlist.push({
           x: (objectlist[i].starttime + 8 * 60 * 60 * 1000) % (24 * 60 * 60 * 1000),
-          x2: (objectlist[i].endtime + 8 * 60 * 60 * 1000 - 1) % (24 * 60 * 60 * 1000),
+          x2: (endtimeMinusOne(objectlist[i].endtime) + 8 * 60 * 60 * 1000) % (24 * 60 * 60 * 1000),
           y: yAxis.indexOf(day),
           name: objectlist[i].type,
           id: objectlist[i].id,
@@ -826,6 +839,11 @@ export const drawActionOptions = (objectlist: TimeLineChartTrans, title: string)
     // console.log(inlist,yAxis)
     // console.log("重新画objectlist")
     return {
+      // plotOptions:{
+      //   xrange: {
+      //     colorByPoint: true,
+      //   }
+      // },
       chart: {
         type: 'xrange',
         // type:
@@ -860,7 +878,19 @@ export const drawActionOptions = (objectlist: TimeLineChartTrans, title: string)
           },
         },
         min: 0,
-        max: 24 * 60 * 60 * 1000,
+        max: 24 * 60 * 60 * 1000-1,
+      },
+      colorAxis: {
+        stops: [
+            [-10, '#3060cf'],
+            [0, '#fffbbc'],
+            [10, '#c4463a']
+        ],
+        // // min: -5
+        // min: -10,
+        // max: 10,
+        // minColor: 'red',// '#FFFFFF',
+        // maxColor: 'blue',// (Highcharts.getOptions() as any).colors[0]
       },
       yAxis: {
         type: "catogory",

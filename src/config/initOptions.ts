@@ -33,7 +33,10 @@ const InitBoxUrlProps: PostParams = {
     thresholder: {
         threshold : 0,
         negative: true,
-        positive: true
+        positive: true,
+        range: [-3,3]
+        // negativethreshold:0,
+        // positivethreshold: 0,
     }
 };
 const InitHeatMapUrlProps: PostParams = {
@@ -53,7 +56,8 @@ const InitHeatMapUrlProps: PostParams = {
     thresholder: {
         threshold : 0,
         negative: true,
-        positive: true
+        positive: true,
+        range: [-3,3]
     }
 };
 
@@ -74,7 +78,8 @@ const InitTimeLineUrlProps: PostParams = {
     thresholder: {
         threshold : 0,
         negative: true,
-        positive: true
+        positive: true,
+        range: [-3,3]
     }
 };
 
@@ -95,7 +100,8 @@ const InitTopUrlProps: PostParams = {
     thresholder: {
         threshold : 0,
         negative: true,
-        positive: true
+        positive: true,
+        range: [-3,3]
     }
 };
 const InitTrendUrlProps: PostParams = {
@@ -115,7 +121,8 @@ const InitTrendUrlProps: PostParams = {
     thresholder: {
         threshold : 0,
         negative: true,
-        positive: true
+        positive: true,
+        range: [-3,3]
     }
 };
 const InitGeomapUrlProps: PostParams = {
@@ -135,7 +142,8 @@ const InitGeomapUrlProps: PostParams = {
     thresholder: {
         threshold : 0,
         negative: true,
-        positive: true
+        positive: true,
+        range: [-3,3]
     }
 };
 
