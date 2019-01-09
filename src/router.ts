@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import Home from './views/Home.vue';
+import ColorSelectBar from "@/components/bar/ColorSelectBar.vue";
 // import App from './App.vue';
 // import ChartPanel from '@/views/ChartPanel.vue';
 Vue.use(Router);
@@ -8,6 +9,11 @@ export default new Router({
   mode: 'hash',
   base: process.env.BASE_URL,
   routes: [
+    {
+      path: '/color',
+      name: 'colorbar',
+      component: ColorSelectBar,
+    },
     {
       path: '/',
       name: 'App',

@@ -1,18 +1,18 @@
 <template>
-    <div class="container-fluid  chartheader"  >
+    <div class="container-fluid  chartheader" @mouseenter="showcontroler(true)" @mouseleave="showcontroler(false)">
         <!-- @mouseenter="showdownincon(true)" @mouseleave="showdownincon(false)" -->
         <div class="littlebar" >
-            <div :style="{position:'relative'}">
+            <div :style="{position:'relative'}" v-show="showtopbar">
                 <!-- <div class="fa icondown middlebutton" :class="showdownicon"></div> -->
-                <div class="fa button fa-clock-o chartrange" style="{color:white}" @click="changeShow($event,0)" v-html="dayrange" v-show="showclockbutton" @mouseenter="highlightbar(true)" @mouseleave="highlightbar(false)"></div>
+                <div class="fa button fa-clock-o chartrange" :class="showid === 0 && showrange?'active':''" style="{color:white}" @click="changeShow($event,0)" v-html="dayrange"  @mouseenter="highlightbar(true)" @mouseleave="highlightbar(false)"></div>
                 <!-- <time-botton :class="middlebutton"></time-botton> -->
                 <!-- <div class="charttitletime" v-show="false"> {{data.starttime + "" + data.endtime }} </div> -->
-                <div class="button chartrange" v-show="showclockbutton" @click="changeShow($event,1)"><i class="fa fa-underline"></i></div>
-                <div class="button chartrange" v-show="showclockbutton" @click="changeShow($event,2)">{{TimeProcess}}</div>
-                <div class="button chartrange" v-show="showclockbutton" @click="downloadchart(positionClass)"><a-icon type="download" /></div>
+                <div class="button chartrange" :class="showid === 1 && showrange?'active':''" @click="changeShow($event,1)"><i class="fa fa-underline"></i>{{`${thresholder.range[0]} - ${thresholder.range[1]}`}}</div>
+                <div class="button chartrange" :class="showid === 2 && showrange?'active':''" @click="changeShow($event,2)">{{TimeProcess}}</div>
+                <div class="button chartrange" :class="showid === 3 && showrange?'active':''" @click="downloadchart(positionClass)"><a-icon type="download" /></div>
             </div>
-            <div class="row options1 table-dark" v-show="showrange" @click.stop="donothing" >
-                <template v-if="showid === 0">
+            <div class="row options1 table-dark" :class="showid=== 1 || showid === 2?'hiddenbackground':''" v-show="showrange" @click.stop="donothing" >
+                <template v-if="showid === 0 && showtopbar">
                     <form class="col-4">
                         <h3 class="section-heading">用户选项</h3>
                         <label class="small">From:</label>
@@ -60,17 +60,15 @@
                     </div>
                 </template>
                 <template v-else-if="showid === 1">
-                    <a-row v-if="showprogress" class="siberbar" v-show="showclockbutton">
+                    <a-row v-if="showcontroller && showtopbar" class="siberbar" >
                         <a-col :span="24">
                             <span class="badge badge-secondary">限制</span>
-                            <!-- <a-checkbox v-model="thresholder.positive">正</a-checkbox>
-                            <a-checkbox v-model="thresholder.negative">负</a-checkbox> -->
                             <a-slider range :step="5"  :tipFormatter="thresholdformatter" :marks="thresholdslidermarks"  v-model="thresholder.range" />
                         </a-col>
                     </a-row>
                 </template>
                 <template v-else-if="showid === 2">
-                    <a-row v-if="showprogress" class="siberbar" v-show="showclockbutton">
+                    <a-row v-if="showcontroller  && showtopbar " class="siberbar">
                         <a-col :span="24">
                             <span class="badge badge-secondary">播速</span>
                             <a-slider  :tipFormatter="formatter" :marks="slidermarks"  v-model="innershowInterval" />
@@ -84,15 +82,10 @@
         <div class="barBody">
             <slot name="chart">无数据</slot>
         </div>
-        <!-- <transition name="fade"> -->
-            <!-- :defaultValue="1" -->
 
-        <!-- </transition> -->
-        <!-- <transition name="fade"> -->
-        <a-progress v-if="showprogress" :format="progressformat" strokeLinecap="square" :percent="percent" />
-        <!-- </transition> -->
-        <!-- <transition name="fade" > -->
-        <div v-show="showclockbutton" v-if="showprogress" :style="{ width: '180px',height: '230px',position: 'absolute',bottom:0,right:'0px', border: '0px solid #d9d9d9', borderRadius: '2px' }">
+        <a-progress v-if="showloader" :format="progressformat" strokeLinecap="square" :percent="percent" />
+        <!--  -->
+        <div v-show="showtopbar" v-if="showcalendar" :style="{ width: '180px',height: '230px',position: 'absolute',bottom:0,right:'0px', border: '0px solid #d9d9d9', borderRadius: '2px' }">
             <a-icon type="left" class="floatleft" @click="preoneday"></a-icon>
             <a-icon type="right" class="floatright" @click="postoneday"></a-icon>
             <a-calendar :validRange="validRange" @select="onSelect" :fullscreen="false" @panelChange="onPanelChange" v-model="showdayLocal" mode="month" >
@@ -101,7 +94,7 @@
                 </template>
             </a-calendar>
         </div>
-        <!-- </transition> -->
+
     </div>
 </template>
 <script lang="ts">
@@ -136,9 +129,22 @@ import { ThresholdLimiter } from '@/types';
             // tslint:disable-next-line:radix
             // return parseInt(0.5 +"") * 100;
         },
-        showprogress(): boolean {
-            // console.log("showprogress",(this as any).percent);
+        showcontroller(): boolean {
+            // console.log("showcontroller",(this as any).percent);
             // return (this as any).appendtimelist!==undefined?(this as any).percent===100?false:true:false;
+            // 默认所有控件都显示
+            return (this as any).appendtimelist!==undefined && (this as any).positionClass===PositionClass.Center?true:true;
+        },
+        showcalendar(): boolean {
+            // console.log("showcontroller",(this as any).percent);
+            // return (this as any).appendtimelist!==undefined?(this as any).percent===100?false:true:false;
+            // 默认所有控件都显示
+            return (this as any).appendtimelist!==undefined && (this as any).positionClass===PositionClass.Center?true:false;
+        },
+        showloader(): boolean {
+            // console.log("showcontroller",(this as any).percent);
+            // return (this as any).appendtimelist!==undefined?(this as any).percent===100?false:true:false;
+            // 显示数据加载进图条 默认所有数据
             return (this as any).appendtimelist!==undefined && (this as any).positionClass===PositionClass.Center?true:false;
         },
         titlesize(): string {
@@ -161,6 +167,7 @@ export default class LittleBar extends Vue {
     private show = true;
     private data: PostParams = this.postparms;
     private showdownicon: string = "";
+    private showtopbar: boolean = false;
     private innershowInterval = 0;
     private showid = 0;
     private thresholder: ThresholdLimiter = {threshold:0,negative:true,positive:true,range: [(this.postparms.thresholder.range[0] + 10) * 5,(this.postparms.thresholder.range[1] + 10) * 5]}; // 阈值为0的时候为不过滤
@@ -377,13 +384,14 @@ export default class LittleBar extends Vue {
         console.log("1111111111");
     }
     @Emit()
-    private showdownincon(show: boolean) {
+    private showcontroler(show: boolean) {
         // console.log("sssssssssssss");
         // this.showdownicon = show?"fa-sort-down":"";
         // this.showdownicon = show?"fa-clock-o":"";
-        if (!this.showrange) {
-            this.showclockbutton = show ;// this.positionClass === PositionClass.Center?show:false;
+        if (this.positionClass === PositionClass.Center) {
+            this.showtopbar = show ;// this.positionClass === PositionClass.Center?show:false;
         }
+        // this.showrange = show;
     }
     @Watch("positionClass")
     private dopostionClassChange(newvalue: string) {
@@ -444,6 +452,7 @@ export default class LittleBar extends Vue {
     private downloadchart(positionClass: string) {
         PubSub.publish("downloadchart",positionClass);
     }
+
 }
 </script>
 
@@ -576,8 +585,9 @@ $littlebarheight: 24px;
 }
 .siberbar {
     position: relative;
-    width: 33%;
+    width: 200px;
     top: 0;
+    right: 0;
     &.ant-btn {
         background: transparent;
         border: 0;
@@ -637,5 +647,20 @@ $littlebarheight: 24px;
         cursor: pointer;
     }
 }
+.hiddenbackground{
+    background: rgba(0,0,0,0);
+    display: flex;
+    justify-content: flex-end;
+    pointer-events: none;
+}
+.hiddenbackground div{
+    pointer-events: auto;
+}
+.active {
+    color: yellow;
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.4);
+    // font-size: smaller;
+}
+
 </style>
 

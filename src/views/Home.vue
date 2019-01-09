@@ -264,8 +264,9 @@ export default class Home extends Vue {
 </script>
 
 
-<style>
-
+<style lang="scss">
+$sliderbaseheight: 5;
+$antdsliderheight: $sliderbaseheight + px;
 .left-bottom,.left-middle,.left-top,.center,.right-bottom,.right-middle,.right-top{
     border-radius: 2px;
     /* background-image: radial-gradient(circle at center,#000066 0%,#000048 100%); */
@@ -328,7 +329,16 @@ export default class Home extends Vue {
     border: 0;
     color: white;
 }
-
+:global(.ant-slider-dot){
+    display: none;
+}
+    /* 日历空格居中 */
+    /* display: flex;
+    justify-content: center; */
+:global(.ant-fullcalendar-cell){
+    color: white;
+    text-align: center;
+}
 /* :global(.ant-fullcalendar-last-month-cell .ant-fullcalendar-value) {
     color: white;
 }
@@ -354,6 +364,14 @@ export default class Home extends Vue {
 }
 :global(.anticon-play-circle){
     color: white;
+}
+:global(.ant-slider-track) {
+    height: $antdsliderheight;
+}
+:global(.ant-slider-handle) {
+    height: $sliderbaseheight * 4 + px;
+    border-radius: 5%;
+    margin-top: -$sliderbaseheight * 2 + px;;
 }
 .right-top{
     position:absolute;
