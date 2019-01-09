@@ -7,8 +7,8 @@
                 <div class="fa button fa-clock-o chartrange" :class="showid === 0 && showrange?'active':''" style="{color:white}" @click="changeShow($event,0)" v-html="dayrange"  @mouseenter="highlightbar(true)" @mouseleave="highlightbar(false)"></div>
                 <!-- <time-botton :class="middlebutton"></time-botton> -->
                 <!-- <div class="charttitletime" v-show="false"> {{data.starttime + "" + data.endtime }} </div> -->
-                <div class="button chartrange" :class="showid === 1 && showrange?'active':''" @click="changeShow($event,1)"><i class="fa fa-underline"></i>{{`${thresholder.range[0]} - ${thresholder.range[1]}`}}</div>
-                <div class="button chartrange" :class="showid === 2 && showrange?'active':''" @click="changeShow($event,2)">{{TimeProcess}}</div>
+                <div class="button chartrange" :class="showid === 1 && showrange?'active':''" @click="changeShow($event,1)" ><i class="fa fa-underline" v-text="`  [-,${showthresholdrange[0]}] ∪ [${showthresholdrange[1]},+]`"></i></div>
+                <div class="button chartrange" :class="showid === 2 && showrange?'active':''" @click="changeShow($event,2)" v-text="TimeProcess"></div>
                 <div class="button chartrange" :class="showid === 3 && showrange?'active':''" @click="downloadchart(positionClass)"><a-icon type="download" /></div>
             </div>
             <div class="row options1 table-dark" :class="showid=== 1 || showid === 2?'hiddenbackground':''" v-show="showrange" @click.stop="donothing" >
@@ -150,6 +150,7 @@ import { ThresholdLimiter } from '@/types';
         titlesize(): string {
             return (this as any).positionClass === PositionClass.Center?"titlelarge":"titlemiddle";
         },
+
     },
 })
 export default class LittleBar extends Vue {
@@ -194,6 +195,11 @@ export default class LittleBar extends Vue {
     get validRange(): [Moment,Moment] {
         return [moment(this.postparms.starttime),moment(this.postparms.endtime)];
     }
+    get showthresholdrange(): [number,number] {
+        const left = this.thresholder.range[0] / 5 - 10;
+        const right = this.thresholder.range[1] / 5 - 10;
+        return [left,right];
+    }
     private thresholdslidermarks = {
         0: {
           style: {
@@ -221,11 +227,11 @@ export default class LittleBar extends Vue {
     ];
     get dayrange(): string {
         if (this.data.scale * 1 === 86400) {
-            return this.data.starttime.split(" ")[0] + " to " + this.data.endtime.split(" ")[0];
+            return "  " + this.data.starttime.split(" ")[0] + " to " + this.data.endtime.split(" ")[0];
         } else if (this.data.scale * 1 === 3600) {
-            return this.data.starttime + " to " + this.data.endtime;
+            return "  " + this.data.starttime + " to " + this.data.endtime;
         } else {
-            return this.data.starttime + " to " + this.data.endtime;
+            return "  " + this.data.starttime + " to " + this.data.endtime;
         }
     }
     @Watch("date")
