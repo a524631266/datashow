@@ -106,7 +106,7 @@
                     <i class="material-icons">skip_next</i>
                     
                 </div>
-                <div class="mdl-button mdl-js-button mdl-button--icon ui-stepButton" @click.prevent.stop="changespeed" v-text="speedstring">
+                <div class="mdl-button mdl-js-button mdl-js-ripple-effect" @click.prevent.stop="changespeed" v-text="speedstring">
                     <!-- <i class="fa fa-step-forward"></i> -->
                     <!-- <input class="btn" type="button" v-model="innershowInterval"> -->
                 </div>
@@ -757,6 +757,9 @@ $littlebarheight: 24px;
     margin-right: 20px;
     width: 140px;
 }
-
+.mdl-js-ripple-effect {
+    color: white;
+    font-size: 15px;
+}
 </style>
 
