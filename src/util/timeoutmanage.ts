@@ -53,6 +53,7 @@ class TimerManager {
     public doN(n: number) {
         // this.pause();
         this.taskfunction(n);
+        this.localn = n;
     }
     public loop(n: number) {
         if(this.totallength !== 0) {

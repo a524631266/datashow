@@ -616,7 +616,7 @@ export default class GeoMapEchart extends Vue {
         // this.clearIntervalnow();
     }
     @Emit()
-    private pause(ifpause: boolean) {
+    private pause(ifpause: boolean,localtime: number) {
         if (ifpause) {
             this.pausedraw();
             this.play = false;

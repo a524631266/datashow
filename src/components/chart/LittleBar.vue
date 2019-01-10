@@ -473,6 +473,7 @@ export default class LittleBar extends Vue {
             this.$message.warning("请重新选择开始时间",1);
         } else {
             this.onSelect(preday);
+            this.showdayLocal = preday;
         }
     }
     @Emit()
