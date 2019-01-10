@@ -522,12 +522,18 @@ export const getGeoChinaProvinceOptionConfig = (provincesArray: ProvinceMapData[
     //     // console.log("data",data.points);
     // }
     // heatData = newdata;
+    // console.log("data: ", JSON.stringify(heatData),geolimiter);
     const points: Points[] = heatData.map(
         (point: Points) => {
             const p = filterPoint(point,geolimiter);
             return p as any;
         }
+    ).filter(
+        (point: Points) => {
+            return point[2] !== 0;
+        }
     );
+    // console.log(JSON.stringify(points));
     return {
         title: {
             show: false,
@@ -790,12 +796,17 @@ export interface GeoData {
 
 function filterPoint(points: Points,geolimiter: ThresholdLimiter ): Points {
     const data: Points = points;
-    if (geolimiter.negative && geolimiter.positive) {
-        data[2] = data[2] > geolimiter.threshold ? 1:(data[2]< geolimiter.threshold?-1:0);
-    } else if( geolimiter.negative && !geolimiter.positive) {
-        data[2] = data[2] < geolimiter.threshold ? -1: 0;
-    } else if ( !geolimiter.negative && geolimiter.positive) {
-        data[2] = data[2] > geolimiter.threshold ? 1: 0;
+    // if (geolimiter.negative && geolimiter.positive) {
+    //     data[2] = data[2] > geolimiter.threshold ? 1:(data[2]< geolimiter.threshold?-1:0);
+    // } else if( geolimiter.negative && !geolimiter.positive) {
+    //     data[2] = data[2] < geolimiter.threshold ? -1: 0;
+    // } else if ( !geolimiter.negative && geolimiter.positive) {
+    //     data[2] = data[2] > geolimiter.threshold ? 1: 0;
+    // }
+    if (data[2] < 0) {
+        data[2] = data[2] > geolimiter.range[0] ? 0:1;
+    } else {
+        data[2] = data[2] < geolimiter.range[1] ? 0:1;
     }
     return data;
 }
@@ -811,6 +822,7 @@ export const getGeoCityOptionConfig = (data: GeoData,geolimiter: ThresholdLimite
     //     data.points = [...data.points,...data.points];
     //     // console.log("data",data.points);
     // }
+    // console.log("data: ", JSON.stringify(data),geolimiter);
     const points: Points[] = data.points.map(
         (point: Points) => {
             const p = filterPoint(point,geolimiter);
@@ -821,6 +833,7 @@ export const getGeoCityOptionConfig = (data: GeoData,geolimiter: ThresholdLimite
             return point[2] !== 0;
         }
     );
+    // console.log(JSON.stringify(points));
     // console.log("打点总数据",data.points.length);
     return {
         title: {

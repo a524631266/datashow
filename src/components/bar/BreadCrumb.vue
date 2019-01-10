@@ -39,7 +39,7 @@ export default class BreadCrumb extends Vue {
     }
     @Emit()
     private onClick(ind: number) {
-        console.log(this.routes[ind]);
+        // console.log(this.routes[ind]);
         const data = this.routes[ind];
         // this.$router.push({name: "node",query: {
         //     entity: data.key,

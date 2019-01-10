@@ -1,6 +1,6 @@
 <template>
   <div :class="positionClass" :draggable="candraggable" @dblclick="handledoubleclick">
-       <LittleBar @toggledrag="toggledrag" @redraw="start" :positionClass="positionClass" :date="date" @querydate="querydate" @restarttodraw="restarttodraw" :appendtimelist="appendtimelist" :titlename="titlename" :show="positionClass === 'center'?false:true" v-model="postparms">
+       <LittleBar :play="play" @pause="pause" @toggledrag="toggledrag" @redraw="start" :positionClass="positionClass" :date="date" @querydate="querydate" @restarttodraw="restarttodraw" :appendtimelist="appendtimelist" :titlename="titlename" :show="positionClass === 'center'?false:true" v-model="postparms">
             <BaseChartFactory :urlparas="urlparas" :positionClass="positionClass" :id="id" :option="option" :chartLibrary="chartLibrary" :handleclick="handleclick" @updateData="way2UpdateData" slot="chart"/>
         </LittleBar>
         <div v-text="nowtime" style="position:absolute;bottom:0;right:0;">
@@ -24,9 +24,11 @@ import moment,{ Moment } from "moment";
 import { AxiosSourceManage } from "@/implements/AxiosSourceManage";
 import { baseurl } from "@/util/getRootPath.ts";
 import { ThresholdLimiter } from '@/types';
+import TimerManager from "@/util/timeoutmanage.ts";
 // import 'echarts/map/js/province/xinjiang.js';
 const prev = process.env.NODE_ENV === "development"? "/xinjiang": "";
 const websocketurlhost = process.env.NODE_ENV === "development"? "192.168.10.63:8088": "192.168.10.63:8088";
+(window as any).TimerManager =TimerManager;
 @Component({
     components: {
         LittleBar,
@@ -54,21 +56,26 @@ export default class GeoMapEchart extends Vue {
     public option = {};
     public titlename = "Geo";
     private candraggable = false;
-    private intervalid: number[] = [];
+    // private intervalid: number[] = [];
+    private timeoutid: number = 0;
     private chartLibrary = ChartLibrary.echart;
     private websocket!: WebSocket;
     private coord!: [number,number];
     private websockecount = 0;
     private redrawcount = 0;
-    private timeoutcount = 0;
+    private timeoutcount = 0;// 当前循环的日期
     private appendtimelist: number[] = [];
+    private startclearTimer = false;
+    private timer = new TimerManager(this.setTimeoutdraw,this.postparms.showinterval);
+    private play = false;
+    // private timeindex: number = 0;// 当前循环的日期
     private mapnames: GeoMapPictureFeaturePropertiesFormat[]= [];
     private date: Moment = moment();
     private geolimiter: ThresholdLimiter = {
         threshold: 0,
         positive: true,
         negative: true,
-        range: [0,0],
+        range: [this.postparms.thresholder.range[0],this.postparms.thresholder.range[1]],
     };
     private initreturndata = {
                         geomap:{
@@ -85,6 +92,19 @@ export default class GeoMapEchart extends Vue {
     @Emit()
     private setOption(option: any) {
         this.option = option;
+    }
+    @Watch("appendtimelist")
+    private setTimerMax(newvalue: number[]) {
+        // console.log("appendtimelist",newvalue);
+        if(newvalue.length !== 0) {
+            this.timer.settTotallength(newvalue.length);
+            this.timer.start();
+            this.play = true;
+        }
+    }
+    @Watch("postparms.showinterval")
+    private setTimerInterval(newvalue: number) {
+        this.timer.setintervaltime(newvalue);
     }
     // @Emit()
     // private level2post(count: number) { // 这选择省的时候
@@ -286,8 +306,9 @@ export default class GeoMapEchart extends Vue {
         return promise;
     }
     @Emit()
-    private setTimeoutdraw(count: number,loop: boolean) {
+    private setTimeoutdraw(count: number) {
         // console.log(count);
+        // console.log("11",this.startclearTimer,this.loop,this);
         const nowtime = this.appendtimelist[count];
         this.date = moment(nowtime);
         const {length: timelen} = this.appendtimelist;
@@ -301,13 +322,7 @@ export default class GeoMapEchart extends Vue {
             // 画图
             if ( timelen > count) { // 一旦timelist大于 1 就要重新画
                 this.setOption(this.getLevelOption(data,false));
-                count += 1;
             }
-        }
-        if(loop) {
-            this.intervalid.push(setTimeout(
-            () => {this.setTimeoutdraw(count,loop);}
-            ,this.postparms.showinterval));
         }
     }
     /**
@@ -377,12 +392,19 @@ export default class GeoMapEchart extends Vue {
             this.setOption(option);
         }
     }
-    private clearIntervalnow() {
-        while (this.intervalid.length > 0 ) {
-            const id = this.intervalid.shift();
-            clearInterval(id);
-        }
-    }
+    // @Emit()
+    // private clearIntervalnow() {
+    //     this.startclearTimer = true;
+    //     this.loop = false;
+    //     clearTimeout(this.timeoutid);
+    //     // while (this.intervalid.length > 0 ) {
+    //     //     const id = this.intervalid.pop();
+    //     //     clearTimeout(id);
+    //     //     console.log("清理id",id);
+    //     // }
+    //     console.log("消除",this.timeoutid);
+    //     this.startclearTimer = false;
+    // }
     /**
      * 一旦entity有变化就重新画图
      * 初始化要做的几件事情
@@ -392,22 +414,19 @@ export default class GeoMapEchart extends Vue {
      */
     @Watch("postparms.entity",  {deep : true})
     private start(val: boolean) {
-        console.log("监听间隔,geo",val);
+        // console.log("监听间隔,geo",val);
         // 1. 关闭之前的websocket
         // tslint:disable-next-line:no-unused-expression
         this.websocket && (this.websocket.close());
-        // 2.重置定时任务
-        this.clearIntervalnow();
-        // 2.1 初始化数据
+        // 2. 初始化数据
         this.initData();
         // 3. 初始化地图
-        // this.setInterval(count);
+        this.play = false;
+        // 3. 初始化地图
         // 初始化websocket数据
         this.initBlackChart();
         // 4. 启动定时任务
-        const count = 0;
-        this.setTimeoutdraw(count,true);
-        // this.option = {change:"redraw"};
+        this.timer.start();
     }
     /**
      * 监听子组件中的阈值是否有变化，一旦变化就更新当前的threshold
@@ -418,7 +437,8 @@ export default class GeoMapEchart extends Vue {
     }
     private destroyed() {
       // console.log("destory (this as any).intervalid", (this as any).intervalid);
-      this.clearIntervalnow();
+    //   this.clearIntervalnow();
+      this.timer.pause();
       this.initData();
       console.log("删除Geo组件,并关闭当前的WebSocket");
       this.websocket.close();
@@ -526,7 +546,7 @@ export default class GeoMapEchart extends Vue {
         this.geoBodydata = {};
         this.geoheaddata = {} as any;
         const websocketurl = `ws://${websocketurlhost}/websocket?entity=${urlparas.entity}&start=${urlparas.starttime.split(" ")[0]}&end=${urlparas.endtime.split(" ")[0]}&scale=${urlparas.scale}`;
-        console.log("initWebSocket",websocketurl);
+        // console.log("initWebSocket",websocketurl);
         this.websocket = new WebSocket(websocketurl);
         this.websocket.onopen = this.wsonopen;
         this.websocket.onmessage = this.wsonmessage;
@@ -542,7 +562,7 @@ export default class GeoMapEchart extends Vue {
     private wsonmessage(evt: MessageEvent) {
         const data: ReturnGeoData =  JSON.parse(evt.data) as ReturnGeoData;
         const {level} = this.postparms;
-        console.log("websocket 收到的新数据",this.websockecount,data,this.redrawcount);
+        // console.log("websocket 收到的新数据",this.websockecount,data,this.redrawcount);
         if ( this.websockecount === 0 ) { // 初始化的时候导入头文件
             this.geoheaddata = data;
         } else {//  在之后的数据是放进body中
@@ -583,21 +603,49 @@ export default class GeoMapEchart extends Vue {
     }
     @Emit()
     private restarttodraw() {
-        this.clearIntervalnow();
-        const count = 0;
-        this.setTimeoutdraw(count,true);
+        this.pausedraw();
+        // const count = 0;
+        // this.loop = true;
+        // this.setTimeoutdraw(count);
+        this.timer.start();
+        this.play = true;
     }
-
+    @Emit()
+    private pausedraw() {
+        this.timer.pause();
+        // this.clearIntervalnow();
+    }
+    @Emit()
+    private pause(ifpause: boolean) {
+        if (ifpause) {
+            this.pausedraw();
+            this.play = false;
+        } else {
+            this.timer.continue();
+            this.play = true;
+        }
+    }
+    /**
+     * 暂停之后接下来继续
+     */
+    @Emit()
+    private continuedraw(loop: boolean) {
+        // this.pausedraw();
+        // this.setTimeoutdraw(this.timeoutcount);
+        this.timer.continue();
+    }
     /**
      * 一旦时间没有，要重新获取数据
      */
     @Emit()
     private querydate(ts: number,send: boolean) {
-        this.clearIntervalnow();
-        console.log("tsts",ts,send);
+        this.pausedraw();
+        // console.log("tsts",ts,send);
         const index = this.appendtimelist.indexOf(ts);
         if( index >= 0) {
-            this.setTimeoutdraw(index,false);
+            // this.setTimeoutdraw(index);
+            this.play = false;
+            this.timer.doN(index);
         } else {
             // if(send) {
             //     this.websocket.send(ts+"");

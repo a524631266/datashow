@@ -1,5 +1,5 @@
 <template>
-    <div class="container-fluid  chartheader" @mouseenter="showcontroler(true)" @mouseleave="showcontroler(false)">
+    <div class="container-fluid  chartheader" @mouseenter="showcontroler(true,$event)" @mouseleave="showcontroler(false,$event)">
         <!-- @mouseenter="showdownincon(true)" @mouseleave="showdownincon(false)" -->
         <div class="littlebar" >
             <div :style="{position:'relative'}" v-show="showtopbar">
@@ -7,8 +7,8 @@
                 <div class="fa button fa-clock-o chartrange" :class="showid === 0 && showrange?'active':''" style="{color:white}" @click="changeShow($event,0)" v-html="dayrange"  @mouseenter="highlightbar(true)" @mouseleave="highlightbar(false)"></div>
                 <!-- <time-botton :class="middlebutton"></time-botton> -->
                 <!-- <div class="charttitletime" v-show="false"> {{data.starttime + "" + data.endtime }} </div> -->
-                <div class="button chartrange" :class="showid === 1 && showrange?'active':''" @click="changeShow($event,1)" ><i class="fa fa-underline" v-text="`  [-,${showthresholdrange[0]}] ∪ [${showthresholdrange[1]},+]`"></i></div>
-                <div class="button chartrange" :class="showid === 2 && showrange?'active':''" @click="changeShow($event,2)" v-text="TimeProcess"></div>
+                <div class="button chartrange" :class="showid === 1 && showrange?'active':''" @click="changeShow($event,1)" ><i class="fa fa-facebook" v-text="`  ${showthresholdrange[0]} ${showthresholdrange[1]}`"></i></div>
+                <!-- <div class="button chartrange" :class="showid === 2 && showrange?'active':''" @click="changeShow($event,2)" v-text="TimeProcess"></div> -->
                 <div class="button chartrange" :class="showid === 3 && showrange?'active':''" @click="downloadchart(positionClass)"><a-icon type="download" /></div>
             </div>
             <div class="row options1 table-dark" :class="showid=== 1 || showid === 2?'hiddenbackground':''" v-show="showrange" @click.stop="donothing" >
@@ -23,14 +23,14 @@
                             </div>
                         </div>
                         <label class="small">To:</label>
-                        <div class="input-group input-group-sm" >
+                        <div class="input-group input-group-sm" @click.stop="()=>{}">
                             <input class="form-control" :placeholder="data.endtime" v-model="data.endtime" type="text"/>
                             <div class="input-group-addon">
                                 <button class="btn btn-outline-secondary btn-sm" type="button"><i class="fa fa-calendar"></i></button>
                             </div>
                         </div>
                         <label class="small">scale:</label>
-                        <div class="input-group input-group-sm">
+                        <div class="input-group input-group-sm" @click.stop="()=>{}">
                             <!-- <select class="form-control" v-model="data.scale">
                                     <option label="1h" value="3600">1h</option>
                                     <option label="1d" value="86400" selected="true">1d</option>
@@ -40,13 +40,14 @@
                                 <button class="btn btn-secondary btn-sm" type="submit" @click.prevent="queryInitWebSocket">查询</button>
                             </div> -->
                             <a-radio-group v-model="data.scale">
+                                <a-radio :value="900" :style="{color: 'white'}">15m</a-radio>
                                 <a-radio :value="3600" :style="{color: 'white'}">1h</a-radio>
                                 <a-radio :value="86400" :style="{color: 'white'}">1d</a-radio>
                             </a-radio-group>
                         </div>
                         <div class="input-group input-group-sm" >
                             <div class="input-group-addon"  style="position: absolute;right:0">
-                                <button class="btn btn-secondary btn-sm" type="submit" @click.prevent="queryInitWebSocket">查询</button>
+                                <button class="btn btn-secondary btn-sm" type="submit" @click.stop.prevent="queryInitWebSocket">查询</button>
                             </div>
                         </div>
                     </form>
@@ -67,7 +68,7 @@
                         </a-col>
                     </a-row>
                 </template>
-                <template v-else-if="showid === 2">
+                <!-- <template v-else-if="showid === 2">
                     <a-row v-if="showcontroller  && showtopbar " class="siberbar">
                         <a-col :span="24">
                             <span class="badge badge-secondary">播速</span>
@@ -75,7 +76,7 @@
                             <a-button shape="circle" icon="play-circle" size="small" @click="restarttodraw"/>
                         </a-col>
                     </a-row>
-                </template>
+                </template> -->
             </div>
         </div>
         <div class="charttitletext" :class="titlesize"> {{titlename }} </div>
@@ -85,9 +86,32 @@
 
         <a-progress v-if="showloader" :format="progressformat" strokeLinecap="square" :percent="percent" />
         <!--  -->
-        <div v-show="showtopbar" v-if="showcalendar" :style="{ width: '180px',height: '230px',position: 'absolute',bottom:0,right:'0px', border: '0px solid #d9d9d9', borderRadius: '2px' }">
-            <a-icon type="left" class="floatleft" @click="preoneday"></a-icon>
-            <a-icon type="right" class="floatright" @click="postoneday"></a-icon>
+        <div v-show="showtopbar" v-if="showcalendar"  :style="{width: '180px',position: 'absolute',bottom:0,right: '180px', border: '0px solid #d9d9d9', borderRadius: '2px' }">
+            
+            <div>
+                <span class="badge badge-secondary">speed</span>
+            </div>
+            <div class="speedcontainer">
+                <div class="btn" @click.prevent.stop="preoneday">
+                    <i class="fa fa-step-backward"></i>
+                </div>
+                <div class="btn" @click.prevent.stop="pausecontinue">
+                    <i class="fa" :class="play?'fa-pause-circle-o rotate360':'fa-play-circle-o'"></i>
+                </div>
+                <div class="btn" @click.prevent.stop="postoneday">
+                    <i class="fa fa-step-forward"></i>
+                </div>
+                <div class="btn" @click.prevent.stop="changespeed" v-text="speedstring">
+                    <!-- <i class="fa fa-step-forward"></i> -->
+                    <!-- <input class="btn" type="button" v-model="innershowInterval"> -->
+                </div>
+                 <!-- <a-slider  :tipFormatter="formatter" :marks="slidermarks"  v-model="innershowInterval" /> -->
+            </div>
+        </div>
+        
+        <div v-show="showtopbar" v-if="showcalendar" :style="{ width: '180px',height: '230px',position: 'absolute',bottom:0,right:0, border: '0px solid #d9d9d9', borderRadius: '2px' }">
+            
+           
             <a-calendar :validRange="validRange" @select="onSelect" :fullscreen="false" @panelChange="onPanelChange" v-model="showdayLocal" mode="month" >
                 <template slot="dateFullCellRender" slot-scope="value">
                     <span style="color:white" class="showpointer" v-if="showCalendar(value)">{{getDayNum(value)}}</span>
@@ -106,6 +130,7 @@ import { PostParams,Dimension, PositionClass } from "@/types/index.ts";
 import moment,{ DurationInputObject, Moment } from "moment";
 import Antd from "ant-design-vue";
 import { ThresholdLimiter } from '@/types';
+import TimeSlicing from '@/util/TimeSlicing.ts';
 // (window as any).moment = moment;
 @Component({
     components: {
@@ -158,6 +183,7 @@ export default class LittleBar extends Vue {
     @Prop() public appendtimelist!: number[];
     @Prop() public date!: Moment;
     @Prop() public positionClass!: PositionClass;
+    @Prop() public play = false;
     @Model("changepostparams") public postparms!: PostParams;
     private showdayLocal: Moment = moment();
     private showclockbutton: boolean = false; // 显示日期小图标
@@ -171,6 +197,7 @@ export default class LittleBar extends Vue {
     private showtopbar: boolean = false;
     private innershowInterval = 0;
     private showid = 0;
+    private timeslice = new TimeSlicing(this.timeslicing,500);
     private thresholder: ThresholdLimiter = {threshold:0,negative:true,positive:true,range: [(this.postparms.thresholder.range[0] + 10) * 5,(this.postparms.thresholder.range[1] + 10) * 5]}; // 阈值为0的时候为不过滤
     private slidermarks = {
         0: {
@@ -234,6 +261,10 @@ export default class LittleBar extends Vue {
             return "  " + this.data.starttime + " to " + this.data.endtime;
         }
     }
+    get speedstring(): string {
+        // tslint:disable-next-line:radix
+        return parseFloat(1000 / (this.innershowInterval / 100 * 5000) + "") + "X";
+    }
     @Watch("date")
     public setShowdayLocal(newval: any) {
         this.showdayLocal = newval;
@@ -242,11 +273,11 @@ export default class LittleBar extends Vue {
     public setInterval(newval: any,oldval: any) {
         // console.log("newval:",newval,"oldval：",oldval);
         // tslint:disable-next-line:radix
-        this.data.showinterval = parseInt(newval / 100 * 5000+"");
+        this.data.showinterval = parseInt(newval / 100 * 5000 + "");
     }
     @Watch("thresholder",{deep: true})
     public setThreshold(newval: ThresholdLimiter) {
-        console.log("newval:",newval);
+        // console.log("newval:",newval);
         // parseFloat(newval / 10 +"");
         const data = JSON.parse(JSON.stringify(newval));
         let [start,end] = newval.range;
@@ -290,6 +321,7 @@ export default class LittleBar extends Vue {
         };
         this.data.thresholder = data;
         this.thresholdslidermarks = initmarks;
+        this.timeslice.execute();
     }
     @Emit()
     public changeShow(showv: boolean | Event,ind: number) {
@@ -328,6 +360,9 @@ export default class LittleBar extends Vue {
         }
         // moment().subtract()
         this.activeitem = item.day;
+    }
+    private timeslicing() {
+        this.onSelect(this.showdayLocal);
     }
     private mounted() {
         // console.log("111111","加载");
@@ -390,10 +425,11 @@ export default class LittleBar extends Vue {
         console.log("1111111111");
     }
     @Emit()
-    private showcontroler(show: boolean) {
+    private showcontroler(show: boolean,evn: any) {
         // console.log("sssssssssssss");
         // this.showdownicon = show?"fa-sort-down":"";
         // this.showdownicon = show?"fa-clock-o":"";
+        // console.log("leave",evn);
         if (this.positionClass === PositionClass.Center) {
             this.showtopbar = show ;// this.positionClass === PositionClass.Center?show:false;
         }
@@ -408,8 +444,17 @@ export default class LittleBar extends Vue {
             this.showclockbutton = true;
         }
     }
-    private restarttodraw() {
-        this.$emit("restarttodraw");
+    @Emit()
+    private pausecontinue() {
+        if(this.play) {
+            // this.play = false;
+            this.$emit("pause",true);
+            // console.log("暂停");
+        } else {
+            // this.play = true;
+            this.$emit("pause",false);
+            // console.log("继续");
+        }
     }
 
     private onPanelChange(value: any, mode: any) {
@@ -423,7 +468,7 @@ export default class LittleBar extends Vue {
         // this.showdayLocal = this.showdayLocal.subtract(1,'days');
         const now = this.showdayLocal.valueOf();
         const preday = moment(now).startOf("day").subtract(1,'day');
-        console.log("now:",now,";preday:",preday);
+        // console.log("now:",now,";preday:",preday);
         if(preday.valueOf()< moment(this.postparms.starttime).startOf("day").valueOf()) {
             this.$message.warning("请重新选择开始时间",1);
         } else {
@@ -441,9 +486,18 @@ export default class LittleBar extends Vue {
             this.showdayLocal = postday;
         }
     }
+    @Emit()
+    private changespeed() {
+        if (this.innershowInterval< 4 ) {
+            this.innershowInterval = 40 ;
+        } else {
+            this.innershowInterval /= 2;
+        }
+    }
     /**
      * 获取日期日期时间
      */
+    @Emit()
     private onSelect(date: Moment) {
         const querydate = moment(date,"YYYY-MM-DD").startOf("day").valueOf();
         this.$emit("querydate",querydate,true);
@@ -653,6 +707,9 @@ $littlebarheight: 24px;
         cursor: pointer;
     }
 }
+.table-dark {
+    background-color: rgba(0,0,0,0.2)
+}
 .hiddenbackground{
     background: rgba(0,0,0,0);
     display: flex;
@@ -667,6 +724,26 @@ $littlebarheight: 24px;
     box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.4);
     // font-size: smaller;
 }
+.speedcontainer {
+    display: flex;
+    justify-content: flex-start;
+}
+.rotate360 {
+    animation: rotate1 1s infinite;
+    @at-root {
+        @keyframes rotate1 {
+            from {
+                transform: rotate(0);
+            }
+            to {
+                transform: rotate(360deg);
+            } 
+        }
+    }
+}
+
+
+
 
 </style>
 

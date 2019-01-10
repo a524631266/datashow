@@ -265,7 +265,7 @@ export default class Home extends Vue {
 
 
 <style lang="scss">
-$sliderbaseheight: 5;
+$sliderbaseheight: 2;
 $antdsliderheight: $sliderbaseheight + px;
 .left-bottom,.left-middle,.left-top,.center,.right-bottom,.right-middle,.right-top{
     border-radius: 2px;
@@ -365,13 +365,24 @@ $antdsliderheight: $sliderbaseheight + px;
 :global(.anticon-play-circle){
     color: white;
 }
-:global(.ant-slider-track) {
-    height: $antdsliderheight;
+:global(.ant-slider-track ) {
+    height: $sliderbaseheight + px;
+}
+:global(.ant-slider-step) {
+    height: $sliderbaseheight + px;
+}
+:global(.ant-slider-rail) {
+    height: $sliderbaseheight + px;
 }
 :global(.ant-slider-handle) {
-    height: $sliderbaseheight * 4 + px;
-    border-radius: 5%;
-    margin-top: -$sliderbaseheight * 2 + px;;
+    // height: $sliderbaseheight * 2 + px;
+    border-radius: 50%;
+    height: 2px;
+    margin-top: -5px;
+    width: 12px;
+    height: 12px;
+    border: solid 6px #91d5ff;
+    // margin-top: -$sliderbaseheight * 2 + px;;
 }
 .right-top{
     position:absolute;
