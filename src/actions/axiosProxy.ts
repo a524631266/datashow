@@ -20,10 +20,16 @@ export enum PostPath {
  * @param callback 处理函数 R 为后端return的数据格式,T 为目标需要转化成的格式(画图专用)
  */
 export function getDataPromise<R,T>(urlparas: PostParams,postpath: PostPath,cancelTokenSource: CancelTokenSource,callback: (data: R)=> T): Promise< string | T> {
-    const {entity,starttime,endtime,entitynums,scale,winlen} = urlparas;
+    const {entity,starttime,endtime,entitynums,scale,winlen,pageid,pagesize} = urlparas;
+    let posturl = "";
+    if(pageid) {
+        posturl = `${prev}/elecnum/${postpath}?entity=${entity}&start=${starttime}&end=${endtime}&entitynums=${entitynums}&scale=${scale}&winlen=${winlen}&pageid=${pageid}&pagesize=${pagesize}`;
+    } else {
+        posturl = `${prev}/elecnum/${postpath}?entity=${entity}&start=${starttime}&end=${endtime}&entitynums=${entitynums}&scale=${scale}&winlen=${winlen}`;
+    }
     const promise = Axios({
-        method:"get",
-        url:`${prev}/elecnum/${postpath}?entity=${entity}&start=${starttime}&end=${endtime}&entitynums=${entitynums}&scale=${scale}&winlen=${winlen}`,
+        method: "get",
+        url: posturl,
         cancelToken: cancelTokenSource.token
     }).then(
         (result) => {

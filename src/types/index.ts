@@ -36,6 +36,8 @@ interface PostParams {
     isLeaf: boolean;
     coord: [number,number];
     thresholder: ThresholdLimiter;
+    pageid?: number;
+    pagesize?: number;
 }
 // function Test (firstName:String, lastName:String) {
 //     let firstName2:String = firstName

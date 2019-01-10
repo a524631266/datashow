@@ -3,6 +3,7 @@
   <div :class="positionClass" :draggable="candraggable" @dblclick="handledoubleclick">
         <LittleBar :date="date" @redraw="start" :positionClass="positionClass" @toggledrag="toggledrag" :titlename="titlename" :show="positionClass === 'center'?false:true" v-model="postparms">
             <BaseChartFactory :positionClass="positionClass" :urlparas="urlparas" :id="id" :option="option" @updateData="way2UpdateData" :chartLibrary="chartLibrary" slot="chart"/>
+            <page-button slot="page" v-model="pageid"></page-button>
         </LittleBar>
   </div>
 </template>
@@ -21,11 +22,13 @@ import {highchartEmptyOption} from "@/components/options/EmptyChart.ts";
 import { updatestate } from '@/types/updateState';
 import Axios from "axios";
 import { AxiosSourceManage } from "@/implements/AxiosSourceManage";
+import PageButton from "@/components/base/PageButton.vue";
 import moment,{ Moment } from "moment";
 @Component({
     components: {
         BaseChartFactory,
         LittleBar,
+        PageButton,
     }
 })
 export default class HeatMapHighChart extends Vue implements AxiosSourceManage {
@@ -40,6 +43,7 @@ export default class HeatMapHighChart extends Vue implements AxiosSourceManage {
     private chartLibrary = ChartLibrary.echart;
     private titlename = "热力图";
     private candraggable = false;
+    private pageid = 1;
     private date: Moment = moment();
     @Emit()
     public cancelAxios() {

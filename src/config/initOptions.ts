@@ -58,7 +58,9 @@ const InitHeatMapUrlProps: PostParams = {
         negative: true,
         positive: true,
         range: [-3,3]
-    }
+    },
+    pageid : 1,
+    pagesize : 20,
 };
 
 const InitTimeLineUrlProps: PostParams = {

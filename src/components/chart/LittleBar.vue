@@ -1,6 +1,7 @@
 <template>
     <div class="container-fluid  chartheader" @mouseenter="showcontroler(true,$event)" @mouseleave="showcontroler(false,$event)">
         <!-- @mouseenter="showdownincon(true)" @mouseleave="showdownincon(false)" -->
+        <slot name="page"></slot>
         <div class="littlebar" >
             <div :style="{position:'relative'}" v-show="showtopbar">
                 <!-- <div class="fa icondown middlebutton" :class="showdownicon"></div> -->
@@ -91,17 +92,21 @@
             <div>
                 <span class="badge badge-secondary">speed</span>
             </div>
-            <div class="speedcontainer">
-                <div class="btn" @click.prevent.stop="preoneday">
-                    <i class="fa fa-step-backward"></i>
+            <div class="speedcontainer timeline-controls">
+                <div class="mdl-button mdl-js-button mdl-button--icon ui-stepButton" @click.prevent.stop="preoneday">
+                    <!-- <i class="fa fa-step-backward"></i> -->
+                    <i class="material-icons">skip_previous</i>
                 </div>
-                <div class="btn" @click.prevent.stop="pausecontinue">
-                    <i class="fa" :class="play?'fa-pause-circle-o rotate360':'fa-play-circle-o'"></i>
+                <div class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored ui-playButton" @click.prevent.stop="pausecontinue">
+                    <!-- <i class="fa" :class="play?'fa-pause-circle-o rotate360':'fa-play-circle-o'"></i>  -->
+                    <i class="material-icons" v-text="play?'pause':'play_arrow'"></i>
                 </div>
-                <div class="btn" @click.prevent.stop="postoneday">
-                    <i class="fa fa-step-forward"></i>
+                <div class="mdl-button mdl-js-button mdl-button--icon ui-stepButton " @click.prevent.stop="postoneday">
+                    <!-- <i class="fa fa-step-forward"></i> -->
+                    <i class="material-icons">skip_next</i>
+                    
                 </div>
-                <div class="btn" @click.prevent.stop="changespeed" v-text="speedstring">
+                <div class="mdl-button mdl-js-button mdl-button--icon ui-stepButton" @click.prevent.stop="changespeed" v-text="speedstring">
                     <!-- <i class="fa fa-step-forward"></i> -->
                     <!-- <input class="btn" type="button" v-model="innershowInterval"> -->
                 </div>
@@ -742,9 +747,16 @@ $littlebarheight: 24px;
         }
     }
 }
-
-
-
+.timeline-controls {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+    width: 140px;
+}
 
 </style>
 
