@@ -8,13 +8,13 @@
                 <div class="fa button fa-clock-o chartrange" :class="showid === 0 && showrange?'active':''" style="{color:white}" @click="changeShow($event,0)" v-html="dayrange"  @mouseenter="highlightbar(true)" @mouseleave="highlightbar(false)"></div>
                 <!-- <time-botton :class="middlebutton"></time-botton> -->
                 <!-- <div class="charttitletime" v-show="false"> {{data.starttime + "" + data.endtime }} </div> -->
-                <div class="button chartrange" :class="showid === 1 && showrange?'active':''" @click="changeShow($event,1)" ><i class="fa fa-facebook" v-text="`  ${showthresholdrange[0]} ${showthresholdrange[1]}`"></i></div>
+                <!-- <div class="button chartrange" :class="showid === 1 && showrange?'active':''" @click="changeShow($event,1)" ><i class="fa fa-facebook" v-text="`  ${showthresholdrange[0]} ${showthresholdrange[1]}`"></i></div> -->
                 <!-- <div class="button chartrange" :class="showid === 2 && showrange?'active':''" @click="changeShow($event,2)" v-text="TimeProcess"></div> -->
                 <div class="button chartrange" :class="showid === 3 && showrange?'active':''" @click="downloadchart(positionClass)"><a-icon type="download" /></div>
             </div>
             <div class="row options1 table-dark" :class="showid=== 1 || showid === 2?'hiddenbackground':''" v-show="showrange" @click.stop="donothing" >
                 <template v-if="showid === 0 && showtopbar">
-                    <form class="col-4">
+                    <form class="col-4" >
                         <h3 class="section-heading">用户选项</h3>
                         <label class="small">From:</label>
                         <div class="input-group input-group-sm" >
@@ -46,11 +46,18 @@
                                 <a-radio :value="86400" :style="{color: 'white'}">1d</a-radio>
                             </a-radio-group>
                         </div>
-                        <div class="input-group input-group-sm" >
-                            <div class="input-group-addon"  style="position: absolute;right:0">
+                        <a-row  >
+                            <a-col :span="24">
+                                <!-- <span class="badge badge-secondary">限制</span> -->
+                                <label class="small">限制:</label>
+                                <a-slider range :step="5"  :tipFormatter="thresholdformatter" :marks="thresholdslidermarks"  v-model="thresholder.range" />
+                            </a-col>
+                        </a-row>
+                        <!-- <div class="input-group input-group-sm" > -->
+                            <div class="input-group-addon middlebutton">
                                 <button class="btn btn-secondary btn-sm" type="submit" @click.stop.prevent="queryInitWebSocket">查询</button>
                             </div>
-                        </div>
+                        <!-- </div> -->
                     </form>
                     <div class="col-8 timepicker-relative-section">
                         <h3 class="section-heading">时段范围</h3>
@@ -61,14 +68,14 @@
                         </div>
                     </div>
                 </template>
-                <template v-else-if="showid === 1">
+                <!-- <template v-else-if="showid === 1">
                     <a-row v-if="showcontroller && showtopbar" class="siberbar" >
                         <a-col :span="24">
                             <span class="badge badge-secondary">限制</span>
                             <a-slider range :step="5"  :tipFormatter="thresholdformatter" :marks="thresholdslidermarks"  v-model="thresholder.range" />
                         </a-col>
                     </a-row>
-                </template>
+                </template> -->
                 <!-- <template v-else-if="showid === 2">
                     <a-row v-if="showcontroller  && showtopbar " class="siberbar">
                         <a-col :span="24">
@@ -87,11 +94,11 @@
 
         <a-progress v-if="showloader" :format="progressformat" strokeLinecap="square" :percent="percent" />
         <!--  -->
-        <div v-show="showtopbar" v-if="showcalendar"  :style="{width: '180px',position: 'absolute',bottom:0,right: '180px', border: '0px solid #d9d9d9', borderRadius: '2px' }">
+        <div v-show="showtopbar" v-if="showcalendar"  :style="{position: 'absolute',bottom:0,right: '180px', border: '0px solid #d9d9d9', borderRadius: '2px' }">
             
-            <div>
+            <!-- <div>
                 <span class="badge badge-secondary">speed</span>
-            </div>
+            </div> -->
             <div class="speedcontainer timeline-controls">
                 <div class="mdl-button mdl-js-button mdl-button--icon ui-stepButton" @click.prevent.stop="preoneday">
                     <!-- <i class="fa fa-step-backward"></i> -->
@@ -99,27 +106,31 @@
                 </div>
                 <div class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored ui-playButton" @click.prevent.stop="pausecontinue">
                     <!-- <i class="fa" :class="play?'fa-pause-circle-o rotate360':'fa-play-circle-o'"></i>  -->
-                    <i class="material-icons" v-text="play?'pause':'play_arrow'"></i>
+                    <i class="material-icons" v-text="ifplay?'pause':'play_arrow'"></i>
                 </div>
                 <div class="mdl-button mdl-js-button mdl-button--icon ui-stepButton " @click.prevent.stop="postoneday">
                     <!-- <i class="fa fa-step-forward"></i> -->
                     <i class="material-icons">skip_next</i>
                     
                 </div>
+                <!-- :class="play?'rotate360':''" 这个是用来做旋转用的-->
+                <div class="mdl-button mdl-js-button mdl-button--icon ui-resetButton"  @click.prevent.stop="restarttodraw" >
+                    <i class="material-icons">replay</i>
+                </div>
                 <div class="mdl-button mdl-js-button mdl-js-ripple-effect" @click.prevent.stop="changespeed" v-text="speedstring">
                     <!-- <i class="fa fa-step-forward"></i> -->
                     <!-- <input class="btn" type="button" v-model="innershowInterval"> -->
                 </div>
+                
                  <!-- <a-slider  :tipFormatter="formatter" :marks="slidermarks"  v-model="innershowInterval" /> -->
             </div>
         </div>
         
-        <div v-show="showtopbar" v-if="showcalendar" :style="{ width: '180px',height: '230px',position: 'absolute',bottom:0,right:0, border: '0px solid #d9d9d9', borderRadius: '2px' }">
-            
-           
+        <div v-show="showtopbar" v-if="showcalendar" :style="{ width: '180px',height: '207px',position: 'absolute',bottom:0,right:0, border: '0px solid #d9d9d9', borderRadius: '2px' }">
             <a-calendar :validRange="validRange" @select="onSelect" :fullscreen="false" @panelChange="onPanelChange" v-model="showdayLocal" mode="month" >
                 <template slot="dateFullCellRender" slot-scope="value">
-                    <span style="color:white" class="showpointer" v-if="showCalendar(value)">{{getDayNum(value)}}</span>
+                    <!-- <span style="color:white" :class="showCalendar(value)?'showpointer':'shownomarl'" v-if="showCalendar(value)">{{getDayNum(value)}}</span> -->
+                    <span :class="showCalendar(value)?'showpointer':'shownomarl'">{{getDayNum(value)}}</span>
                 </template>
             </a-calendar>
         </div>
@@ -180,7 +191,6 @@ import TimeSlicing from '@/util/TimeSlicing.ts';
         titlesize(): string {
             return (this as any).positionClass === PositionClass.Center?"titlelarge":"titlemiddle";
         },
-
     },
 })
 export default class LittleBar extends Vue {
@@ -188,7 +198,7 @@ export default class LittleBar extends Vue {
     @Prop() public appendtimelist!: number[];
     @Prop() public date!: Moment;
     @Prop() public positionClass!: PositionClass;
-    @Prop() public play = false;
+    @Prop({default: false}) public play!: boolean;
     @Model("changepostparams") public postparms!: PostParams;
     private showdayLocal: Moment = moment();
     private showclockbutton: boolean = false; // 显示日期小图标
@@ -231,6 +241,9 @@ export default class LittleBar extends Vue {
         const left = this.thresholder.range[0] / 5 - 10;
         const right = this.thresholder.range[1] / 5 - 10;
         return [left,right];
+    }
+    get ifplay(): boolean {
+        return this.play;
     }
     private thresholdslidermarks = {
         0: {
@@ -326,7 +339,7 @@ export default class LittleBar extends Vue {
         };
         this.data.thresholder = data;
         this.thresholdslidermarks = initmarks;
-        this.timeslice.execute();
+        // this.timeslice.execute();
     }
     @Emit()
     public changeShow(showv: boolean | Event,ind: number) {
@@ -392,7 +405,7 @@ export default class LittleBar extends Vue {
     @Emit()
     private queryInitWebSocket(value: any) {
         // this.$emit("changepostparams", this.data);
-        this.$emit("redraw");
+        this.$emit("initWebSocket");
         this.showrange = false;
     }
     private formatter(value: any) {
@@ -461,6 +474,11 @@ export default class LittleBar extends Vue {
             // console.log("继续");
         }
     }
+    @Emit()
+    private restarttodraw() {
+        this.$emit("restarttodraw");
+    }
+
 
     private onPanelChange(value: any, mode: any) {
     //   console.log(value, mode);
@@ -632,9 +650,7 @@ $littlebarheight: 24px;
     text-align: center;
     // margin-left: 25%;
 }
-.middlebutton{
-    position: absolute;
-}
+
 .ant-progress{
     position: absolute;
     bottom: 0;
@@ -690,10 +706,19 @@ $littlebarheight: 24px;
 .titlemiddle {
     font-size: medium;
 }
+.showpointer {
+    color:white;
+}
 .showpointer:hover{
     cursor: pointer;
     text-decoration: underline;
-    color:magenta;
+    color:white;
+}
+.shownomarl{
+    color: gray;
+}
+.shownomarl:hover{
+    cursor: none; 
 }
 .floatleft{
     float: left;
@@ -714,7 +739,7 @@ $littlebarheight: 24px;
     }
 }
 .table-dark {
-    background-color: rgba(0,0,0,0.2)
+    background-color: rgba(0,0,0,0.6)
 }
 .hiddenbackground{
     background: rgba(0,0,0,0);
@@ -742,24 +767,28 @@ $littlebarheight: 24px;
                 transform: rotate(0);
             }
             to {
-                transform: rotate(360deg);
+                transform: rotate(-360deg);
             } 
         }
     }
 }
 .timeline-controls {
-    display: -webkit-box;
-    display: -moz-box;
-    display: -ms-flexbox;
-    display: -webkit-flex;
     display: flex;
     align-items: center;
     margin-right: 20px;
-    width: 140px;
+    // width: 180px;
 }
 .mdl-js-ripple-effect {
     color: white;
     font-size: 15px;
 }
+form {
+    display: flex;
+    flex-direction: column;
+}
+form .middlebutton {
+    align-self: center;
+}
+
 </style>
 

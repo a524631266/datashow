@@ -1,7 +1,7 @@
 
 <template>
   <div :class="positionClass" :draggable="candraggable" @dblclick="handledoubleclick">
-        <LittleBar :date="date" @redraw="start" :positionClass="positionClass" @toggledrag="toggledrag" :titlename="titlename" :show="positionClass === 'center'?false:true" v-model="postparms">
+        <LittleBar :date="date" @initWebSocket="start" :positionClass="positionClass" @toggledrag="toggledrag" :titlename="titlename" :show="positionClass === 'center'?false:true" v-model="postparms">
             <BaseChartFactory :positionClass="positionClass" :urlparas="urlparas" :id="id" :option="option" :chartLibrary="chartLibrary" @getData="getData" slot="chart" />
         </LittleBar>
   </div>

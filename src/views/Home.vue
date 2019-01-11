@@ -151,7 +151,7 @@ const geo = Object.assign({},InitGeomapUrlProps);
 export default class Home extends Vue {
     private datalist =  [
          {id: "chart-top", urlparas: orgtop,
-            option: {xAxis: "1"}, positionClass: PositionClass.RightTop,chartName:"TopHighChart"},
+            option: {xAxis: "1"}, positionClass: PositionClass.RightBottom,chartName:"TopHighChart"},
         {id: "chart-single-boxchart", urlparas: entbox,
           option: {xAxis: "2"}, positionClass: PositionClass.LeftTop,chartName:"BoxSingleHighChart"},
         {id: "chart-single-action", urlparas: enttl,
@@ -163,7 +163,7 @@ export default class Home extends Vue {
           {id: "chart-heatmap", urlparas: orghp,
         option: {xAxis: "4"}, positionClass: PositionClass.Center,chartName:"HeatMapHighChart"},
         {id: "chart-geomap", urlparas: geo,
-        option: {xAxis: "1"}, positionClass: PositionClass.RightBottom,chartName:"GeoMapEchart"},
+        option: {xAxis: "1"}, positionClass: PositionClass.RightTop,chartName:"GeoMapEchart"},
     ];
     private centerid = "chart-heatmap";
     private drawerlist = [
@@ -345,9 +345,7 @@ $antdsliderheight: $sliderbaseheight + px;
 :global(.ant-fullcalendar-next-month-btn-day .ant-fullcalendar-value){
     color: white;
 } */
-:global(.ant-fullcalendar-header > div:nth-child(3)) {
-    display: none;
-}
+
 :global(.ant-fullcalendar-value) {
     color: white;
     width: auto!important;
@@ -384,6 +382,30 @@ $antdsliderheight: $sliderbaseheight + px;
     border: solid 6px #91d5ff;
     // margin-top: -$sliderbaseheight * 2 + px;;
 }
+:global(.ant-fullcalendar-header) {
+    display: flex;
+    justify-content: center;
+}
+:global(.ant-fullcalendar-header > div:nth-child(1)) {
+    width: 50%;
+}
+:global(.ant-fullcalendar-header > div:nth-child(2)) {
+    width: 50%;
+}
+:global(.ant-fullcalendar-header > div:nth-child(3)) {
+    display: none;
+}
+:global(.ant-fullcalendar-header > div:nth-child(2) > div > div ) {
+    width: 100%;
+    justify-content: center;
+    display: flex;
+}
+:global(.ant-fullcalendar-header > div:nth-child(1) > div > div ) {
+    width: 100%;
+    justify-content: center;
+    display: flex;
+}
+
 .right-top{
     position:absolute;
     left:0%;

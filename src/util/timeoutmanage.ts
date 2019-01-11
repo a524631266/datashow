@@ -69,7 +69,8 @@ class TimerManager {
                     this.intervaltime
                   );
             } else {
-                this.start();
+                // 两次播放间隔3000
+                setTimeout(() => {this.start();},3000);
             }
         } else {
             // 暂停

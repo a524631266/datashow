@@ -1,10 +1,10 @@
 <template>
   <div :class="positionClass" :draggable="candraggable" @dblclick="handledoubleclick">
-       <LittleBar :play="play" @pause="pause" @toggledrag="toggledrag" @redraw="start" :positionClass="positionClass" :date="date" @querydate="querydate" @restarttodraw="restarttodraw" :appendtimelist="appendtimelist" :titlename="titlename" :show="positionClass === 'center'?false:true" v-model="postparms">
+       <LittleBar :play="play" @pause="pause" @toggledrag="toggledrag" @initWebSocket="start" :positionClass="positionClass" :date="date" @querydate="querydate" @restarttodraw="restarttodraw" :appendtimelist="appendtimelist" :titlename="titlename" :show="positionClass === 'center'?false:true" v-model="postparms">
             <BaseChartFactory :urlparas="urlparas" :positionClass="positionClass" :id="id" :option="option" :chartLibrary="chartLibrary" :handleclick="handleclick" @updateData="way2UpdateData" slot="chart"/>
         </LittleBar>
-        <div v-text="nowtime" style="position:absolute;bottom:0;right:0;">
-        </div>
+        <!-- <div v-text="nowtime" style="position:absolute;bottom:0;right:0;">
+        </div> -->
   </div>
 </template>
 
