@@ -20,12 +20,12 @@ export enum PostPath {
  * @param callback 处理函数 R 为后端return的数据格式,T 为目标需要转化成的格式(画图专用)
  */
 export function getDataPromise<R,T>(urlparas: PostParams,postpath: PostPath,cancelTokenSource: CancelTokenSource,callback: (data: R)=> T): Promise< string | T> {
-    const {entity,starttime,endtime,entitynums,scale,winlen,pageid,pagesize} = urlparas;
+    const {entity,starttime,endtime,entitynums,scale,winlen,pageid,pagesize,thresholder:{range}} = urlparas;
     let posturl = "";
     if(pageid) {
-        posturl = `${prev}/elecnum/${postpath}?entity=${entity}&start=${starttime}&end=${endtime}&entitynums=${entitynums}&scale=${scale}&winlen=${winlen}&pageid=${pageid}&pagesize=${pagesize}`;
+        posturl = `${prev}/elecnum/${postpath}?entity=${entity}&start=${starttime}&end=${endtime}&entitynums=${entitynums}&scale=${scale}&winlen=${winlen}&pageid=${pageid}&pagesize=${pagesize}&neger=${range[0]}&poser=${range[1]}`;
     } else {
-        posturl = `${prev}/elecnum/${postpath}?entity=${entity}&start=${starttime}&end=${endtime}&entitynums=${entitynums}&scale=${scale}&winlen=${winlen}`;
+        posturl = `${prev}/elecnum/${postpath}?entity=${entity}&start=${starttime}&end=${endtime}&entitynums=${entitynums}&scale=${scale}&winlen=${winlen}&neger=${range[0]}&poser=${range[1]}`;
     }
     const promise = Axios({
         method: "get",
@@ -45,4 +45,20 @@ export function getDataPromise<R,T>(urlparas: PostParams,postpath: PostPath,canc
         }
     );
     return promise;
+}
+
+const prev2 = process.env.NODE_ENV === "development"? "/tree": "";
+export function getTreeNode(entity: string) {
+    const posturl = `${prev2}/case/entity?id=${entity}`;
+    const axiospromise = Axios(
+        {
+        method:"get",
+        url:posturl,
+        }
+    ).then(
+        (result) => {
+            return result;
+        }
+    );
+    return axiospromise;
 }

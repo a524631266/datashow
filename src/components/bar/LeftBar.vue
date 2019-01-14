@@ -20,8 +20,8 @@
                 <a v-if="data.dataRef.hover" class="btn btn-sm right">图表</a>
                 <a v-if="data.dataRef.hover" class="btn btn-sm right">用户信息</a> -->
                 {{data.title}}
-                <a v-if="data.hover" class="btn btn-sm" @click.prevent.stop="router2home(data)" style="position:relative;color:#007bff;text-decoration:underline">图表</a>
-                <a v-if="data.hover" class="btn btn-sm" @click.prevent.stop="router2info(data)" style="position:relative;color:#007bff;text-decoration:underline">用户信息</a>
+                <a v-if="data.hover" class="btn btn-sm" @click.prevent.stop="router2home(data,false)" style="position:relative;color:#007bff;text-decoration:underline">图表</a>
+                <a v-if="data.hover" class="btn btn-sm" @click.prevent.stop="router2info(data,false)" style="position:relative;color:#007bff;text-decoration:underline">用户信息</a>
             </template>
             <!-- <a href="#" slot="entity">123</a> -->
         </a-tree>
@@ -65,6 +65,7 @@ import Antd from "ant-design-vue";
 import Axios from "axios";
 import { entity,name,level } from "@/config/initOptions.ts";
 import PubSub from 'pubsub-js';
+import {getTreeNode} from '@/actions/axiosProxy.ts';
 export interface ChildrenValue {
     id: string ;
     pId: number;
@@ -140,65 +141,59 @@ export default class LeftBar extends Vue {
         // console.log("treeNode",treeNode);
         const {eventKey: postid} = treeNode;
         const {level} = treeNode.dataRef;
-        // const {eventKey: postid ,dataRef:{id ,level }} = treeNode;
-        return new Promise((resolve,reject) => {
-            // console.log(treeNode.dataRef.children);
-            // if (treeNode.dataRef.children) {
-            if (treeNode.getNodeChildren().length) {
-                resolve("");
-                return;
+        if (treeNode.getNodeChildren().length) {
+            return;
+        }
+        this.opentree(treeNode,postid, level);
+    }
+    @Emit()
+    private opentree(treeNode: any, entity: string,level: number) {
+        getTreeNode(entity).then(
+            (result) => {
+                const {data} = result;
+                const childrenlist: ChildrenValue[] = [];
+                // console.log(data)
+                data.forEach(
+                    (value: ChildrenValue,index: number)=> {
+                        const children = value;
+                        children.title = value.name + "(" + value.entityNum + ")";
+                        children.key = value.id + "";
+                        children.entityNum = value.entityNum;
+                        children.isLeaf = value.isEntity;
+                        children.level = level + 1;
+                        children.value = value.id + "";
+                        children.label = value.name;
+                        children.coord = value.coord?value.coord
+                                                :value.lnglat?[parseFloat(value.lnglat.split(",")[0]),parseFloat(value.lnglat.split(",")[1])]
+                                                :value.cityLnglat?[parseFloat(value.cityLnglat.split(",")[0]),parseFloat(value.cityLnglat.split(",")[1])]
+                                                :value.districtLnglat?[parseFloat(value.districtLnglat.split(",")[0]),parseFloat(value.districtLnglat.split(",")[1])]
+                                                :[0,0];
+                        children.slots = {
+                                icon: value.isEntity?'user':'org',
+                        };
+                        children.scopedSlots =  {
+                            title: 'custom'
+                        };
+                        // children.on= {
+                        //     mouseenter:this.showtooltip,
+                        //     mouseleave: this.hidetooltip,
+                        // };
+                        children.hover = false;
+                        childrenlist.push(children);
+                    }
+                );
+                treeNode.dataRef.children = childrenlist;
+                this.treeData = [...this.treeData];
+                // console.log("tree data",this.treeData);
+                // resolve("成功");
+            },
+        ).catch(
+            (err: any) => {
+                // console.log("111111",err);
+                this.$message.error("无节点数据");
             }
-            const posturl = `${prev}/case/entity?id=${postid}`;
-            Axios(
-                {
-                method:"get",
-                url:posturl,
-                }
-            ).then(
-                (result) => {
-                    const {data} = result;
-                    const childrenlist: ChildrenValue[] = [];
-                    // console.log(data)
-                    data.forEach(
-                        (value: ChildrenValue,index: number)=> {
-                            const children = value;
-                            children.title = value.name + "(" + value.entityNum + ")";
-                            children.key = value.id + "";
-                            children.isLeaf = value.isEntity;
-                            children.level = level + 1;
-                            children.value = value.id + "";
-                            children.label = value.name;
-                            children.coord = value.coord?value.coord
-                                                    :value.lnglat?[parseFloat(value.lnglat.split(",")[0]),parseFloat(value.lnglat.split(",")[1])]
-                                                    :value.cityLnglat?[parseFloat(value.cityLnglat.split(",")[0]),parseFloat(value.cityLnglat.split(",")[1])]
-                                                    :value.districtLnglat?[parseFloat(value.districtLnglat.split(",")[0]),parseFloat(value.districtLnglat.split(",")[1])]
-                                                    :[0,0];
-                            children.slots = {
-                                    icon: value.isEntity?'user':'org',
-                            };
-                            children.scopedSlots =  {
-                                title: 'custom'
-                            };
-                            // children.on= {
-                            //     mouseenter:this.showtooltip,
-                            //     mouseleave: this.hidetooltip,
-                            // };
-                            children.hover = false;
-                            childrenlist.push(children);
-                        }
-                    );
-                    treeNode.dataRef.children = childrenlist;
-                    this.treeData = [...this.treeData];
-                    // console.log("tree data",this.treeData);
-                    resolve("成功");
-                },
-            ).catch(
-                (err: any) => {
-                    // console.log("111111",err);
-                }
-            );
-            resolve("111");
-        });
+        );
+
     }
     private onSelect(val: string,e: any) {
         // console.log("object1",val,e.node,e.node.dataRef.key);
@@ -292,7 +287,7 @@ export default class LeftBar extends Vue {
         // console.log("hhhhhh");
     }
     @Emit()
-    private router2home(data: ChildrenValue) {
+    private router2home(data: ChildrenValue,openLeftBar: boolean) {
         // 1.  触发路由
         this.$router.push({name: "node",query: {
             entity: data.key,
@@ -300,9 +295,10 @@ export default class LeftBar extends Vue {
             level:data.level as any,
             isLeaf:data.isLeaf as any,
             coord:data.coord as any,
+            entitynums: data.entityNum as any,
             },params: { entity: data.key}});
         // 2. 自动关闭数
-        PubSub.publish("openLeftBar",false);
+        PubSub.publish("openLeftBar",openLeftBar);
         // 3. 更新左标题 因为之前没有点击选择，是直接通过用户信息做的，所以需要更新
         if(!data.isLeaf) {
             // 修正错位问题
@@ -319,7 +315,7 @@ export default class LeftBar extends Vue {
             PubSub.publish("updateBread",data2);
         }
     }
-    private router2info(data: ChildrenValue) {
+    private router2info(data: ChildrenValue,openLeftBar: boolean) {
         // this.$router.push({name: "entityinfo",
         //     query: {
         //         entity: data.key,
@@ -332,7 +328,7 @@ export default class LeftBar extends Vue {
                 entity: data.key,
                 name: data.name}
                 );
-        PubSub.publish("openLeftBar",false);
+        PubSub.publish("openLeftBar",openLeftBar);
     }
     private mounted() {
         this.treeheight = (document.body.clientHeight - 24) + 'px';

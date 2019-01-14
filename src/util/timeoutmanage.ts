@@ -70,7 +70,7 @@ class TimerManager {
                   );
             } else {
                 // 两次播放间隔3000
-                setTimeout(() => {this.start();},3000);
+                this.timeid = setTimeout(() => {this.start();},3000);
             }
         } else {
             // 暂停

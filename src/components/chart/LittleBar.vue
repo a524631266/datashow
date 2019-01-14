@@ -5,12 +5,17 @@
         <div class="littlebar" >
             <div :style="{position:'relative'}" v-show="showtopbar">
                 <!-- <div class="fa icondown middlebutton" :class="showdownicon"></div> -->
-                <div class="fa button fa-clock-o chartrange" :class="showid === 0 && showrange?'active':''" style="{color:white}" @click="changeShow($event,0)" v-html="dayrange"  @mouseenter="highlightbar(true)" @mouseleave="highlightbar(false)"></div>
+                <div class="container2 chartrange" :class="showid === 0 && showrange?'active':''" style="{color:white}" @click="changeShow($event,0)"   @mouseenter="highlightbar(true)" @mouseleave="highlightbar(false)">
+                    <i class="fa fa-clock-o"></i>
+                    <div class="container2 mdl-button" v-html="dayrange"></div>
+                </div>
                 <!-- <time-botton :class="middlebutton"></time-botton> -->
                 <!-- <div class="charttitletime" v-show="false"> {{data.starttime + "" + data.endtime }} </div> -->
                 <!-- <div class="button chartrange" :class="showid === 1 && showrange?'active':''" @click="changeShow($event,1)" ><i class="fa fa-facebook" v-text="`  ${showthresholdrange[0]} ${showthresholdrange[1]}`"></i></div> -->
                 <!-- <div class="button chartrange" :class="showid === 2 && showrange?'active':''" @click="changeShow($event,2)" v-text="TimeProcess"></div> -->
-                <div class="button chartrange" :class="showid === 3 && showrange?'active':''" @click="downloadchart(positionClass)"><a-icon type="download" /></div>
+                <!-- <div class="container2  chartrange " :class="showid === 3 && showrange?'active':''" @click="downloadchart(positionClass)">
+                    <a-icon class="container2 mdl-button" type="download" />
+                </div> -->
             </div>
             <div class="row options1 table-dark" :class="showid=== 1 || showid === 2?'hiddenbackground':''" v-show="showrange" @click.stop="donothing" >
                 <template v-if="showid === 0 && showtopbar">
@@ -66,7 +71,11 @@
                                 <li v-for="(item,index) in data" :key="index" class="list-group-item h6" :class="item.day===activeitem?'active':''" @click="licktimeselectrange(item)">{{item.day}}</li>
                             </ul>
                         </div>
+                        <div class="download" :class="showid === 3 && showrange?'active':''" @click="downloadchart(positionClass)">
+                            <a-icon class="container2 mdl-button" type="download" />
+                        </div>
                     </div>
+                    
                 </template>
                 <!-- <template v-else-if="showid === 1">
                     <a-row v-if="showcontroller && showtopbar" class="siberbar" >
@@ -100,6 +109,10 @@
                 <span class="badge badge-secondary">speed</span>
             </div> -->
             <div class="speedcontainer timeline-controls">
+                <!-- :class="play?'rotate360':''" 这个是用来做旋转用的-->
+                <div class="mdl-button mdl-js-button mdl-button--icon ui-resetButton"  @click.prevent.stop="restarttodraw" >
+                    <i class="material-icons">replay</i>
+                </div>
                 <div class="mdl-button mdl-js-button mdl-button--icon ui-stepButton" @click.prevent.stop="preoneday">
                     <!-- <i class="fa fa-step-backward"></i> -->
                     <i class="material-icons">skip_previous</i>
@@ -111,13 +124,9 @@
                 <div class="mdl-button mdl-js-button mdl-button--icon ui-stepButton " @click.prevent.stop="postoneday">
                     <!-- <i class="fa fa-step-forward"></i> -->
                     <i class="material-icons">skip_next</i>
-                    
                 </div>
-                <!-- :class="play?'rotate360':''" 这个是用来做旋转用的-->
-                <div class="mdl-button mdl-js-button mdl-button--icon ui-resetButton"  @click.prevent.stop="restarttodraw" >
-                    <i class="material-icons">replay</i>
-                </div>
-                <div class="mdl-button mdl-js-button mdl-js-ripple-effect" @click.prevent.stop="changespeed" v-text="speedstring">
+                <div class="mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect flexcontentcenter" @click.prevent.stop="changespeed" >
+                    <span v-text="speedstring"></span>
                     <!-- <i class="fa fa-step-forward"></i> -->
                     <!-- <input class="btn" type="button" v-model="innershowInterval"> -->
                 </div>
@@ -611,8 +620,8 @@ $littlebarheight: 24px;
     cursor: pointer;
 }
 .fa-clock-o {
-    left: 50%;
-    position: relative;
+    // left: 50%;
+    // position: relative;
     cursor: pointer;
     vertical-align: middle;
     color: white;
@@ -675,7 +684,7 @@ $littlebarheight: 24px;
         border: 0;
     }
 }
-.button {
+.mdl-button2 {
     // position: absolute;
     z-index: 500;
     left: 0;
@@ -684,22 +693,48 @@ $littlebarheight: 24px;
     //   border: 0px transparent;
     color:white;
     text-shadow: 0 1px 0 rgba(0,0,0,.1);
-    background-color: #2a2a2c;
-    background-image: linear-gradient(180deg,#262628,#303032);
+    // background-color: #2a2a2c;
+    // background-image: linear-gradient(180deg,#262628,#303032);
     background-repeat: repeat-x;
     border-color: #262628;
     // padding: 6px 11px;
     line-height: 16px;
-    border: 1px solid #2f2f32;
-    margin-right: 3px;
-    white-space: nowrap;
+    border: 0px solid #2f2f32;
+    // margin-right: 3px;
+    // white-space: nowrap;
     border-radius: 0.25rem;
     padding:0.1em 0.2em;
-    &:hover{
-        cursor: pointer;
-    }
+    // &:hover{
+    //     cursor: pointer;
+    // }
 }
-
+.container2 {
+    // position: absolute;
+    z-index: 500;
+    left: 0;
+    height: 100%;
+    //   background: transparent;
+    //   border: 0px transparent;
+    color:white;
+    text-shadow: 0 1px 0 rgba(0,0,0,.1);
+    // background-color: #2a2a2c;
+    // background-image: linear-gradient(180deg,#262628,#303032);
+    background-repeat: repeat-x;
+    border-color: #262628;
+    // padding: 6px 11px;
+    line-height: 16px;
+    border: 0px solid #2f2f32;
+    // margin-right: 3px;
+    // white-space: nowrap;
+    border-radius: 0.25rem;
+    padding:0.1em 0.2em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    // &:hover{
+    //     cursor: pointer;
+    // }
+}
 .titlelarge{
     font-size: large;
 }
@@ -788,6 +823,17 @@ form {
 }
 form .middlebutton {
     align-self: center;
+}
+.flexcontentcenter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 15px;
+}
+.download {
+    bottom: 0px;
+    position: absolute;
+    right: 0px;
 }
 
 </style>

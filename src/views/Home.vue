@@ -1,81 +1,7 @@
 <template>
   <div class="home">
-      <!-- <FloatBotton /> -->
-    <!-- <HeatMapHighChart :urlparas="datalist[2].urlparas" 
-        :positionClass="datalist[2].positionClass" 
-        :key="2" 
-        :id="datalist[2].id" 
-        @ajaxFunc="ajaxFunc"
-        :data="datalist[2]"
-        v-model="datalist[2].urlparas"
-    /> -->
-    <!-- <div class="select">用来选择条的</div> -->
     <div class="container">
-        <!-- <BoxHighChart :urlparas="datalist[0].urlparas" 
-            :positionClass="datalist[0].positionClass" 
-            :key="0" 
-            :id="datalist[0].id" 
-            @ajaxFunc="ajaxFunc"
-            :data="datalist[0]"
-            v-model="datalist[0].urlparas"
-        />
-        <BoxHighChart :urlparas="datalist[1].urlparas" 
-            :positionClass="datalist[1].positionClass" 
-            :key="1" 
-            :id="datalist[1].id" 
-            @ajaxFunc="ajaxFunc"
-            :data="datalist[1]"
-            v-model="datalist[1].urlparas"
-        />
-        <TrendHighChart :urlparas="datalist[3].urlparas" 
-            :positionClass="datalist[3].positionClass" 
-            :key="3" 
-            :id="datalist[3].id" 
-            @ajaxFunc="ajaxFunc"
-            :data="datalist[3]"
-            v-model="datalist[3].urlparas"
-        />
-        <TrendHighChart :urlparas="datalist[4].urlparas" 
-            :positionClass="datalist[4].positionClass" 
-            :key="4" 
-            :id="datalist[4].id" 
-            @ajaxFunc="ajaxFunc"
-            :data="datalist[4]"
-            v-model="datalist[4].urlparas"
-        />
-        <TopHighChart :urlparas="datalist[5].urlparas" 
-            :positionClass="datalist[5].positionClass" 
-            :key="5" 
-            :id="datalist[5].id" 
-            @ajaxFunc="ajaxFunc"
-            :data="datalist[5]"
-            v-model="datalist[5].urlparas"
-        />
-        <TimeLineHighChart :urlparas="datalist[2].urlparas" 
-            :positionClass="datalist[2].positionClass" 
-            :key="2" 
-            :id="datalist[2].id" 
-            @ajaxFunc="ajaxFunc"
-            :data="datalist[2]"
-            v-model="datalist[2].urlparas"
-        /> -->
-        <!-- <HighchartFactory v-for="(one, index) in datalist" 
-            :urlparas="one.urlparas" :option="one.option" 
-            :positionClass="one.positionClass" 
-            :key="index" 
-            :id="one.id" 
-            @ajaxFunc="ajaxFunc"
-            :data="one"
-            v-model="one.urlparas"
-        /> -->
-        <!-- <GeoMapEchart :urlparas="datalist[7].urlparas" 
-                :positionClass="datalist[7].positionClass" 
-                :key="7" 
-                :id="datalist[7].id" 
-                @ajaxFunc="ajaxFunc"
-                :data="datalist[7]"
-                v-model="datalist[7].urlparas">
-        </GeoMapEchart> -->
+
         <component v-for="(one, index) in datalist" 
                     :urlparas="one.urlparas" 
                     :option="one.option"
@@ -98,10 +24,7 @@
                     >
         </component>
     </div>
-    <!-- <transition name="slide-right">
-        <router-view></router-view>
-    </transition> -->
-    <!-- <entity-info></entity-info> -->
+
     <component :is="'EntityInfo'"></component>
   </div>
 </template>
@@ -196,6 +119,7 @@ export default class Home extends Vue {
                     this.datalist[index].urlparas.name = this.$route.query.name as any;
                     this.datalist[index].urlparas.level = this.$route.query.level as any;
                     this.datalist[index].urlparas.coord = this.$route.query.coord as any;
+                    this.datalist[index].urlparas.entitynums = this.$route.query.entitynums as any;
                 }
             }
         );
@@ -316,7 +240,8 @@ $antdsliderheight: $sliderbaseheight + px;
   color: white ;
 }
 :global(.ant-breadcrumb-separator){
-    margin: 0px 0px !important;
+    // margin: 0px 0px !important;
+    color: white !important;
 }
 :global(.ant-fullcalendar-column-header-inner) {
   color: white ;
@@ -397,12 +322,12 @@ $antdsliderheight: $sliderbaseheight + px;
 }
 :global(.ant-fullcalendar-header > div:nth-child(2) > div > div ) {
     width: 100%;
-    justify-content: center;
+    justify-content: flex-end;
     display: flex;
 }
 :global(.ant-fullcalendar-header > div:nth-child(1) > div > div ) {
     width: 100%;
-    justify-content: center;
+    justify-content: flex-end;
     display: flex;
 }
 

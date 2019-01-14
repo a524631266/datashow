@@ -14,7 +14,7 @@ import { PositionClass , PostParams, ChartLibrary } from '@/types/index';
 import BaseChartFactory from "@/components/chart/base/BaseChartFactory.vue";
 import LittleBar from "@/components/chart/LittleBar.vue";
 import { Options , HeatMapSeriesOptions} from 'highcharts';
-import {listdata, drawHeatmapOptions } from "@/components/options/HeatMapOptions.ts";
+import {listdata, drawHeatmapOptions,HeatMapLimiter } from "@/components/options/HeatMapOptions.ts";
 import { getDataPromise, PostPath } from "@/actions/axiosProxy.ts";
 import PubSub from 'pubsub-js';
 import { HeatmapChart, HeatmapChartTrans } from '@/types/postreturnform';
@@ -45,6 +45,9 @@ export default class HeatMapHighChart extends Vue implements AxiosSourceManage {
     private candraggable = false;
     private pageid = 1;
     private date: Moment = moment();
+    private limiter: HeatMapLimiter = {
+      scale: this.postparms.scale,
+    };
     @Emit()
     public cancelAxios() {
       this.axiosSource.cancel("删除HeatMap");
@@ -59,7 +62,7 @@ export default class HeatMapHighChart extends Vue implements AxiosSourceManage {
         (data: string | HeatmapChartTrans) => {
           if ( typeof data !== "string") {
             const change = (this.option as any).change;
-            const option2 = drawHeatmapOptions(data, "HeatMap","" ,this.showTooltiop);
+            const option2 = drawHeatmapOptions(data, "HeatMap","" ,this.showTooltiop,this.limiter);
             (option2 as any).change = updatestate.redraw;
             this.option = option2 as any;
             // console.log("timelinedata",this.option);

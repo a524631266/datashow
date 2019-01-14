@@ -65,6 +65,7 @@ export default class TimeLineHighChart extends Vue implements AxiosSourceManage 
           if ( typeof data !== "string") {
             const change = (this.option as any).change;
             const option2 = drawActionOptions(data, "异常",this.thresholdlimiter);
+            // const option2 = drawActionOptions(inout, "异常",this.thresholdlimiter);
             // const newdata = this._TimeLine2Heatmap(data);
             // const option2 = drawHeatmapOptions(newdata, "异常","" ,"" as any);
             (option2 as any).change = updatestate.redraw;

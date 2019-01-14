@@ -1,3 +1,4 @@
+import { onehour, fifteenminute } from './../../config/initOptions';
 import Highcharts, { Options ,HeatMapChart} from 'highcharts';
 import $ from "jquery";
 // import "highcharts/modules/exporting.js";
@@ -23,8 +24,35 @@ interface Timemapx {
 interface Namemap {
     [x: string]: string;
 }
+export interface HeatMapLimiter {
+    scale: number;
+}
+function transminute(n: number): string {
+    let ylabelname = "";
+    const num = n % 4;
+    // tslint:disable-next-line:no-bitwise
+    const hour = n / 4 | 0;
+    const hourprefix = hour<10?("0"+hour):hour;
+    switch (num) {
+        case 0:
+            ylabelname = hourprefix + ":00";
+            break;
+        case 1:
+            ylabelname = hourprefix + ":15";
+            break;
+        case 2:
+            ylabelname = hourprefix + ":30";
+            break;
+        case 3:
+            ylabelname = hourprefix + ":45";
+            break;
+        default:
+            break;
+    }
+    return ylabelname;
+}
 
-export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, redrawEntityFunc: any, openInfo: (entity: string, name: string,clientX: number,clientY: number,target: DOMRect)=>void) => {// redrawEntityFunc(entityid)
+export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, redrawEntityFunc: any, openInfo: (entity: string, name: string,clientX: number,clientY: number,target: DOMRect)=>void,limiter: HeatMapLimiter) => {// redrawEntityFunc(entityid)
     // var title = "用电"
     // var listdata= [{x:123456,y:0,value:200},{x:123456,y:1,value:200},{x:123456,y:3,value:200},{x:1222356,y:23,value:200},{x:1234567,y:3,value:200}]
     const xmaptime: Xmaptime = {};
@@ -157,23 +185,23 @@ export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, r
                 color: "white"
             }
         },
-        legend: {
-            title: {
-                text: title,
-                style: {
-                    color: 'white'
-                },
-            },
-            backgroundColor: '#303030',
-            // borderColor: '#ffffff',
-            borderWidth: 2,
-            borderRadius: 0,
-            // shadow: true,
-            itemStyle: {
-                color: '#C1FFC1',
-                fontWeight: 'bold'
-            },
-        },
+        // legend: {
+        //     title: {
+        //         text: title,
+        //         style: {
+        //             color: 'white'
+        //         },
+        //     },
+        //     backgroundColor: '#303030',
+        //     // borderColor: '#ffffff',
+        //     borderWidth: 2,
+        //     borderRadius: 0,
+        //     // shadow: true,
+        //     itemStyle: {
+        //         color: '#C1FFC1',
+        //         fontWeight: 'bold'
+        //     },
+        // },
         // subtitle: {
         //   text: 'Temperature variation by day and hour through April 2013',
         //   align: 'left'
@@ -188,7 +216,7 @@ export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, r
                 formatter() {
                     // console.log(this,"2222222222222",timemapx[this.value])
                     // console.log(namemap,timemapx,(this as any).value);
-                    return (this as any).value.slice(0, 5) + "...";
+                    return (this as any).value.slice(0, 5) + "";
                 },
                 style: {
                     color: "white"
@@ -219,10 +247,18 @@ export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, r
                     // tslint:disable-next-line:radix
                     const hourvalue = parseInt((this as any).value);
                     // console.log(chartWidth,this.chart,a,b,c)
-                    if (chartWidth / window.innerWidth < 0.25) {// 小图
-                        return a.pos % 2 === 0 ? hourvalue + ":00" : "";
-                    } else {
-                        return hourvalue + ":00";
+                    if (limiter.scale === onehour) {
+                        if (chartWidth / window.innerWidth < 0.25) {// 小图
+                            return a.pos % 2 === 0 ? hourvalue + ":00" : "";
+                        } else {
+                            return hourvalue + ":00";
+                        }
+                    } else if(limiter.scale === fifteenminute) {
+                        if (chartWidth / window.innerWidth < 0.25) {// 小图
+                            return a.pos % 4 === 0 ? transminute(hourvalue) : "";
+                        } else {
+                            return transminute(hourvalue);
+                        }
                     }
                 }
             },
@@ -230,7 +266,7 @@ export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, r
             maxPadding: 0,
             startOnTick: false,
             endOnTick: false,
-            tickPositions: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
+            // tickPositions: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
             tickWidth: 1,
             min: 0,
             max: 23,
@@ -244,15 +280,22 @@ export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, r
                 const x = timemapx[(this as any).options.x];
                 const y = (this as any).options.y;
                 const value = (this as any).options.value;
-                return "配电柜id : " + x + "<br/> 时刻:" + y + ":00" + "<br/>" + title + "量:" + value;
+                if (limiter.scale === fifteenminute) {
+                    return "配电柜ID : " + x + "<br/> time:" + transminute(y) + "<br/>value:" + value;
+                } else if (limiter.scale === onehour) {
+                    return "配电柜ID : " + x + "<br/> time:" + y + ":00" + "<br/>value:" + value;
+                }
+                return "";
             }
         },
         colorAxis: {
             stops: [
                 [0, '#3060cf'],
                 [0.5, '#fffbbc'],
-                [0.9, '#c4463a']
+                [1, '#c4463a']
             ],
+            // min:-1,
+            // max:1,
             // min: -5
         },
         series: [{

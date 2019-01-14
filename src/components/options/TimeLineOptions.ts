@@ -781,14 +781,15 @@ interface inlist  {
     y: number;
     name: string;
     id: string;
-    color: string;
     value: number;
+    color?: string;
 }
 
 
 // tslint:disable-next-line:no-shadowed-variable
 const getInterData = (inlist: inlist[]) => {
     return {
+        name: "value",
         colorByPoint: true,
         // borderColor: 'rgba(0,0,0,0)',
         data: inlist,
@@ -880,18 +881,6 @@ export const drawActionOptions = (objectlist: TimeLineChartTrans, title: string,
         min: 0,
         max: 24 * 60 * 60 * 1000-1,
       },
-      colorAxis: {
-        stops: [
-            [-10, '#3060cf'],
-            [0, '#fffbbc'],
-            [10, '#c4463a']
-        ],
-        // // min: -5
-        // min: -10,
-        // max: 10,
-        // minColor: 'red',// '#FFFFFF',
-        // maxColor: 'blue',// (Highcharts.getOptions() as any).colors[0]
-      },
       yAxis: {
         type: "catogory",
         title: {
@@ -933,16 +922,45 @@ export const drawActionOptions = (objectlist: TimeLineChartTrans, title: string,
         },
       },
       legend: {
-        enabled: false,
+        // enabled: false,
         align : 'center',
-        verticalAlign : 'bottom',
+        // verticalAlign : 'bottom',
         y : 0,
-        floating : true,
+        floating : false,
         borderWidth : 0,
         itemStyle: {
           color: "#C1FFC1",
         },
       },
+        // colorAxis: {
+        //   stops: [
+        //       [0, '#3060cf'],
+        //       [0.5, '#fffbbc'],
+        //       [1, '#c4463a']
+        //   ],
+        //   // // min: -5
+        //   // min: -10,
+        //   // max: 10,
+        //   // minColor: 'red',// '#FFFFFF',
+        //   // maxColor: 'blue',// (Highcharts.getOptions() as any).colors[0]
+        // },
+    //   legend: {
+    //     title: {
+    //         text: title,
+    //         style: {
+    //             color: 'white'
+    //         },
+    //     },
+    //     backgroundColor: '#303030',
+    //     // borderColor: '#ffffff',
+    //     borderWidth: 2,
+    //     borderRadius: 0,
+    //     // shadow: true,
+    //     itemStyle: {
+    //         color: '#C1FFC1',
+    //         fontWeight: 'bold'
+    //     },
+    // },
       series: [getInterData(inlist)],
       credits: {
           enabled: false,

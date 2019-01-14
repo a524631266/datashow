@@ -1,7 +1,12 @@
 <template>
 <div>
   <a-breadcrumb>
-    <span slot="separator" style="color: white;">></span>
+    <a-breadcrumb-item style="color: white;" class="fa fa-angle-right breadrighticon">
+        <!-- <i class="material-icons">chevronright</i> -->
+        <i slot="separator" style="color: white;" class="fa fa-angle-right breadrighticon">
+        <!-- <i class="material-icons">chevronright</i> -->
+        </i>
+    </a-breadcrumb-item>
     <a-breadcrumb-item v-for="(data,index) in routes" :key="index">
         <span v-show="index>=(routes.length-3)" @click.stop.prevent="onClick(index)">{{data.name.substr(0,5)}}</span>
     </a-breadcrumb-item>
@@ -71,6 +76,9 @@ export default class BreadCrumb extends Vue {
     font-weight: 900;
     box-shadow: 0 2px 8px black;
     
+}
+.breadrighticon {
+    border: 1
 }
 
 </style>

@@ -3,6 +3,7 @@
   <div :class="positionClass" :draggable="candraggable" @dblclick="handledoubleclick">
         <LittleBar :date="date" @initWebSocket="start" :positionClass="positionClass" @toggledrag="toggledrag" :titlename="titlename" :show="positionClass === 'center'?false:true" v-model="postparms">
             <BaseChartFactory :positionClass="positionClass" :urlparas="urlparas" :id="id" :option="option" @updateData="way2UpdateData" :chartLibrary="chartLibrary" slot="chart"/>
+            <page-button @prepage="prepage" @nextpage="nextpage" v-show="positionClass==='center'" class="rightbottom" slot="page" v-model="pagedata"></page-button>
         </LittleBar>
   </div>
 </template>
@@ -13,7 +14,7 @@ import { PositionClass , PostParams, ChartLibrary } from '@/types/index';
 import BaseChartFactory from "@/components/chart/base/BaseChartFactory.vue";
 import LittleBar from "@/components/chart/LittleBar.vue";
 import { Options , HeatMapSeriesOptions} from 'highcharts';
-import {listdata, drawHeatmapOptions } from "@/components/options/HeatMapOptions.ts";
+import {listdata, drawHeatmapOptions,HeatMapLimiter } from "@/components/options/HeatMapOptions.ts";
 import { getDataPromise, PostPath } from "@/actions/axiosProxy.ts";
 import PubSub from 'pubsub-js';
 import { HeatmapChart, HeatmapChartTrans } from '@/types/postreturnform';
@@ -22,10 +23,12 @@ import { updatestate } from '@/types/updateState';
 import Axios from "axios";
 import { AxiosSourceManage } from "@/implements/AxiosSourceManage";
 import moment,{ Moment } from "moment";
+import PageButton from "@/components/base/PageButton.vue";
 @Component({
     components: {
         BaseChartFactory,
         LittleBar,
+        PageButton,
     }
 })
 export default class HeatMapHighChart extends Vue implements AxiosSourceManage {
@@ -41,6 +44,18 @@ export default class HeatMapHighChart extends Vue implements AxiosSourceManage {
     private titlename = "热力图";
     private candraggable = false;
     private date: Moment = moment();
+    private pagedata = {
+      pageid: 1,
+      entitynums: this.urlparas.entitynums,
+      pagesize: this.urlparas.pagesize
+    };
+    private limiter: HeatMapLimiter = {
+      scale: this.postparms.scale,
+    };
+    @Watch("postparms.scale",{deep: true})
+    public updatelimiter(newv: number) {
+      this.limiter.scale = newv;
+    }
     @Emit()
     public cancelAxios() {
       this.axiosSource.cancel("删除HeatMap");
@@ -55,7 +70,7 @@ export default class HeatMapHighChart extends Vue implements AxiosSourceManage {
         (data: string | HeatmapChartTrans) => {
           if ( typeof data !== "string") {
             const change = (this.option as any).change;
-            const option2 = drawHeatmapOptions(data, "HeatMap","" ,this.showTooltiop);
+            const option2 = drawHeatmapOptions(data, "HeatMap","" ,this.showTooltiop,this.limiter);
             (option2 as any).change = updatestate.redraw;
             this.option = option2 as any;
             // console.log("timelinedata",this.option);
@@ -63,6 +78,21 @@ export default class HeatMapHighChart extends Vue implements AxiosSourceManage {
         }
       );
     }
+    @Emit()
+    private prepage(pageid: number,pagesize: number) {
+      // this.pagedata.pageid = pageid;
+      this.urlparas.pageid = pageid;
+      this.urlparas.pagesize = pagesize;
+      this.redraw(this.urlparas.entity);
+    }
+    @Emit()
+    private nextpage(pageid: number,pagesize: number) {
+      // this.pagedata.pageid = pageid;
+      this.urlparas.pageid = pageid;
+      this.urlparas.pagesize = pagesize;
+      this.redraw(this.urlparas.entity);
+    }
+
     private mounted() {
       // this.intervalid = setTimeout(
       //   () => {
@@ -74,8 +104,13 @@ export default class HeatMapHighChart extends Vue implements AxiosSourceManage {
       //   this.showinterval
       // );
     }
+    @Emit()
+    private updateEntityNums() {
+      this.pagedata.entitynums = this.urlparas.entitynums;
+    }
     @Watch("urlparas.entity",  {deep : true})
     private redraw(entity: string) {
+      this.updateEntityNums();
       this.cancelAxios();
       // this.option = drawHeatmapOptions([{x: "0",name: "",y: 0,value: 0}], "HeatMap","" ,this.showTooltiop) as any;
       this.option = highchartEmptyOption(entity);
@@ -91,7 +126,7 @@ export default class HeatMapHighChart extends Vue implements AxiosSourceManage {
     private showTooltiop(entity: string, name: string,clientX: number,clientY: number,target: DOMRect) {
       // 方法在 LeftBar中订阅
       const level = -1;
-      console.log("clientX:",clientX,";clientY",clientY,"target:",target);
+      // console.log("clientX:",clientX,";clientY",clientY,"target:",target);
       PubSub.publish("showtooltip",{entity,name,isLeaf:true,level,clientX,clientY,target});
     }
     private destroyed() {
@@ -121,5 +156,13 @@ export default class HeatMapHighChart extends Vue implements AxiosSourceManage {
 </script>
 
 <style scoped>
+.rightbottom {
+  position: absolute;
+  right: 10px;
+  bottom: 0px;
+  z-index: inherit;
+  z-index: 501;
+
+}
 
 </style>

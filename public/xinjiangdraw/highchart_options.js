@@ -883,14 +883,14 @@ function drawHeatmapOptions(listdata,title,redrawEntityFunc,openInfo){// redrawE
 				var x = timemapx[this.options.x]
 				var y = this.options.y
 				var value = this.options.value
-				return "配电柜id : "+ x + "<br/> 时刻:" + y + ":00" + "<br/>" + title +"量:" + value 
+				return "配电柜ID : "+ x + "<br/> time:" + y + ":00" + "<br/>"+"value:" + value 
 			}
 		},
 		colorAxis: {
 			stops: [
 				[0, '#3060cf'],
 				[0.5, '#fffbbc'],
-				[0.9, '#c4463a']
+				[1, '#c4463a']
 			],
 			// min: -5
 		},
