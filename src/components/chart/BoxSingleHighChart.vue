@@ -77,7 +77,7 @@ export default class BoxSingleHighChart extends Vue implements AxiosSourceManage
     private redraw(entity: string) {
       this.cancelAxios();
       this.option = highchartEmptyOption(entity);
-      console.log("上层图表 BoxSingleChart",this.postparms,this.id);
+      // console.log("上层图表 BoxSingleChart",this.postparms,this.id);
       this.getData();
       // 在这里开始做长轮询 定时从后台传数据
     }

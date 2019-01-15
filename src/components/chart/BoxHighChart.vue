@@ -78,7 +78,7 @@ export default class BoxHighChart extends Vue implements AxiosSourceManage {
       this.cancelAxios();
       // this.option = {} as any;
       this.option = drawBoxOptions([], [] , this.id) as any;
-      console.log("上层图表 BoxHighcart变动",this.postparms,this.id);
+      // console.log("上层图表 BoxHighcart变动",this.postparms,this.id);
       this.getData();
       // 在这里开始做长轮询 定时从后台传数据
     }

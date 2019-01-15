@@ -108,7 +108,7 @@ export default class HeatMapHighChart extends Vue implements AxiosSourceManage {
       this.cancelAxios();
       // this.option = drawHeatmapOptions([{x: "0",name: "",y: 0,value: 0}], "HeatMap","" ,this.showTooltiop) as any;
       this.option = highchartEmptyOption(entity);
-      console.log("上层图表 HeatMapHighCHart",this.postparms,this.id);
+      // console.log("上层图表 HeatMapHighCHart",this.postparms,this.id);
       this.getData();
       // 在这里开始做长轮询 定时从后台传数据
     }

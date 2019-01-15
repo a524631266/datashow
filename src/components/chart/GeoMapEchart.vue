@@ -337,9 +337,10 @@ export default class GeoMapEchart extends Vue {
         this.geoBodydata = {};
         this.geoheaddata= {geomap:{}} as any;
         this.mapnames = [];
+        // (this.option as any).change = updatestate.empty;
     }
     private mounted() {
-        console.log("geo 加载");
+        // console.log("geo 加载");
         this.initData();
         const {entity, pid, pidlevel: level} = orginitconfig;
         const datapromise = insertInitData(pid, entity, level, this);
@@ -587,22 +588,38 @@ export default class GeoMapEchart extends Vue {
     /**
      * 地图下钻的时候触发的事件
      */
+    @Emit()
     private handleclick(params: any) {
-        if ( params.data === undefined || params.data.id === "") {
-                this.$message.error('数据库后台暂时没有指定的组织id', 2);
-                return ;
-        } else {
-            const { name , id , coord} = params.data as any;
-            const level: number = this.urlparas.level + 1;
-            // console.log(name , id , coord);
-            // PubSub.publish("showtooltip",{entity: id,name,isLeaf: false,this.urlparas.level + 1 ,0,0});
-            this.$router.push({name: "node",query: {
-                                entity: id as any,name:name as any,level: level as any,isLeaf: false as any,
-                                coord: coord as any,
-                                },
-                                params: { entity: id as any}
-                                });
-        }
+        // 登录框条件
+        const { name , id , coord} = params.data as any;
+        this.$confirm({
+            title: `确定要登录${name}吗?`,
+            content: "点击确定登录子页面,取消返回",
+            okText: '确定',
+            okType: 'danger',
+            cancelText: "取消",
+            onOk:() => {
+                // console.log("this",this);
+                if ( params.data === undefined || params.data.id === "") {
+                    this.$message.error('数据库后台暂时没有指定的组织id', 2);
+                    return ;
+                } else {
+                    const { name , id , coord} = params.data as any;
+                    const level: number = this.urlparas.level + 1;
+                    // console.log(name , id , coord);
+                    // PubSub.publish("showtooltip",{entity: id,name,isLeaf: false,this.urlparas.level + 1 ,0,0});
+                    this.$router.push({name: "node",query: {
+                                        entity: id as any,name:name as any,level: level as any,isLeaf: false as any,
+                                        coord: coord as any,
+                                        },
+                                        params: { entity: id as any}
+                                        });
+                }
+            },
+            onCancel() {
+                console.log("取消数据");
+            },
+        });
     }
     @Emit()
     private restarttodraw() {

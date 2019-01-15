@@ -39,7 +39,7 @@ export default class HighchartFactory extends Vue {
     private intervalid = 0;
     @Emit()
     public changedata() {
-            console.log(this.data);
+            // console.log(this.data);
             if (this.id === "chart-top") {
                 this.positionClass = PositionClass.Center;
             }
@@ -64,7 +64,7 @@ export default class HighchartFactory extends Vue {
     }
     @Watch("postparms",  {deep : true})
     private onHandleShow(val: boolean) {
-        console.log("监听",this.postparms,this.id);
+        // console.log("监听",this.postparms,this.id);
         // this.initshow = !this.initshow;
     }
     private destroyed() {

@@ -1,6 +1,7 @@
 import Highcharts, { Options } from 'highcharts';
 import { TopChart, TopChartTrans } from '@/types/postreturnform';
 import PubSub from 'pubsub-js';
+import $ from 'jquery';
 interface TopValue {
   id: string;
   value: number;
@@ -59,7 +60,46 @@ function getTwoDirectBarOption(positive_id: string[],datalist: TwoNumberList[],n
               openInfo(entity,(e.target as any).point.name,clientX,clientY,(e.target as any).getBoundingClientRect());
               // infoObject.createNewInfoDiv(e.target.point.name,e.target.point.name,clientX,clientY,redrawEntityFunc,openInfo)
             });
+            // console.log("object",this);
             Highcharts.addEvent(seriesGroup.element, 'mouseleave', (e)=> {
+              // let timeoutid = setTimeout(()=>{infoObject.hiddenInfo()},300)
+              // infoObject.setTimeoutId(timeoutid);
+              PubSub.publish("hidetooltip","none");
+            });
+            // 给元素添加事件
+            const element1 = (this as any).series[0].dataLabelsGroup.element;
+            const element2 = (this as any).series[1].dataLabelsGroup.element;
+            Highcharts.addEvent(element1, 'mouseover',(e: MouseEvent)=> {
+              e = (this as any).pointer.normalize(e);
+              // tslint:disable-next-line:one-variable-per-declaration
+              const clientX = e.clientX,clientY = e.clientY;
+              // console.log("topevent",(e.target as any),e,(e.target as any).point,e);
+              const g = (e.target as any).parentElement.parentElement;
+              const index = $(g).index();
+              const name = (e.target as any).innerHTML;
+              // console.log("ggggindex",index);
+              const entity = negative_id[index];
+              openInfo(entity,name,clientX,clientY,(e.target as any).getBoundingClientRect());
+              // infoObject.createNewInfoDiv(e.target.point.name,e.target.point.name,clientX,clientY,redrawEntityFunc,openInfo)
+            });
+            Highcharts.addEvent(element2, 'mouseover',(e: MouseEvent)=> {
+              e = (this as any).pointer.normalize(e);
+              // tslint:disable-next-line:one-variable-per-declaration
+              const clientX = e.clientX,clientY = e.clientY;
+              // console.log("topevent",(e.target as any).point);
+              const g = (e.target as any).parentElement.parentElement;
+              const index = $(g).index();
+              const name = (e.target as any).innerHTML;
+              const entity = positive_id[index];
+              openInfo(entity,name,clientX,clientY,(e.target as any).getBoundingClientRect());
+              // infoObject.createNewInfoDiv(e.target.point.name,e.target.point.name,clientX,clientY,redrawEntityFunc,openInfo)
+            });
+            Highcharts.addEvent(element1, 'mouseleave', (e)=> {
+              // let timeoutid = setTimeout(()=>{infoObject.hiddenInfo()},300)
+              // infoObject.setTimeoutId(timeoutid);
+              PubSub.publish("hidetooltip","none");
+            });
+            Highcharts.addEvent(element2, 'mouseleave', (e)=> {
               // let timeoutid = setTimeout(()=>{infoObject.hiddenInfo()},300)
               // infoObject.setTimeoutId(timeoutid);
               PubSub.publish("hidetooltip","none");
@@ -91,7 +131,7 @@ function getTwoDirectBarOption(positive_id: string[],datalist: TwoNumberList[],n
           color:"white"
         },
         formatter(): string {
-          console.log(this);
+          // console.log(this);
           if ((this as any).value === (this as any).pos) {
             return "";
           } else {
@@ -113,7 +153,7 @@ function getTwoDirectBarOption(positive_id: string[],datalist: TwoNumberList[],n
           color:"white"
         },
         formatter(): string {
-          console.log(this);
+          // console.log(this);
           if ((this as any).value === (this as any).pos) {
             return "";
           } else {
@@ -128,9 +168,9 @@ function getTwoDirectBarOption(positive_id: string[],datalist: TwoNumberList[],n
         text: null
       },
       labels: {
-        // formatter: function () {
-        //   // console.log(this)
-        //   return this.value
+        // formatter(): string {
+        //   console.log(this);
+        //   return (this as any).value;
         // },
         style:{
           color:"white"
@@ -193,7 +233,7 @@ function getTwoDirectBarOption(positive_id: string[],datalist: TwoNumberList[],n
         enabled: true,
         // allowOverlap: true ,// 允许数据标签重叠
         formatter(): string {
-          // console.log(this)
+          // console.log("datalabels",this);
           // this 为当前的点（扇区）对象，可以通过  console.log(this) 来查看详细信息
           return "" + (this as any).key ;
           // +"<br/>value:" +  Highcharts.numberFormat(this.y , 2)

@@ -72,7 +72,7 @@ export default class TopHighChart extends Vue implements AxiosSourceManage {
       // this.option = highchartEmptyOption();
       const option: any = highchartEmptyOption(entity);
       this.option = option;
-      console.log("上层图表  TopHighChart",this.postparms,this.id);
+      // console.log("上层图表  TopHighChart",this.postparms,this.id);
       this.getData();
       // 在这里开始做长轮询 定时从后台传数据
     }

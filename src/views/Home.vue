@@ -228,10 +228,10 @@ $antdsliderheight: $sliderbaseheight + px;
     height: 3rem;
     position: relative;
 }
-#container{
-    height: 90vh;
-    position: relative;
-}
+// #container{
+//     height: 90vh;
+//     position: relative;
+// }
 :global(.ant-fullcalendar table ){
     height: auto;
     font-size: 13px;

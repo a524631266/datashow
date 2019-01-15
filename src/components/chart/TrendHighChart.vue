@@ -69,7 +69,7 @@ export default class TrendHighChart extends Vue implements AxiosSourceManage {
     private redraw(entity: string) {
       this.cancelAxios();
       this.option = highchartEmptyOption(entity);
-      console.log("上层图表 TrendHighChart",this.postparms,this.id);
+      // console.log("上层图表 TrendHighChart",this.postparms,this.id);
       this.getData();
       // 在这里开始做长轮询 定时从后台传数据
     }

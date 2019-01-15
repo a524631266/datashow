@@ -54,7 +54,7 @@
                         <a-row  >
                             <a-col :span="24">
                                 <!-- <span class="badge badge-secondary">限制</span> -->
-                                <label class="small">限制:</label>
+                                <label class="small">filter:</label>
                                 <a-slider range :step="5"  :tipFormatter="thresholdformatter" :marks="thresholdslidermarks"  v-model="thresholder.range" />
                             </a-col>
                         </a-row>

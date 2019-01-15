@@ -96,9 +96,15 @@ export default class BaseChartFactory extends Vue {
        if(this.chartLibrary === ChartLibrary.echart) {
             if (this.chartInstance) { // echart增量更新数据的时候操作
                 // console.log("Echart111111111111111111");
-                this.$emit("updateData",this.chartInstance,this.option);
-                this.showLoading = false; // 因为echart是默认先加载地图，数据还没有返回的情况下
                 // this.updateData(this.chartInstance,this.option); //
+                if(newVal === updatestate.redraw) {
+                    this.showLoading = true;
+                } else {
+                    this.showLoading = false; // 因为echart是默认先加载地图，数据还没有返回的情况下
+                }
+                // console.log("newVal",newVal);
+                // this.showLoading = false; // 因为echart是默认先加载地图，数据还没有返回的情况下
+                this.$emit("updateData",this.chartInstance,this.option);
             } else {
                 // console.log("resechart");
                 const nodeid = document.getElementById(this.id);
@@ -111,6 +117,10 @@ export default class BaseChartFactory extends Vue {
                     (this.chartInstance as any).resize();
                     // console.log("resize.........");
                 };
+                // console.log("geochartoption",this.option);
+                if(newVal === updatestate.redraw) {
+                    this.showLoading = true;
+                }
                 mychart.on("click",this.handleclick);
             }
        }
@@ -174,7 +184,7 @@ export default class BaseChartFactory extends Vue {
     }
     @Emit()
     private downloadchart(msg: any,positionClass: string) {
-        console.log("111111");
+        // console.log("111111");
         if(this.positionClass === positionClass) {
             if (this.chartLibrary === ChartLibrary.highchart ) {
                 (this.chartInstance as any).exportChart({
@@ -187,7 +197,7 @@ export default class BaseChartFactory extends Vue {
                 //     filename: 'my-pdf'
                 // });
             } else if(this.chartLibrary === ChartLibrary.echart ) {
-                console.log("地图下载");
+                // console.log("地图下载");
                 downloadchart(this.chartInstance);
             }
         }
