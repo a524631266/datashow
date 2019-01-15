@@ -14,7 +14,7 @@ export default new Router({
     {
       path: '/login',
       name: 'login',
-      component: () => import(/* webpackChunkName: "about" */ './views/Login.vue'),
+      component: () => import(/* webpackChunkName: "login" */ './views/Login.vue'),
     },
     {
       path: '/color',
@@ -23,8 +23,9 @@ export default new Router({
     },
     {
       path: '/',
-      name: 'App',
-      component: () => import(/* webpackChunkName: "about" */ './views/Login.vue'),
+      name: 'app',
+      redirect: "login"
+      // component: () => import(/* webpackChunkName: "about" */ './views/Login.vue'),
     },
     // {
     //   path: '/about',
@@ -40,11 +41,11 @@ export default new Router({
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ './views/Main.vue'),
+      component: () => import(/* webpackChunkName: "main" */ './views/Main.vue'),
       children: [{
         path: "/:entity",
         name: "node",
-        component: () => import(/* webpackChunkName: "about" */ './views/Main.vue'),
+        component: () => import(/* webpackChunkName: "main" */ './views/Main.vue'),
         meta: {
           id: 0,
           name : "",
