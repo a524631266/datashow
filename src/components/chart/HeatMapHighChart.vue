@@ -15,7 +15,7 @@ import BaseChartFactory from "@/components/chart/base/BaseChartFactory.vue";
 import LittleBar from "@/components/chart/LittleBar.vue";
 import { Options , HeatMapSeriesOptions} from 'highcharts';
 import {listdata, drawHeatmapOptions,HeatMapLimiter } from "@/components/options/HeatMapOptions.ts";
-import { getDataPromise, PostPath } from "@/actions/axiosProxy.ts";
+import { getDataPromise, PostPath, insertInitData } from "@/actions/axiosProxy.ts";
 import PubSub from 'pubsub-js';
 import { HeatmapChart, HeatmapChartTrans } from '@/types/postreturnform';
 import {highchartEmptyOption} from "@/components/options/EmptyChart.ts";
@@ -24,6 +24,7 @@ import Axios from "axios";
 import { AxiosSourceManage } from "@/implements/AxiosSourceManage";
 import moment,{ Moment } from "moment";
 import PageButton from "@/components/base/PageButton.vue";
+import {orginitconfig} from '@/config/initOptions.ts';
 @Component({
     components: {
         BaseChartFactory,
@@ -94,15 +95,8 @@ export default class HeatMapHighChart extends Vue implements AxiosSourceManage {
     }
 
     private mounted() {
-      // this.intervalid = setTimeout(
-      //   () => {
-      //       const option2 = drawHeatmapOptions(listdata, "HeatMap","" ,this.showTooltiop) as any;
-      //       (option2 as any).change = false;
-      //       this.option = option2;
-      //       // console.log(this.option);
-      //   },
-      //   this.showinterval
-      // );
+      const {entity, pid, pidlevel: level} = orginitconfig;
+      const datapromise = insertInitData(pid, entity, level, this);
     }
     @Emit()
     private updateEntityNums() {

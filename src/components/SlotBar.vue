@@ -33,6 +33,7 @@ import { Component, Vue, Prop, Emit } from 'vue-property-decorator';
 import PubSub from 'pubsub-js';
 import LittleBar from "@/components/chart/LittleBar.vue";
 import { PositionClass , PostParams, ChartLibrary } from '@/types/index';
+import {entityinitconfig} from '@/config/initOptions.ts';
 @Component({
     components: {
         LittleBar,
@@ -48,6 +49,7 @@ export default class SlotBar extends Vue {
         PubSub.subscribe("updateleftbarname",this.updateleftbarname);
         PubSub.subscribe("updaterightbarname",this.updaterightname);
         PubSub.subscribe("updatemiddledata",this.updatemiddledata);
+        this.rightbarname = entityinitconfig.name;
     }
     public destroyed() {
         // console.log((this as any).some);

@@ -14,7 +14,7 @@ import BaseChartFactory from "@/components/chart/base/BaseChartFactory.vue";
 import LittleBar from "@/components/chart/LittleBar.vue";
 import Highcharts, { Options , HeatMapSeriesOptions} from 'highcharts';
 import {boxchart3, xAxis3,drawBoxOptions} from "@/components/options/BoxOptions.ts";
-import { getDataPromise, PostPath } from "@/actions/axiosProxy.ts";
+import { getDataPromise, PostPath, insertInitData } from "@/actions/axiosProxy.ts";
 import PubSub from 'pubsub-js';
 import { RegionBoxChart, SingleBoxChart, BoxChartTrans } from '@/types/postreturnform';
 import echarts from "echarts";
@@ -24,6 +24,7 @@ import { updatestate } from '@/types/updateState';
 import Axios from "axios";
 import { AxiosSourceManage } from "@/implements/AxiosSourceManage";
 import moment,{ Moment } from "moment";
+import {orginitconfig} from '@/config/initOptions.ts';
 // import { Component } from "vue-property-decorator";
 // @Component({
 //     components:{
@@ -113,7 +114,8 @@ export default class BoxHighChart extends Vue implements AxiosSourceManage {
       return result;
     }
     private mounted() {
-      console.log("加载BoxHighChart");
+      const {entity, pid, pidlevel: level} = orginitconfig;
+      const datapromise = insertInitData(pid, entity, level, this);
     }
     private destroyed() {
       // console.log("destory (this as any).intervalid", (this as any).intervalid);

@@ -21,6 +21,7 @@ import Antd from "ant-design-vue";
 import { ChildrenValue } from "@/components/bar/LeftBar.vue";
 import PubSub from 'pubsub-js';
 import { InitGeomapUrlProps } from "@/config/initOptions.ts";
+import {orginitconfig, entityinitconfig} from '@/config/initOptions.ts';
 @Component({
     components: {
         ABreadcrumb:Antd.Breadcrumb,
@@ -28,15 +29,15 @@ import { InitGeomapUrlProps } from "@/config/initOptions.ts";
     },
 })
 export default class BreadCrumb extends Vue {
-    private routes: ChildrenValue[] = [InitGeomapUrlProps
-                        // {
-                        // key: "111111",
-                        // name: "爱上的假设的逆反" as any,
-                        // level: 2 as any,
-                        // isLeaf: false as any,
-                        // coord: [1,2] as any,
-                        // }
-                        ] as any;
+    private routes: ChildrenValue[] = [InitGeomapUrlProps,
+                                            {
+                                                key: orginitconfig.entity,
+                                                name: orginitconfig.name,
+                                                level: orginitconfig.pidlevel + 1,
+                                                isLeaf: false as any,
+                                                coord: [0,0] as any,
+                                            }
+                                        ] as any;
     private mounted() {
         PubSub.subscribe("updateBread",(msg: any,data: ChildrenValue[])=> {
             this.routes = data;

@@ -151,8 +151,32 @@ const InitGeomapUrlProps: PostParams = {
         range: [-3,3]
     }
 };
+// 默认 为和田区 entity=99928858&name=和田地区&level=3&isLeaf=false&coord=79.93023863721294&coord=37.11677449267836&entitynums=98 以及 entity=1201055&name=7号&level=8&isLeaf=true&coord=0&coord=0&entitynums=0
+
+const orginitconfig = {
+    pid: "99998999",
+    entity : "99928858",
+    pidlevel: 2,
+    name: "和田地区",
+    // level: 3,
+    isLeaf: false,
+    // coord: [79.93023863721294,37.11677449267836],
+    // entitynums: 98,
+};
+
+const entityinitconfig = {
+    pid: "99499694",
+    entity : "1201055",
+    name: "7号",
+    level: 7,
+    // isLeaf: true,
+    // coord: [79.93023863721294,37.11677449267836],
+    // entitynums: 0,
+};
+
 
 export {
     InitBoxUrlProps,InitHeatMapUrlProps,InitTimeLineUrlProps,
-    InitTopUrlProps,InitTrendUrlProps,InitGeomapUrlProps
+    InitTopUrlProps,InitTrendUrlProps,InitGeomapUrlProps,orginitconfig,entityinitconfig
+
 };

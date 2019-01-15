@@ -14,7 +14,7 @@ import BaseChartFactory from "@/components/chart/base/BaseChartFactory.vue";
 import LittleBar from "@/components/chart/LittleBar.vue";
 import { Options , HeatMapSeriesOptions} from 'highcharts';
 import { inout, drawActionOptions} from "@/components/options/TimeLineOptions.ts";
-import { getDataPromise, PostPath } from "@/actions/axiosProxy.ts";
+import { getDataPromise, PostPath , insertInitData} from "@/actions/axiosProxy.ts";
 import { TimeLineChart,TimeLineChartTrans, HeatmapChartTrans, TimeLineDataTrans } from "@/types/postreturnform.ts";
 import {listdata, drawHeatmapOptions } from "@/components/options/HeatMapOptions.ts";
 import {highchartEmptyOption} from "@/components/options/EmptyChart.ts";
@@ -23,6 +23,7 @@ import { updatestate } from '@/types/updateState';
 import Axios from "axios";
 import { AxiosSourceManage } from "@/implements/AxiosSourceManage";
 import moment,{ Moment } from "moment";
+import {entityinitconfig} from '@/config/initOptions.ts';
 @Component({
     components: {
         BaseChartFactory,
@@ -122,6 +123,10 @@ export default class TimeLineHighChart extends Vue implements AxiosSourceManage 
     private start() {
       // 重新画图
       this.redraw(this.postparms.entity);
+    }
+    private mounted() {
+      const {entity, pid, level} = entityinitconfig;
+      const datapromise = insertInitData(pid, entity, level, this);
     }
 }
 </script>

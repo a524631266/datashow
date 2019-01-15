@@ -18,13 +18,14 @@ import echarts,{ ECharts, EChartOption, EChartsOptionConfig } from "echarts";
 import { provincedata} from '@/components/options/ProvinceOptions.ts';
 import Axios,{AxiosPromise} from "axios";
 import PubSub from 'pubsub-js';
-import { getDataPromise, PostPath } from "@/actions/axiosProxy.ts";
+import { getDataPromise, PostPath, insertInitData } from "@/actions/axiosProxy.ts";
 import { updatestate } from "@/types/updateState.ts";
 import moment,{ Moment } from "moment";
 import { AxiosSourceManage } from "@/implements/AxiosSourceManage";
 import { baseurl } from "@/util/getRootPath.ts";
 import { ThresholdLimiter } from '@/types';
 import TimerManager from "@/util/timeoutmanage.ts";
+import {orginitconfig} from '@/config/initOptions.ts';
 // import 'echarts/map/js/province/xinjiang.js';
 const prev = process.env.NODE_ENV === "development"? "/xinjiang": "";
 const websocketurlhost = process.env.NODE_ENV === "development"? "192.168.10.63:8088": "192.168.10.63:8088";
@@ -340,6 +341,8 @@ export default class GeoMapEchart extends Vue {
     private mounted() {
         console.log("geo 加载");
         this.initData();
+        const {entity, pid, pidlevel: level} = orginitconfig;
+        const datapromise = insertInitData(pid, entity, level, this);
     }
     /**
      * data : 返回的option数据

@@ -15,7 +15,7 @@ import BaseChartFactory from "@/components/chart/base/BaseChartFactory.vue";
 import LittleBar from "@/components/chart/LittleBar.vue";
 import { Options , HeatMapSeriesOptions} from 'highcharts';
 import {listdata, drawLineOptions } from "@/components/options/TrendOptions.ts";
-import { getDataPromise, PostPath } from "@/actions/axiosProxy.ts";
+import { getDataPromise, PostPath , insertInitData} from "@/actions/axiosProxy.ts";
 import PubSub from 'pubsub-js';
 import { SingleTrendChart, RegionTrendChart,TrendChartTrans } from '@/types/postreturnform';
 import {highchartEmptyOption} from "@/components/options/EmptyChart.ts";
@@ -23,6 +23,7 @@ import { updatestate } from '@/types/updateState';
 import Axios from "axios";
 import { AxiosSourceManage } from "@/implements/AxiosSourceManage";
 import moment,{ Moment } from "moment";
+import {entityinitconfig, orginitconfig} from '@/config/initOptions.ts';
 @Component({
     components: {
         BaseChartFactory,
@@ -82,27 +83,13 @@ export default class TrendHighChart extends Vue implements AxiosSourceManage {
       return result;
     }
     private mounted() {
-      // this.intervalid = setTimeout(
-      //   () => {
-      //       const option2 = drawLineOptions(listdata,"趋势图") as any;
-      //       (option2 as any).change = false;
-      //       this.option = option2;
-      //       // console.log(this.id);
-      //   },
-      //   this.showinterval
-      // );
-      // 通过change来获取定义属性的变化
-    //   setInterval(
-    //       () => {
-    //           console.log("第二次变化");
-    //           // boxchart3[1].data[0][1] = 133333000;
-    //         //   (this.option as any).series[1].data[0][1] = Math.random()*10000;
-    //           (this.option as any).change = !(this.option as any).change ;
-    //           // this.option =  drawBoxOptions(boxchart3, xAxis3 , this.id) as Options;
-    //           console.log(this.option);
-    //       },
-    //       this.showinterval+3000
-    //   );
+      if(this.postparms.isLeaf) {
+        const {entity, pid, level} = entityinitconfig;
+        const datapromise = insertInitData(pid, entity, level, this);
+      } else {
+        const {entity, pid, pidlevel: level} = orginitconfig;
+        const datapromise = insertInitData(pid, entity, level, this);
+      }
     }
     private destroyed() {
       // console.log("destory (this as any).intervalid", (this as any).intervalid);

@@ -1,5 +1,6 @@
 import { PostParams } from '@/types';
 import Axios,{AxiosPromise, CancelTokenSource} from "axios";
+import { Component, Vue } from 'vue-property-decorator';
 const prev = process.env.NODE_ENV === "development"? "/xinjiang": "";
 
 export enum PostPath {
@@ -61,4 +62,80 @@ export function getTreeNode(entity: string) {
         }
     );
     return axiospromise;
+}
+
+
+
+interface InitChart {
+    entity: string;
+    name: string;
+    level: number;
+    isLeaf: boolean;
+    coord: [number, number];
+    entitynums: number;
+}
+export interface ChildrenValue {
+    id: string ;
+    pId: number;
+    name: string;
+    key: string;
+    title: string;
+    mapname: string;
+    icon: string;
+    level: number;
+    coord: [number,number];
+    isLeaf: boolean;
+    entityNum: number;
+    isEntity: boolean;
+    label: string;
+    value: string;
+    lnglat: string;
+    cityLnglat: string;
+    districtLnglat: string;
+    slots: {icon: string};
+    hover: boolean;
+    scopedSlots: {title: string};
+    on: {
+        [name: string]: (e: any)=>void
+    };
+}
+/**
+ * 获取初始化数据，初始化图
+ * @param pid 父亲id
+ * @param entity 本id
+ * @param pidlevel 父亲id等级
+ */
+export function insertInitData(pid: string,entity: string,pidlevel: number,vue: Vue) {
+    return getTreeNode(pid).then(
+        (result)=> {
+            // console.log("result",result);
+            const data: InitChart = {} as any;
+            result.data.some(
+                (value: ChildrenValue) => {
+                    if((value.id+"") === entity) {
+                        data.entity = value.id + "";
+                        data.name = value.name;
+                        data.entitynums = value.entityNum;
+                        data.isLeaf = value.isEntity;
+                        data.level = pidlevel + 1;
+                        data.coord = value.coord?value.coord
+                                        :value.lnglat?[parseFloat(value.lnglat.split(",")[0]),parseFloat(value.lnglat.split(",")[1])]
+                                        :value.cityLnglat?[parseFloat(value.cityLnglat.split(",")[0]),parseFloat(value.cityLnglat.split(",")[1])]
+                                        :value.districtLnglat?[parseFloat(value.districtLnglat.split(",")[0]),parseFloat(value.districtLnglat.split(",")[1])]
+                                        :[0,0];
+                    }
+                    return (value.id+"") === entity;
+                }
+            );
+            // 此时会触发vue组件的entity ，封装到这里
+            (vue as any).postparms.name = data.name;
+            (vue as any).postparms.level = data.level;
+            (vue as any).postparms.isLeaf = data.isLeaf;
+            (vue as any).postparms.entitynums = data.entitynums;
+            (vue as any).postparms.coord = data.coord;
+            (vue as any).postparms.entity = data.entity;
+            // console.log("data",data);
+            return data;
+        }
+    );
 }

@@ -14,7 +14,7 @@ import BaseChartFactory from "@/components/chart/base/BaseChartFactory.vue";
 import LittleBar from "@/components/chart/LittleBar.vue";
 import { Options , HeatMapSeriesOptions} from 'highcharts';
 import {objectlist, drawTopOptions } from "@/components/options/TopOptions.ts";
-import { getDataPromise, PostPath } from "@/actions/axiosProxy.ts";
+import { getDataPromise, PostPath, insertInitData } from "@/actions/axiosProxy.ts";
 import PubSub from 'pubsub-js';
 import { TopChart, TopChartTrans } from '@/types/postreturnform';
 import {highchartEmptyOption} from "@/components/options/EmptyChart.ts";
@@ -22,6 +22,7 @@ import { updatestate } from '@/types/updateState';
 import Axios from "axios";
 import { AxiosSourceManage } from "@/implements/AxiosSourceManage";
 import moment,{ Moment } from "moment";
+import {orginitconfig} from '@/config/initOptions.ts';
 @Component({
     components: {
         BaseChartFactory,
@@ -86,7 +87,8 @@ export default class TopHighChart extends Vue implements AxiosSourceManage {
       PubSub.publish("showtooltip",{entity,name,isLeaf:true,level,clientX,clientY,target});
     }
     private mounted() {
-      console.log("加载topChart");
+      const {entity, pid, pidlevel: level} = orginitconfig;
+      const datapromise = insertInitData(pid, entity, level, this);
     }
     private destroyed() {
       // console.log("destory (this as any).intervalid", (this as any).intervalid);

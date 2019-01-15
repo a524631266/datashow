@@ -146,9 +146,9 @@ export default class LeftBar extends Vue {
         }
         this.opentree(treeNode,postid, level);
     }
-    @Emit()
+    // @Emit()
     private opentree(treeNode: any, entity: string,level: number) {
-        getTreeNode(entity).then(
+        return getTreeNode(entity).then(
             (result) => {
                 const {data} = result;
                 const childrenlist: ChildrenValue[] = [];
@@ -174,23 +174,21 @@ export default class LeftBar extends Vue {
                         children.scopedSlots =  {
                             title: 'custom'
                         };
-                        // children.on= {
-                        //     mouseenter:this.showtooltip,
-                        //     mouseleave: this.hidetooltip,
-                        // };
                         children.hover = false;
                         childrenlist.push(children);
                     }
                 );
                 treeNode.dataRef.children = childrenlist;
                 this.treeData = [...this.treeData];
-                // console.log("tree data",this.treeData);
+                console.log("tree data",this.treeData);
                 // resolve("成功");
+                return childrenlist;
             },
         ).catch(
             (err: any) => {
                 // console.log("111111",err);
                 this.$message.error("无节点数据");
+                return false;
             }
         );
 
@@ -296,7 +294,7 @@ export default class LeftBar extends Vue {
             isLeaf:data.isLeaf as any,
             coord:data.coord as any,
             entitynums: data.entityNum as any,
-            },params: { entity: data.key}});
+            },params: { entity: data.key,entitynums: data.entityNum + "" }});
         // 2. 自动关闭数
         PubSub.publish("openLeftBar",openLeftBar);
         // 3. 更新左标题 因为之前没有点击选择，是直接通过用户信息做的，所以需要更新

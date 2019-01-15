@@ -14,7 +14,7 @@ import BaseChartFactory from "@/components/chart/base/BaseChartFactory.vue";
 import LittleBar from "@/components/chart/LittleBar.vue";
 import Highcharts, { Options , HeatMapSeriesOptions} from 'highcharts';
 import {boxchart3, xAxis3,drawBoxOptions} from "@/components/options/BoxOptions.ts";
-import { getDataPromise, PostPath } from "@/actions/axiosProxy.ts";
+import { getDataPromise, PostPath, insertInitData } from "@/actions/axiosProxy.ts";
 import PubSub from 'pubsub-js';
 import { RegionBoxChart, SingleBoxChart, BoxChartTrans } from '@/types/postreturnform';
 import echarts from "echarts";
@@ -24,6 +24,7 @@ import { updatestate } from '@/types/updateState';
 import Axios from "axios";
 import { AxiosSourceManage } from "@/implements/AxiosSourceManage";
 import moment,{ Moment } from "moment";
+import {entityinitconfig} from '@/config/initOptions.ts';
 // import { Component } from "vue-property-decorator";
 // @Component({
 //     components:{
@@ -116,34 +117,8 @@ export default class BoxSingleHighChart extends Vue implements AxiosSourceManage
       return result;
     }
     private mounted() {
-      // this.intervalid = setTimeout(
-      //   () => {
-      //       console.log("11111");
-      //       // Highcharts.chart((this as any).id, (this as any).option as Options);
-      //       // 1.时间timeline配置
-      //       //  drawActionOptions(inout, "1111"));
-      //       // console.log((this as any).changedata(),"this.$props.");
-      //       // 2.箱线图配置
-      //       const option2 =  drawBoxOptions(boxchart3, xAxis3 , this.id) as Options;
-      //       (option2 as any).change = false;
-      //       this.option = option2;
-      //       // console.log(this.option);
-      //       // (this as any).$emit("ajaxFunc", this.$props.urlparas);
-      //   },
-      //   this.showinterval
-      // );
-      // 通过change来获取定义属性的变化
-      // setInterval(
-      //     () => {
-      //         console.log("第二次变化");
-      //         // boxchart3[1].data[0][1] = 133333000;
-      //         (this.option as any).series[1].data[0][1] = Math.random()*10000;
-      //         (this.option as any).change = !(this.option as any).change ;
-      //         // this.option =  drawBoxOptions(boxchart3, xAxis3 , this.id) as Options;
-      //         console.log(this.option);
-      //     },
-      //     this.showinterval+3000
-      // );
+      const {entity, pid, level} = entityinitconfig;
+      const datapromise = insertInitData(pid, entity, level, this);
     }
     private destroyed() {
       // console.log("destory (this as any).intervalid", (this as any).intervalid);

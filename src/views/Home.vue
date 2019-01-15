@@ -112,9 +112,12 @@ export default class Home extends Vue {
     @Watch("$route.query.entity",{deep: true})
     private routerchange(val: any) {
         // console.log("路由变化",val,this.$route.query.entity);
+        // 当路由返回的时候，此时的isLeaf变成了文本字符串，需要判断
+        const bool =  (this.$route.query.isLeaf === "false" || !this.$route.query.isLeaf)?false:true;
+        // console.log("this.$route.query.isLeaf",this.$route.query.isLeaf);
         this.datalist.forEach(
             (data: any,index: number)=> {
-                if((this.datalist[index].urlparas as any).isLeaf === this.$route.query.isLeaf) {
+                if(this.datalist[index].urlparas.isLeaf === bool) {
                     this.datalist[index].urlparas.entity = val;
                     this.datalist[index].urlparas.name = this.$route.query.name as any;
                     this.datalist[index].urlparas.level = this.$route.query.level as any;
@@ -132,7 +135,7 @@ export default class Home extends Vue {
     }
     private mounted() {
         const that = this;
-        // home订阅交互的消息
+        // 1. home订阅交互的消息
         PubSub.subscribe("doubleclick2changecenter",(mesg: any, id: string)=> {
             let idindex= 0;
             let beforepositionClass = "";

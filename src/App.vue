@@ -63,6 +63,7 @@ export default class App extends Vue {
         this.openLeftBar = !this.openLeftBar;
       });
       // 初始化tree高低
+      // 2. 同时初始化面包屑
     }
     @Emit()
     private toggleCollapsed() {
