@@ -18,7 +18,7 @@ $headerbarheight:24px;
 $vheight:100vh; 
 #container {
   height: $vheight;
-  background: radial-gradient(circle at center, rgba(0,0,102,0.98) 0, rgba(0,0,0,0.98) 100%);
+  background: radial-gradient(circle at center, rgba(0,0,102,0.98) 0, rgba(0,0,0,0.98) 143%);
   // opacity: 0.98;
   //  background-image: url("<%= BASE_URL %>xinjiang/img/background5.png");
 }

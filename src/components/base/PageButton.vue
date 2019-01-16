@@ -11,9 +11,9 @@
             <!-- <i class="fa fa-step-forward"></i> -->
             <i class="material-icons">skip_next</i>
         </div>
-        <div class="btn ">
+        <!-- <div class="btn ">
             pagesize: <span class="squareborder" v-text="pagedata.pagesize"></span>
-        </div>
+        </div> -->
     </div>
 </template>
 <script lang='ts'>
@@ -57,7 +57,7 @@ export default class PageButton extends Vue {
     border-color: white;
 }
 .squareborder{
-  border: 1px solid white;
+//   border: 1px solid white;
 }
 .nopionter {
     cursor: none!important;

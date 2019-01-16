@@ -1,13 +1,20 @@
 <template>
   <div id="container" class="row">
         <div  class="left"> 
-            <ul  class="icon">
+            <!-- <ul  class="icon">
                 <li  class="sword">
                 </li>
-            </ul>
-            <h1>智能情报分析系统</h1>
+            </ul> -->
+            <div class="word" :style='{transform: `scale(${scale})`,marginLeft: `-${wordleft}px`}'>
+            </div>
+            <div class="sword" :style='{transform: `scale(${scale})`}'>
+                <h1>智能情报分析系统</h1>
+            </div>
+            
+            
         </div> 
-        <div class="login">
+        
+        <div class="login" :style="{transform: `scaleX(${loadingscale})`}">
             <form action="/login" method="post">
                 <table>
                 <tr><td colspan="2"><input class="bar" type="text" required="required" placeholder="用户名" name="username"></input></td></tr>
@@ -29,6 +36,9 @@ import { Component, Vue, Prop, Emit, Watch } from 'vue-property-decorator';
 export default class Login extends Vue {
     @Prop({default: false }) public initshow!: boolean;
     @Prop() private some!: string;
+    private scale = 0.5;
+    private wordleft = 500;
+    private loadingscale = 1;
     // private name = 111;
     // @Emit()
     // private dosomething(args: any) {
@@ -37,6 +47,26 @@ export default class Login extends Vue {
     // @Watch('some', { deep: true })
     // private watchsomeaction(beforevalue: any, nowvalue: any) {
     // };
+    private mounted() {
+        if (window.innerWidth > 1366) {
+            this.scale = 0.85;
+            this.wordleft = 500;
+        } else {
+            this.scale = 0.55;
+            this.wordleft = 350;
+            // this.loadingscale = 0.8;
+        }
+        window.onresize = ()=> {
+                   if (window.innerWidth > 1366) {
+                        this.scale = 0.85;
+                        this.wordleft = 500;
+                    } else {
+                        this.scale = 0.55;
+                        this.wordleft = 350;
+                        // this.loadingscale = 0.8;
+                    }
+                };
+    }
 }
 </script>
 
@@ -45,7 +75,7 @@ body{
     // background-image: url("/html/xinjiang/img/background5.png");
     /* background-repeat: repeat-y; */
     /* background-size: cover; */
-    background-image: url("<%= BASE_URL %>xinjiang/img/background5.png");
+    // background-image: url("<%= BASE_URL %>xinjiang/img/background5.png");
     background-attachment: fixed; 
     /* background-position: left left; */
     height:100vh;
@@ -56,8 +86,8 @@ body{
 
 .login {
     position: absolute;
-    bottom: 74px;
-    right: 123px;
+    bottom: 4%;
+    right: 4%;
 }
 
 .violet{
@@ -87,11 +117,19 @@ body{
     width: 100%;
 }
 .left h1{
-    position: relative;
+    position: absolute;
     color: #fff;
-    text-shadow: 0 0 10px;
+    // text-shadow: 0 0 10px;
+    text-shadow: 4px 5px #00000F;
     letter-spacing: 1px;
     text-align: center;
+    padding: 0;
+    margin: 0;
+    bottom: 0;
+    font-size: 70px;
+    left: 45%;
+    // display: inline-table;
+    white-space: nowrap;
     /* top:60%; */
 }
 /* .right{
@@ -103,7 +141,7 @@ body{
 }
 .left ul .sword,.left .violet,.left .violet2{
     position: relative;
-    transform: scale(0.8)
+    // transform: scale(0.8)
 }
 .left ul .sword{
     position: absolute;
@@ -155,6 +193,20 @@ input[class="bar"]{
 .but{
     width: 278px;
 }
+.word {
+    position: absolute;
+    // right: 17%;
+    height: 276px;
+    width: 146px;
+    top:10%;
+    align-self: center;
+    
+    left: 50%;
+}
+.word.reflect{
+    left:17%;
+    opacity: 0.2;
+}
 .right form{
     position: relative;
     /* display: flex;
@@ -162,14 +214,20 @@ input[class="bar"]{
     align-items:Center; */
     top:40%;
 }
-.icon .sword{
-    background-position: 0px 0px ;
+.sword{
+    background-position: 0px 0px;
     /* background-size: cover; */
-    /* background-attachment: fixed;  */
-    /* width: 350px;
-    height: 280px; */
-    width: 500px;
-    height: 320px;
+    /* background-attachment: fixed; */
+    width: 780px;
+    height: 348px;
+    align-self: center;
+    position: relative;
+    // transform: scale(0.85);
 }
+.left {
+    display: flex;
+    justify-content: center;
+}
+
 
 </style>

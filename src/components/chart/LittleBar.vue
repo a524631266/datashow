@@ -64,14 +64,30 @@
                             </div>
                         <!-- </div> -->
                     </form>
-                    <div class="col-8 timepicker-relative-section">
+                    <div class="col-6 timepicker-relative-section">
                         <h3 class="section-heading">时段范围</h3>
                         <div class="card-group">
                             <ul v-for="(data,index) in rangeselectlist" :key="index" class="card list-group list-group-flush">
                                 <li v-for="(item,index) in data" :key="index" class="list-group-item h6" :class="item.day===activeitem?'active':''" @click="licktimeselectrange(item)">{{item.day}}</li>
                             </ul>
                         </div>
-                        <div class="download" :class="showid === 3 && showrange?'active':''" @click="downloadchart(positionClass)">
+                        <!-- <div class="download" :class="showid === 3 && showrange?'active':''" @click="downloadchart(positionClass)">
+                            <a-icon class="container2 mdl-button" type="download" />
+                        </div> -->
+                    </div>
+                    <div class="col-2">
+                        <h3 class="section-heading">other</h3>
+                        <label class="small" v-show="showPageSize">Pagesize:</label>
+                        <div class="input-group input-group-sm" v-show="showPageSize" >
+                            <!-- <select class="form-control" v-model="data.pagesize" @click.stop="()=>{}" >
+                                <option label="20" value="20" selected="true" @mouseleave.stop="()=>{}">20</option>
+                            </select> -->
+                            <a-select defaultValue="20">
+                                <a-select-option value="20"  @mouseenter="enterPageSize">20</a-select-option>
+                            </a-select>
+                        </div>
+                        <label class="small">download:</label>
+                        <div  :class="showid === 3 && showrange?'active':''" @click="downloadchart(positionClass)">
                             <a-icon class="container2 mdl-button" type="download" />
                         </div>
                     </div>
@@ -169,7 +185,9 @@ import TimeSlicing from '@/util/TimeSlicing.ts';
         ACheckbox: Antd.checkbox,
         AIcon: Antd.Icon,
         ARadioGroup: Antd.Radio.Group,
-        ARadio: Antd.Radio
+        ARadio: Antd.Radio,
+        ASelect: Antd.Select,
+        ASelectOption: Antd.Select.Option
     },
     computed:{
         percent(): number {
@@ -205,6 +223,7 @@ import TimeSlicing from '@/util/TimeSlicing.ts';
 export default class LittleBar extends Vue {
     @Prop({default: ""}) public titlename!: string;
     @Prop() public appendtimelist!: number[];
+    @Prop({default: false}) public showPageSize!: boolean;
     @Prop() public date!: Moment;
     @Prop() public positionClass!: PositionClass;
     @Prop({default: false}) public play!: boolean;
@@ -453,7 +472,7 @@ export default class LittleBar extends Vue {
     }
     @Emit()
     private showcontroler(show: boolean,evn: any) {
-        // console.log("sssssssssssss");
+        console.log("sssssssssssss",evn);
         // this.showdownicon = show?"fa-sort-down":"";
         // this.showdownicon = show?"fa-clock-o":"";
         // console.log("leave",evn);
@@ -545,7 +564,10 @@ export default class LittleBar extends Vue {
     private downloadchart(positionClass: string) {
         PubSub.publish("downloadchart",positionClass);
     }
-
+    @Emit()
+    private enterPageSize(ev: any) {
+        console.log("ev",ev);
+    }
 }
 </script>
 
@@ -731,6 +753,7 @@ $littlebarheight: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
+    text-transform: lowercase;
     // &:hover{
     //     cursor: pointer;
     // }

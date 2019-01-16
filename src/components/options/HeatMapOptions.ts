@@ -185,6 +185,9 @@ export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, r
                 color: "white"
             }
         },
+        legend: {
+            y:20,
+        },
         // legend: {
         //     title: {
         //         text: title,
@@ -297,6 +300,7 @@ export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, r
             // min:-1,
             // max:1,
             // min: -5
+            className: "heatmaplegend"
         },
         series: [{
             data: newdatalist,
