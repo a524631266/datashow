@@ -8,7 +8,7 @@
             <div class="word" :style='{transform: `scale(${scale})`,marginLeft: `-${wordleft}px`}'>
             </div>
             <div class="sword" :style='{transform: `scale(${scale})`}'>
-                <h1>智能情报分析系统</h1>
+                <h1 :style='{marginLeft: `-${subtitleleft}px`}'>智能情报分析系统</h1>
             </div>
             
             
@@ -39,6 +39,14 @@ export default class Login extends Vue {
     private scale = 0.5;
     private wordleft = 500;
     private loadingscale = 1;
+    private innerWidth = window.innerWidth;
+    private subtitleleft = 140;
+    // get subtitleleft() {
+    //     return this.innerWidth > 1366? 140: 140;
+    // }
+    // get scale() {
+    //     return this.innerWidth > 1366? 0.85: 0.55;
+    // }
     // private name = 111;
     // @Emit()
     // private dosomething(args: any) {
@@ -54,6 +62,7 @@ export default class Login extends Vue {
         } else {
             this.scale = 0.55;
             this.wordleft = 350;
+            this.subtitleleft = 140;
             // this.loadingscale = 0.8;
         }
         window.onresize = ()=> {
@@ -63,8 +72,10 @@ export default class Login extends Vue {
                     } else {
                         this.scale = 0.55;
                         this.wordleft = 350;
+                        this.subtitleleft = 140;
                         // this.loadingscale = 0.8;
                     }
+                //    this.innerWidth = window.innerWidth;
                 };
     }
 }
@@ -125,11 +136,11 @@ body{
     text-align: center;
     padding: 0;
     margin: 0;
-    bottom: 0;
-    font-size: 70px;
-    left: 45%;
+    bottom: 18px;
+    font-size: 74px;
     // display: inline-table;
     white-space: nowrap;
+    left: 50%;
     /* top:60%; */
 }
 /* .right{

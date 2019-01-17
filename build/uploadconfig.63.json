@@ -1,7 +1,0 @@
-{
-    "port": 22,
-    "host": "192.168.10.63",
-    "password":"123456",
-    "username":"tomcat",
-    "path": "/home/tomcat/tomcat/inner_tomcat/webapps/eap/popudist"
-}
