@@ -1,7 +1,7 @@
 .DS_Store
 node_modules
 /dist
-/build/uploadconfig.json
+/build/uploadconfig*.json
 # local env files
 .env.local
 .env.*.local
