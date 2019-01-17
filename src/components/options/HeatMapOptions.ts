@@ -58,7 +58,7 @@ function getSortedList(listdata: HeatmapChartTrans): number[] {
     // tslint:disable-next-line:forin
     for (const i in listdata) {
         const time = listdata[i].time;
-        if(!timelist.indexOf(time)) {
+        if(!(timelist.indexOf(time) >= 0)) {
             timelist.push(time);
         }
     }
@@ -107,8 +107,8 @@ export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, r
         newdatalist.push({ x: xmaptime[id], y: timelist.indexOf(listdata[i].time), value: listdata[i].value, name });
         namemap[id] = name;
     }
-    console.log("timelist",timelist);
-    console.log("newdatalist",newdatalist);
+    // console.log("timelist",timelist);
+    // console.log("newdatalist",newdatalist);
     return {
         // data: {
         //   csv: document.getElementById('csv').innerHTML
