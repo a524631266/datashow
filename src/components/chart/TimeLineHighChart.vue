@@ -77,24 +77,24 @@ export default class TimeLineHighChart extends Vue implements AxiosSourceManage 
       );
     }
 
-    private _TimeLine2Heatmap(data: TimeLineChartTrans): HeatmapChartTrans {
-      // let newdata : HeatmapChartTrans = [];
-    //    x: string; // 代表 1201065
-    // name: string; // "8号",
-    // y: number; // 0,
-    // value: number; // 0,
-      const newdata: HeatmapChartTrans = Array.from(data as any).map(
-          (value: TimeLineDataTrans)=> {
-            return {
-              x: value.id,
-              name: moment(value.starttime).format("MM-DD"),
-              y: 1,
-              value: value.value
-            };
-          }
-      );
-      return newdata;
-    }
+    // private _TimeLine2Heatmap(data: TimeLineChartTrans): HeatmapChartTrans {
+    //   // let newdata : HeatmapChartTrans = [];
+    // //    x: string; // 代表 1201065
+    // // name: string; // "8号",
+    // // y: number; // 0,
+    // // value: number; // 0,
+    //   const newdata: HeatmapChartTrans = Array.from(data as any).map(
+    //       (value: TimeLineDataTrans)=> {
+    //         return {
+    //           x: value.id,
+    //           name: moment(value.starttime).format("MM-DD"),
+    //           y: 1,
+    //           value: value.value
+    //         };
+    //       }
+    //   );
+    //   return newdata;
+    // }
     @Watch("urlparas.entity",  {deep : true})
     private redraw(entity: string) {
       this.cancelAxios();

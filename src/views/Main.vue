@@ -136,7 +136,7 @@ body{
   z-index:401;
   position: fixed;
   // height: calc(100vh-24px) !important;
-  overflow-y: auto;
+  // overflow-y: auto;
   width: auto !important;
   max-width: 100vw !important;
   // min-width: 200px !important;

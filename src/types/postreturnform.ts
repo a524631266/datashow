@@ -160,9 +160,9 @@ interface TimeLineChartTrans {
 // };
 
 interface HeatmapData {
-    x: string; // "1201065",
+    id: string; // "1201065",
     name: string; // "8号",
-    y: number; // 0,
+    time: number; // 0,
     value: number; // 0.9145603551415997
 }
 interface HeatmapChart {
@@ -170,10 +170,11 @@ interface HeatmapChart {
 }
 
 interface HeatmapDataTrans {
-    x: string; // 代表 1201065
+    id: string; // 代表 1201065
     name: string; // "8号",
-    y: number; // 0,
+    // y: number; // 0,
     value: number; // 0,
+    time: number; // 1234567890123
 }
 interface HeatmapChartTrans {
     [index: number]: HeatmapDataTrans;

@@ -2,8 +2,9 @@ import { PostParams } from '@/types';
 import Axios,{AxiosPromise, CancelTokenSource} from "axios";
 import { Component, Vue } from 'vue-property-decorator';
 // 新疆接口
-const prev = process.env.NODE_ENV === "development"? "/xinjiang": "/anomaly";
-const prev2 = process.env.NODE_ENV === "development"? "/tree": "/anomaly";
+export const projectname = "anomaly";
+const prev = process.env.NODE_ENV === "development"? "/xinjiang": "/" + projectname;
+const prev2 = process.env.NODE_ENV === "development"? "/tree": "/" + projectname;
 export const baseUrl = "";
 export const websocketurlhost = process.env.NODE_ENV === "development"? `192.168.10.63:8088/`: `192.168.10.63:8088${baseUrl}`;
 export enum PostPath {

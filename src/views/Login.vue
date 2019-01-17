@@ -29,7 +29,7 @@
 
 <script lang='ts'>
 import { Component, Vue, Prop, Emit, Watch } from 'vue-property-decorator';
-import {baseUrl} from '@/actions/axiosProxy.ts';
+import {projectname} from '@/actions/axiosProxy.ts';
 @Component({
     components: {
     },
@@ -42,7 +42,7 @@ export default class Login extends Vue {
     private loadingscale = 1;
     private innerWidth = window.innerWidth;
     private subtitleleft = 140;
-    private baseUrl = baseUrl;
+    private baseUrl = projectname;
     // get subtitleleft() {
     //     return this.innerWidth > 1366? 140: 140;
     // }

@@ -182,7 +182,7 @@ export default class LeftBar extends Vue {
                 );
                 treeNode.dataRef.children = childrenlist;
                 this.treeData = [...this.treeData];
-                console.log("tree data",this.treeData);
+                // console.log("tree data",this.treeData);
                 // resolve("成功");
                 return childrenlist;
             },
@@ -218,12 +218,13 @@ export default class LeftBar extends Vue {
             return "";
         }
         const {eventKey: postid } = treeNode;
-        console.log(treeNode.getNodeChildren().length);
+        // console.log(treeNode.getNodeChildren().length);
         return new Promise(
             (resolve, reject) => {
                 getTreeNode(postid).then(
                 (result) => {
                     const {data} = result;
+                    console.log("打点数据",data);
                     const childrenlist: ChildrenValue[] = [];
                     // console.log(data)
                     data.forEach(
@@ -253,14 +254,14 @@ export default class LeftBar extends Vue {
                     );
                     treeNode.dataRef.children = childrenlist;
                     this.treeData = [...this.treeData];
-                    console.log("tree data",this.treeData);
+                    // console.log("tree data",this.treeData);
                     // this.treeData = [...this.treeData];
                     resolve("成功");
                     this.firstcount += 1;
                 },
             ).catch(
                 (err: any) => {
-                    console.log("111111",err);
+                    // console.log("111111",err);
                     reject("err");
                 }
             );

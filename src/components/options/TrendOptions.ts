@@ -11,7 +11,18 @@ export const listdata: TrendChartTrans = [ {
   name : "avg-3std"
 }];
 
+const transname = {
+    "normal": "电量",
+    "avg+3std": "上界",
+    "avg-3std": "下界"
+};
 export const drawLineOptions = (listdata: TrendChartTrans,title: string) => {
+  (listdata as any).forEach(
+    (value: any)=> {
+      const name: string = value.name;
+      value.name = (transname as any)[name];
+    }
+  );
   const option = {
     chart : {
       panning : true,
