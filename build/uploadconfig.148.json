@@ -1,7 +1,0 @@
-{
-    "port": 22,
-    "host": "192.168.40.148",
-    "password":"homewell",
-    "username":"homewell",
-    "path": "/home/homewell/git/anomaly/src/main/webapp"
-}
