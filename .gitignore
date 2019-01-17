@@ -2,6 +2,7 @@
 node_modules
 /dist
 /build/uploadconfig*.json
+/build/uploadconfig.148.json
 # local env files
 .env.local
 .env.*.local
