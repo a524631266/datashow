@@ -1,8 +1,11 @@
 import { PostParams } from '@/types';
 import Axios,{AxiosPromise, CancelTokenSource} from "axios";
 import { Component, Vue } from 'vue-property-decorator';
-const prev = process.env.NODE_ENV === "development"? "/xinjiang": "";
-
+// 新疆接口
+const prev = process.env.NODE_ENV === "development"? "/xinjiang": "/anomaly";
+const prev2 = process.env.NODE_ENV === "development"? "/tree": "/anomaly";
+export const baseUrl = "";
+export const websocketurlhost = process.env.NODE_ENV === "development"? `192.168.10.63:8088/`: `192.168.10.63:8088${baseUrl}`;
 export enum PostPath {
     singleLineChart = "singleLineChart",
     singleBoxChart = "singleBoxChart",
@@ -29,6 +32,7 @@ export function getDataPromise<R,T>(urlparas: PostParams,postpath: PostPath,canc
         posturl = `${prev}/elecnum/${postpath}?entity=${entity}&start=${starttime}&end=${endtime}&entitynums=${entitynums}&scale=${scale}&winlen=${winlen}&neger=${range[0]}&poser=${range[1]}`;
     }
     const promise = Axios({
+        baseURL: baseUrl,
         method: "get",
         url: posturl,
         cancelToken: cancelTokenSource.token
@@ -48,11 +52,12 @@ export function getDataPromise<R,T>(urlparas: PostParams,postpath: PostPath,canc
     return promise;
 }
 
-const prev2 = process.env.NODE_ENV === "development"? "/tree": "";
+
 export function getTreeNode(entity: string) {
     const posturl = `${prev2}/case/entity?id=${entity}`;
     const axiospromise = Axios(
         {
+        baseURL: baseUrl,
         method:"get",
         url:posturl,
         }

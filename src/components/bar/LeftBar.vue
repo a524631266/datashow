@@ -11,6 +11,7 @@
             @select="onSelect"
             @mouseenter="showtooltip"
             @mouseleave="hidetooltip"
+            :loadData="onLoadData2"
             showIcon 
         >
             <a-icon slot="org" type="home" />
@@ -130,6 +131,7 @@ export default class LeftBar extends Vue {
                     hover: false,
                 }
             ] as any;
+    private firstcount = 0;
     private historytreeSelectData: { [key: string]: ChildrenValue} = {[this.treeData[0].key]: JSON.parse(JSON.stringify(this.treeData[0]))};
     private expandedKeys: string[] = [];
     private tooltipShow = false;
@@ -211,51 +213,60 @@ export default class LeftBar extends Vue {
             }
         }
     }
-    // private onLoadData(treeNode: any) {
-    //     const {eventKey: postid } = treeNode;
-
-    //     return new Promise((resolve,reject) => {
-    //         console.log(treeNode.getNodeChildren().length);
-    //         if (treeNode.getNodeChildren().length) {
-    //             resolve("");
-    //             return;
-    //         }
-    //         const posturl = `${prev}/case/entity?id=${postid}`;
-    //         Axios(
-    //             {
-    //             method:"get",
-    //             url:posturl,
-    //             }
-    //         ).then(
-    //             (result) => {
-    //                 const {data} = result;
-    //                 const childrenlist: ChildrenValue[] = [];
-    //                 // console.log(data)
-    //                 data.forEach(
-    //                     (value: ChildrenValue,index: number)=> {
-    //                         const children = value;
-    //                         children.title = value.name + "(" + value.entityNum + ")";
-    //                         children.key = value.id + "";
-    //                         children.isLeaf = value.isEntity;
-    //                         children.level = value.level;
-    //                         children.value = value.id + "";
-    //                         children.label = value.name;
-    //                         childrenlist.push(children);
-    //                     }
-    //                 );
-    //                 // treeNode.$children = childrenlist;
-    //                 console.log("this.treeData",this.treeData);
-    //                 // this.treeData = [...this.treeData];
-    //                 // resolve("成功");
-    //             },
-    //         ).catch(
-    //             (err: any) => {
-    //                 console.log("111111",err);
-    //             }
-    //         );
-    //         resolve("111");
-    //     });
-    // }
+    private onLoadData2(treeNode: any) {
+        if (this.firstcount > 0) {
+            return "";
+        }
+        const {eventKey: postid } = treeNode;
+        console.log(treeNode.getNodeChildren().length);
+        return new Promise(
+            (resolve, reject) => {
+                getTreeNode(postid).then(
+                (result) => {
+                    const {data} = result;
+                    const childrenlist: ChildrenValue[] = [];
+                    // console.log(data)
+                    data.forEach(
+                        (value: ChildrenValue,index: number)=> {
+                            const children = value;
+                            children.title = value.name + "(" + value.entityNum + ")";
+                            children.key = value.id + "";
+                            children.entityNum = value.entityNum;
+                            children.isLeaf = value.isEntity;
+                            children.level = level + 1;
+                            children.value = value.id + "";
+                            children.label = value.name;
+                            children.coord = value.coord?value.coord
+                                                    :value.lnglat?[parseFloat(value.lnglat.split(",")[0]),parseFloat(value.lnglat.split(",")[1])]
+                                                    :value.cityLnglat?[parseFloat(value.cityLnglat.split(",")[0]),parseFloat(value.cityLnglat.split(",")[1])]
+                                                    :value.districtLnglat?[parseFloat(value.districtLnglat.split(",")[0]),parseFloat(value.districtLnglat.split(",")[1])]
+                                                    :[0,0];
+                            children.slots = {
+                                    icon: value.isEntity?'user':'org',
+                            };
+                            children.scopedSlots =  {
+                                title: 'custom'
+                            };
+                            children.hover = false;
+                            childrenlist.push(children);
+                        }
+                    );
+                    treeNode.dataRef.children = childrenlist;
+                    this.treeData = [...this.treeData];
+                    console.log("tree data",this.treeData);
+                    // this.treeData = [...this.treeData];
+                    resolve("成功");
+                    this.firstcount += 1;
+                },
+            ).catch(
+                (err: any) => {
+                    console.log("111111",err);
+                    reject("err");
+                }
+            );
+            }
+        );
+    }
     private showtooltip(e: any) {
         // // ##########版本1
         // // const {key,name} = e.node.dataRef;
@@ -331,6 +342,7 @@ export default class LeftBar extends Vue {
     private mounted() {
         this.treeheight = (document.body.clientHeight - 24) + 'px';
         // PubSub.publishSync("updateBread",this.treeData);
+        this.expandedKeys.push("99998999");
     }
 }
 </script>

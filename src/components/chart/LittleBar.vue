@@ -472,7 +472,7 @@ export default class LittleBar extends Vue {
     }
     @Emit()
     private showcontroler(show: boolean,evn: any) {
-        console.log("sssssssssssss",evn);
+        // console.log("sssssssssssss",evn);
         // this.showdownicon = show?"fa-sort-down":"";
         // this.showdownicon = show?"fa-clock-o":"";
         // console.log("leave",evn);
@@ -566,7 +566,7 @@ export default class LittleBar extends Vue {
     }
     @Emit()
     private enterPageSize(ev: any) {
-        console.log("ev",ev);
+        // console.log("ev",ev);
     }
 }
 </script>

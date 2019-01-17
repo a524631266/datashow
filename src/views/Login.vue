@@ -15,7 +15,7 @@
         </div> 
         
         <div class="login" :style="{transform: `scaleX(${loadingscale})`}">
-            <form action="/login" method="post">
+            <form :action="`/${baseUrl}/login`" method="post">
                 <table>
                 <tr><td colspan="2"><input class="bar" type="text" required="required" placeholder="用户名" name="username"></input></td></tr>
                 <tr><td colspan="2"><input class="bar" type="password" required="required" placeholder="密码" name="password"></input></td></tr>
@@ -29,6 +29,7 @@
 
 <script lang='ts'>
 import { Component, Vue, Prop, Emit, Watch } from 'vue-property-decorator';
+import {baseUrl} from '@/actions/axiosProxy.ts';
 @Component({
     components: {
     },
@@ -41,6 +42,7 @@ export default class Login extends Vue {
     private loadingscale = 1;
     private innerWidth = window.innerWidth;
     private subtitleleft = 140;
+    private baseUrl = baseUrl;
     // get subtitleleft() {
     //     return this.innerWidth > 1366? 140: 140;
     // }

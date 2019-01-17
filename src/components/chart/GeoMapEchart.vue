@@ -18,7 +18,7 @@ import echarts,{ ECharts, EChartOption, EChartsOptionConfig } from "echarts";
 import { provincedata} from '@/components/options/ProvinceOptions.ts';
 import Axios,{AxiosPromise} from "axios";
 import PubSub from 'pubsub-js';
-import { getDataPromise, PostPath, insertInitData } from "@/actions/axiosProxy.ts";
+import { getDataPromise, PostPath, insertInitData, websocketurlhost } from "@/actions/axiosProxy.ts";
 import { updatestate } from "@/types/updateState.ts";
 import moment,{ Moment } from "moment";
 import { AxiosSourceManage } from "@/implements/AxiosSourceManage";
@@ -27,9 +27,9 @@ import { ThresholdLimiter } from '@/types';
 import TimerManager from "@/util/timeoutmanage.ts";
 import {orginitconfig} from '@/config/initOptions.ts';
 // import 'echarts/map/js/province/xinjiang.js';
-const prev = process.env.NODE_ENV === "development"? "/xinjiang": "";
-const websocketurlhost = process.env.NODE_ENV === "development"? "192.168.10.63:8088": "192.168.10.63:8088";
-(window as any).TimerManager =TimerManager;
+// const prev = process.env.NODE_ENV === "development"? "/xinjiang": "";
+// const websocketurlhost = process.env.NODE_ENV === "development"? "192.168.10.63:8088": "192.168.10.63:8088";
+// (window as any).TimerManager =TimerManager;
 @Component({
     components: {
         LittleBar,
@@ -287,25 +287,25 @@ export default class GeoMapEchart extends Vue {
         }
         return result;
     }
-    private postAndDealData(callback: any): Promise<GeoTransData> {
-        const {entity,starttime,endtime,entitynums,scale,winlen} = this.postparms;
-        const promise = Axios({
-            method:"get",
-            url:`${prev}/elecnum/geomap?entity=${entity}&starttime=${starttime}&endtime=${endtime}&entitynums=${entitynums}&scale=${scale}&winlen=${winlen}`,
-        }).then(
-            (result) => {
-                // return data;
-                const data: GeoTransData = callback(GeoTestData);
-                return data;
-            }
-        ).catch(
-            (err) => {
-                const data: GeoTransData = callback(GeoTestData);
-                return data;
-            }
-        );
-        return promise;
-    }
+    // private postAndDealData(callback: any): Promise<GeoTransData> {
+    //     const {entity,starttime,endtime,entitynums,scale,winlen} = this.postparms;
+    //     const promise = Axios({
+    //         method:"get",
+    //         url:`${prev}/elecnum/geomap?entity=${entity}&starttime=${starttime}&endtime=${endtime}&entitynums=${entitynums}&scale=${scale}&winlen=${winlen}`,
+    //     }).then(
+    //         (result) => {
+    //             // return data;
+    //             const data: GeoTransData = callback(GeoTestData);
+    //             return data;
+    //         }
+    //     ).catch(
+    //         (err) => {
+    //             const data: GeoTransData = callback(GeoTestData);
+    //             return data;
+    //         }
+    //     );
+    //     return promise;
+    // }
     @Emit()
     private setTimeoutdraw(count: number) {
         // console.log(count);
