@@ -7,12 +7,12 @@
   </a-popover> -->
   <div class="ant-popover ant-popover-placement-rightTop" :class="classname" :style="overlayStyle" @mouseleave="tooltipmouseleave" @mouseenter="tooltipmouseenter">
       <div class="ant-popover-content">
-          <div class="ant-popover-arrow"></div>
+          <div class="ant-popover-arrow" :style="{top: `${rise}px`}"></div>
           <div class="ant-popover-inner">
               <div>
                 <div class="ant-popover-title" v-text="nodedataref.name"></div>
                 <div class="ant-popover-inner-content">
-                    <a data-v-40e8afb2="" :href="'/home/'+nodedataref.key" @click.prevent="router2home" target="_self" class="btn btn-sm">图表</a>
+                    <a data-v-40e8afb2="" :href="'/home/'+nodedataref.key" @click.prevent="router2home" target="_self" class="btn btn-sm" >图表</a>
                     <a data-v-40e8afb2="" :href="'/info/'+nodedataref.key" @click.prevent="router2info" target="_self" class="btn btn-sm">用户信息</a>
                 </div>
               </div>
@@ -35,9 +35,11 @@ export default class TooltipRoute extends Vue {
     private classname = "tooltip2";
     private tooltipplacement = "rightTop";
     private nodedataref: ChildrenValue = {} as any;
-    private overlayStyle = {left:"50px",top:"572px"};
+    private overlayStyle = {left:"50px",top:"572px",transform: `translateY(${this.rise}px)`};
+    // :style="{transform: `translateY(${rise}px)`}"
     private timeoutqueue: number[]= [];
     private locktooltip = false;
+    private rise = 10;
     public mounted() {
         // 订阅显示tooltip消息
         PubSub.subscribe("showtooltip",async (mesg: any,data: {entity: string,name: string,isLeaf: boolean,level: number,clientX: number,clientY: number,target: DOMRect,coord: [number, number]}) => {
@@ -48,9 +50,9 @@ export default class TooltipRoute extends Vue {
           this.nodedataref.level = data.level;
           this.nodedataref.coord = data.coord;
           if( data.target) {
-              this.overlayStyle = {left: (data.target.left+data.target.width) + "px",top: data.target.top + "px"};
+              this.overlayStyle = {left: (data.target.left+data.target.width) + "px",top: data.target.top + "px",transform: `translateY(${-this.rise}px)`};
           } else {
-              this.overlayStyle = {left: data.clientX+"px",top: data.clientY+"px"};
+              this.overlayStyle = {left: data.clientX+"px",top: data.clientY+"px",transform: `translateY(${-this.rise}px)`};
           }
           this.classname = "tooltip3";
         });

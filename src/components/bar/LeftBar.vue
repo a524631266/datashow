@@ -224,7 +224,7 @@ export default class LeftBar extends Vue {
                 getTreeNode(postid).then(
                 (result) => {
                     const {data} = result;
-                    console.log("打点数据",data);
+                    // console.log("打点数据",data);
                     const childrenlist: ChildrenValue[] = [];
                     // console.log(data)
                     data.forEach(
@@ -350,7 +350,7 @@ export default class LeftBar extends Vue {
             // console.log("this.$refs",this.$refs);
             (this.$refs.treepanel as HTMLDivElement).style.height = (document.body.clientHeight - 24) + "px";
             // this.treeheight = document.body.clientHeight - 24;
-        }
+        };
         // PubSub.publishSync("updateBread",this.treeData);
         this.expandedKeys.push("99998999");
     }

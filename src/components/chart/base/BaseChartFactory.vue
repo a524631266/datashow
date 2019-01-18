@@ -23,7 +23,7 @@ import exportHighchart from 'highcharts/modules/exporting';
 import {downloadchart} from '@/util/downloadcanvas.ts';
 exportHighchart(Highcharts);
 // 设置 Highcharts时间问题 为false,采用中国日期时间戳
-Highcharts.setOptions({global: { useUTC: false}});
+// Highcharts.setOptions({global: { useUTC: false}});
 @Component({
     components: {
         ASpin: Antd.Spin,
@@ -46,6 +46,9 @@ export default class BaseChartFactory extends Vue {
     public mounted() {
         // console.log("1111111")
         PubSub.subscribe("downloadchart",this.downloadchart);
+        // if( this.id === "chart-heatmap") {
+        //     this.highchartHeatMapWarp(Highcharts);
+        // }
     }
     /**
      * 监控entity变化的时候，也就是当entityid真正变化的时候，就要更新视图
@@ -70,62 +73,65 @@ export default class BaseChartFactory extends Vue {
     }
     @Watch("option.change",{deep: true})
     private redrawChart(newVal: updatestate, oldVal: updatestate) {
-    //    console.log("options变化",newVal, oldVal,this.id);
-       if(this.chartLibrary === ChartLibrary.highchart) {
-            if (this.chartInstance) {
-                // console.log("1");
-                // (this.chartInstance as any).reflow();
-                if(newVal === updatestate.redraw) { // 前一次数据为undefined的时候，为新的option因此需要重画
-                    // this.destroyed();
-                    this.chartInstance = Highcharts.chart(this.id, this.option) as any;
-                    this.showLoading = false;
-                } else if (newVal === updatestate.empty) {
-                    this.showLoading = true;
-                    this.chartInstance = Highcharts.chart(this.id, this.option) as any;
-                } else { // highchart增量更新数据的时候操作
-                    // this.showLoading = false;
-                    this.$emit("updateData",this.chartInstance,this.option);
-                }
-            } else {
-                this.chartInstance = Highcharts.chart(this.id, this.option) as any;
-                // this.showLoading = false;
-            }
-            this.toggleHighChartLegend();
-            if (this.id === "chart-heatmap") {
-                this.toggleHighChartAxis();
-            }
-       }
-       if(this.chartLibrary === ChartLibrary.echart) {
-            if (this.chartInstance) { // echart增量更新数据的时候操作
-                // console.log("Echart111111111111111111");
-                // this.updateData(this.chartInstance,this.option); //
-                if(newVal === updatestate.redraw) {
-                    this.showLoading = true;
+        if( this.id === "chart-heatmap") {
+            this.highchartHeatMapWarp(Highcharts);
+        }
+        //    console.log("options变化",newVal, oldVal,this.id);
+        if(this.chartLibrary === ChartLibrary.highchart) {
+                if (this.chartInstance) {
+                    // console.log("1");
+                    // (this.chartInstance as any).reflow();
+                    if(newVal === updatestate.redraw) { // 前一次数据为undefined的时候，为新的option因此需要重画
+                        // this.destroyed();
+                        this.chartInstance = Highcharts.chart(this.id, this.option) as any;
+                        this.showLoading = false;
+                    } else if (newVal === updatestate.empty) {
+                        this.showLoading = true;
+                        this.chartInstance = Highcharts.chart(this.id, this.option) as any;
+                    } else { // highchart增量更新数据的时候操作
+                        // this.showLoading = false;
+                        this.$emit("updateData",this.chartInstance,this.option);
+                    }
                 } else {
-                    this.showLoading = false; // 因为echart是默认先加载地图，数据还没有返回的情况下
+                    this.chartInstance = Highcharts.chart(this.id, this.option) as any;
+                    // this.showLoading = false;
                 }
-                // console.log("newVal",newVal);
-                // this.showLoading = false; // 因为echart是默认先加载地图，数据还没有返回的情况下
-                this.$emit("updateData",this.chartInstance,this.option);
-            } else {
-                // console.log("resechart");
-                const nodeid = document.getElementById(this.id);
-                const mychart = echarts.init(nodeid as any);
-                mychart.setOption(JSON.parse(JSON.stringify(this.option)));
-                this.chartInstance = mychart as any;
-                // (window as any).echart = mychart as any;
-                // 窗口变动自动变换数据
-                window.onresize = ()=> {
-                    (this.chartInstance as any).resize();
-                    // console.log("resize.........");
-                };
-                // console.log("geochartoption",this.option);
-                if(newVal === updatestate.redraw) {
-                    this.showLoading = true;
+                this.toggleHighChartLegend();
+                if (this.id === "chart-heatmap") {
+                    this.toggleHighChartAxis();
                 }
-                mychart.on("click",this.handleclick);
-            }
-       }
+        }
+        if(this.chartLibrary === ChartLibrary.echart) {
+                if (this.chartInstance) { // echart增量更新数据的时候操作
+                    // console.log("Echart111111111111111111");
+                    // this.updateData(this.chartInstance,this.option); //
+                    if(newVal === updatestate.redraw) {
+                        this.showLoading = true;
+                    } else {
+                        this.showLoading = false; // 因为echart是默认先加载地图，数据还没有返回的情况下
+                    }
+                    // console.log("newVal",newVal);
+                    // this.showLoading = false; // 因为echart是默认先加载地图，数据还没有返回的情况下
+                    this.$emit("updateData",this.chartInstance,this.option);
+                } else {
+                    // console.log("resechart");
+                    const nodeid = document.getElementById(this.id);
+                    const mychart = echarts.init(nodeid as any);
+                    mychart.setOption(JSON.parse(JSON.stringify(this.option)));
+                    this.chartInstance = mychart as any;
+                    // (window as any).echart = mychart as any;
+                    // 窗口变动自动变换数据
+                    window.onresize = ()=> {
+                        (this.chartInstance as any).resize();
+                        // console.log("resize.........");
+                    };
+                    // console.log("geochartoption",this.option);
+                    if(newVal === updatestate.redraw) {
+                        this.showLoading = true;
+                    }
+                    mychart.on("click",this.handleclick);
+                }
+        }
     }
     /**
      * highcart 显示legend
@@ -144,10 +150,10 @@ export default class BaseChartFactory extends Vue {
         // console.log("(this.chartInstance as any).xAxis[0]",(this.chartInstance as any).xAxis[0]);
         if ( this.chartInstance && this.positionClass !== PositionClass.Center) {
             // (this.chartInstance as any).xAxis[0].update({labels:{enabled:false}});
-            (this.chartInstance as any).xAxis[0].update({visible:false});
+            (this.chartInstance as any).yAxis[0].update({visible:false});
         } else if (this.chartInstance) {
             // (this.chartInstance as any).xAxis[0].update({labels:{enabled:true}});
-            (this.chartInstance as any).xAxis[0].update({visible:true});
+            (this.chartInstance as any).yAxis[0].update({visible:true});
         }
     }
     /**
@@ -203,6 +209,63 @@ export default class BaseChartFactory extends Vue {
                 downloadchart(this.chartInstance);
             }
         }
+    }
+
+    /**
+     * 改造热力图，可以支持大型热力图
+     */
+    private highchartHeatMapWarp(H: any) {
+        const Series = H.Series;
+        const each = H.each;
+        /**
+         * Create a hidden canvas to draw the graph on. The contents is later copied over
+         * to an SVG image element.
+         */
+        Series.prototype.getContext = function() {
+            if (!this.canvas) {
+                this.canvas = document.createElement('canvas');
+                this.canvas.setAttribute('width', this.chart.chartWidth);
+                this.canvas.setAttribute('height', this.chart.chartHeight);
+                this.image = this.chart.renderer.image('', 0, 0, this.chart.chartWidth, this.chart.chartHeight).add(this.group);
+                this.ctx = this.canvas.getContext('2d');
+            }
+            return this.ctx;
+        };
+        /**
+         * Draw the canvas image inside an SVG image
+         */
+        Series.prototype.canvasToSVG = function() {
+            this.image.attr({ href: this.canvas.toDataURL('image/png') });
+        };
+        const that = this.$refs.id;
+        /**
+         * Wrap the drawPoints method to draw the points in canvas instead of the slower SVG,
+         * that requires one shape each point.
+         */
+        Series.prototype.transSvg2Canvas = function fac() {
+            const ctx = this.getContext();
+            if (ctx) {
+                // draw the columns
+                // tslint:disable-next-line:only-arrow-functions
+                each( (this as any).points, function(point: any) {
+                    const plotY = point.plotY;
+                    if (plotY !== undefined && !isNaN(plotY) && point.y !== null) {
+                        const shapeArgs = point.shapeArgs;
+                        const pointAttr = (point.pointAttr && point.pointAttr['']) || point.series.pointAttribs(point);
+                        ctx.fillStyle = pointAttr.fill;
+                        ctx.fillRect(shapeArgs.x, shapeArgs.y, shapeArgs.width, shapeArgs.height);
+                    }
+                });
+                (this as any).canvasToSVG();
+            } else {
+                (this as any).chart.showLoading('Your browser doesn\'t support HTML5 canvas, <br>please use a modern browser');
+                // Uncomment this to provide low-level (slow) support in oldIE. It will cause script errors on
+                // charts with more than a few thousand points.
+                // arguments[0].call(this);
+            }
+        };
+        H.wrap(H.seriesTypes.heatmap.prototype, 'drawPoints',Series.prototype.transSvg2Canvas );
+        H.seriesTypes.heatmap.prototype.directTouch = false; // Use k-d-tree
     }
 }
 </script>

@@ -1,7 +1,9 @@
 <template>
     <div class="container-fluid  chartheader" @mouseenter="showcontroler(true,$event)" @mouseleave="showcontroler(false,$event)">
         <!-- @mouseenter="showdownincon(true)" @mouseleave="showdownincon(false)" -->
-        <slot name="page"></slot>
+        <template v-if="showtopbar">
+            <slot name="page" v-show="showtopbar"></slot>
+        </template>
         <div class="littlebar" >
             <div :style="{position:'relative'}" v-show="showtopbar">
                 <!-- <div class="fa icondown middlebutton" :class="showdownicon"></div> -->
@@ -83,6 +85,7 @@
                                 <option label="20" value="20" selected="true" @mouseleave.stop="()=>{}">20</option>
                             </select> -->
                             <a-select defaultValue="20">
+                                <a-select-option value="10"  @mouseenter="enterPageSize">10</a-select-option>
                                 <a-select-option value="20"  @mouseenter="enterPageSize">20</a-select-option>
                             </a-select>
                         </div>

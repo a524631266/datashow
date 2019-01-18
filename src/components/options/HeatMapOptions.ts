@@ -1,11 +1,12 @@
 import moment,{ DurationInputObject, Moment } from "moment";
-import { onehour, fifteenminute } from './../../config/initOptions';
+import { onehour, fifteenminute, oneday } from './../../config/initOptions';
 import Highcharts, { Options ,HeatMapChart} from 'highcharts';
 import $ from "jquery";
 // import "highcharts/modules/exporting.js";
 import "./dependentjs/map";
 import PubSub from 'pubsub-js';
 import { HeatmapChart, HeatmapChartTrans } from '@/types/postreturnform';
+moment.locale('zh-cn');
 // tslint:disable-next-line:class-name
 interface heatmapData {
     x: string;
@@ -53,8 +54,9 @@ function transminute(n: number): string {
     return ylabelname;
 }
 
-function getSortedList(listdata: HeatmapChartTrans): number[] {
+function getSortedList(listdata: HeatmapChartTrans): { timelist: number[],inittimelist: number[]} {
     const timelist: number[] = [];
+    const inittimelist: number[] = [];
     // tslint:disable-next-line:forin
     for (const i in listdata) {
         const time = listdata[i].time;
@@ -67,7 +69,32 @@ function getSortedList(listdata: HeatmapChartTrans): number[] {
             return a - b;
         }
     );
-    return timelist;
+    timelist.forEach(
+        (value: number,index: number) => {
+            inittimelist.push( 1364774400000 + index * 24 * 60 * 60 * 1000);
+        }
+    );
+    // console.log("timelist",timelist);
+    // console.log("inittimelist",inittimelist);
+    return {timelist,inittimelist};
+}
+function getTheFirstTS(timelist: number[],time: number): number {
+    let time1 = 0;
+    timelist.forEach(
+        (value: number, index: number) => {
+            // tslint:disable-next-line:no-debugger
+            // debugger;
+            if(timelist[index +1] !== undefined && time >= value && time <= timelist[index +1] ) {
+                time1 = value;
+                // console.log("time1",time1);
+            }
+            if (index === 0 && time <= value) {
+                time1 = value;
+            }
+            // console.log("timelist",timelist, time);
+        }
+    );
+    return time1;
 }
 export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, redrawEntityFunc: any, openInfo: (entity: string, name: string,clientX: number,clientY: number,target: DOMRect)=>void,limiter: HeatMapLimiter) => {// redrawEntityFunc(entityid)
     // var title = "用电"
@@ -76,7 +103,7 @@ export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, r
     // 代表时间与x的映射
     const timemapx: Timemapx = {};
     const namemap: Namemap = {};
-    const timelist = getSortedList(listdata);
+    const {timelist,inittimelist} = getSortedList(listdata);
 
     // tslint:disable-next-line:forin
     for (const i in listdata) {
@@ -86,12 +113,8 @@ export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, r
     const len = xlist.length;
     const min = 1364774400000;
     const max = 1364774400000 + (len - 1) * 1000 * 60 * 60 * 24;
-    // tslint:disable-next-line:forin
-    // for (const i in xlist) {
-    //     const id = xlist[i];
-    //     xmaptime[id] = min + i * 1000 * 60 * 60 * 24;
-    //     timemapx[min + i * 1000 * 60 * 60 * 24] = id;
-    // }
+    let startmin = 0;
+    let endmax = 0;
     xlist.forEach(
         (value, i) => {
             // const id = xlist[i];
@@ -104,23 +127,38 @@ export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, r
     for (const i in listdata) {
         const id = listdata[i].id;
         const name = listdata[i].name;
-        newdatalist.push({ x: xmaptime[id], y: timelist.indexOf(listdata[i].time), value: listdata[i].value, name });
+        const time = listdata[i].time;
+        newdatalist.push({ x: inittimelist[timelist.indexOf(time)], y: xlist.indexOf(id), value: listdata[i].value });
         namemap[id] = name;
+        if(startmin === 0  || startmin > time) {
+            startmin = time;
+        }
+        if(startmin === 0  || endmax < time) {
+            endmax = time;
+        }
     }
     // console.log("timelist",timelist);
     // console.log("newdatalist",newdatalist);
+    // console.log("xlist",xlist); // xlist [""977875", "977885", "977985", "978005", "978015", "978025", "1201015", "1201605", "1201615", "1201625", "1204035", "1204045", "1204085", ""]
+    // console.log("xmaptime",xmaptime);
+    // console.log("namemap",namemap);
+    // console.log(Date.UTC(moment(startmin).year(), moment(startmin).month(), moment(startmin).day()));
+    // console.log(moment(startmin).year(),moment(startmin).month(),moment(startmin).day());
+    // console.log("inittimelist",inittimelist);
+    // (window as any).moment = moment;
+    // (window as any).newdatalist = newdatalist;
     return {
         // data: {
         //   csv: document.getElementById('csv').innerHTML
         // },
         chart: {
             type: 'heatmap',
-            inverted: true,
+            // inverted: true,
             backgroundColor: 'rgba(0,0,0,0)',
-            zoomType: 'y',
+            zoomType: 'x',
             events: {
                 render() {
-                    const xAxis = (this as any).xAxis[0];
+                    const xAxis = (this as any).yAxis[0];
                     const chart = (this as any);
                     // console.log("1");
                     // console.log("xAxis",xAxis);
@@ -172,7 +210,7 @@ export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, r
                         // console.log("e.target", (e as any).target.style.left,(e as any).target.style.top,(e as any).target.style.width,(e as any).target.style.height);
                         // console.log("e.target", (e as any).target.getBoundingClientRect(),e);
                         // 先隐藏 ###########
-                        openInfo(categories[index],namemap[xlist[index]],clientX,clientY,(e as any).target.getBoundingClientRect());
+                        openInfo(xlist[index],namemap[xlist[index]],clientX,clientY,(e as any).target.getBoundingClientRect());
                         // infoObject.createNewInfoDiv(categories[index], namemap[xlist[index]], clientX, clientY, redrawEntityFunc, openInfo);
                     });};
                     const overlabel2hideinfo = ()=> {Highcharts.addEvent(xAxis.labelGroup.element, 'mouseleave', (e) => {
@@ -189,10 +227,6 @@ export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, r
                         // setTimeout(overlabel2hideinfo,20);
                     }
                 },
-                // render() {
-                //     // 先隐藏 ###########
-                //     // infoObject.hiddenInfo();
-                // }
             }
         },
         title: {
@@ -208,53 +242,34 @@ export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, r
         legend: {
             y:20,
         },
-        // legend: {
-        //     title: {
-        //         text: title,
-        //         style: {
-        //             color: 'white'
-        //         },
-        //     },
-        //     backgroundColor: '#303030',
-        //     // borderColor: '#ffffff',
-        //     borderWidth: 2,
-        //     borderRadius: 0,
-        //     // shadow: true,
-        //     itemStyle: {
-        //         color: '#C1FFC1',
-        //         fontWeight: 'bold'
-        //     },
-        //     y:20,
-        // },
-        // subtitle: {
-        //   text: 'Temperature variation by day and hour through April 2013',
-        //   align: 'left'
-        // },
         xAxis: {
-            type: "category",
-            tickInterval: 60 * 60 * 24 * 1000,// 以一天为单位，也就是不同个
-            min: min - 12 * 60 * 60 * 1000,
-            max: max + 12 * 60 * 60 * 1000,
+            type: 'datetime',
+            // min: Date.UTC(moment(inittimelist[0]).year(), moment(inittimelist[0]).month(), moment(inittimelist[0]).day()),
+            // max: Date.UTC(moment(inittimelist[inittimelist.length-1]).year(), moment(inittimelist[inittimelist.length-1]).month(), moment(inittimelist[inittimelist.length-1]).day()),
+            min: inittimelist[0],
+            max: inittimelist[inittimelist.length-1],
             labels: {
-                // enabled:false,
-                formatter() {
-                    // console.log(this,"2222222222222",timemapx[this.value])
-                    // console.log(namemap,timemapx,(this as any).value);
-                    return (this as any).value.slice(0, 5) + "";
-                },
+                align: 'left',
+                x: 5,
+                y: 14,
+                // format: '{value:%B}', // long month
                 style: {
                     color: "white"
-                }
+                },
+                formatter() {
+                    // console.log(this,"2222222222222",timemapx[this.value])
+                    // console.log(inittimelist,timelist,(this as any).value);
+                    // console.log("(this as any)",(this as any));
+                    const initts = (this as any).value; // 1365465600000
+                    // console.log("getTheFirstTS(inittimelist, initts)",getTheFirstTS(inittimelist, initts));
+                    const readlytime = timelist[inittimelist.indexOf(getTheFirstTS(inittimelist, initts))];
+                    // console.log("moment(readlytime).format('HH:mm')",moment(readlytime).format('HH:mm'),readlytime);
+                    return moment(readlytime).format('HH:mm');
+                    // return (this as any).value.slice(0, 5) + "";
+                },
             },
-            gridLineWidth: 0,
-            categories: xlist, // 这个要确保为[id,id,id] 而不是名字
-            tickmarkPlacement: "on",
-            gridLineColor: 'rgba(0,0,0,0)'
-            // type:"category",
-            // tickPositioner:function(a,b,c){
-            //   console.log(this,a,b,c)
-            //   return this.tickPositions
-            // }
+            // showLastLabel: true,
+            // tickLength: 16
         },
         yAxis: {
             type: "category",
@@ -262,63 +277,43 @@ export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, r
                 text: null
             },
             labels: {
-                // format: '{value}:00',
+                formatter() {
+                    // console.log(this,"2222222222222",timemapx[this.value])
+                    // console.log(namemap,timemapx,(this as any).value);
+                    // console.log("(this as any)",(this as any));
+                    return namemap[xlist[(this as any).value]].slice(0, 5) + "";
+                    // return (this as any).value.slice(0, 5) + "";
+                },
                 style: {
                     color: "white"
-                },
-                formatter(a: { pos: number; }) {
-                    const chartWidth = (this as any).chart.chartWidth;
-                    // tslint:disable-next-line:radix
-                    // 逻辑1
-                    // const hourvalue = parseInt((this as any).value);
-                    // 逻辑2
-                    // tslint:disable-next-line:radix
-                    const ind = parseInt((this as any).value);
-                    const time = timelist[ind];
-                    let hourvalue = moment(time).format('HH:mm');
-                    if (hourvalue === "00:00") {
-                        hourvalue = moment(time).format('MM-DD');
-                    }
-                    // console.log(chartWidth,this.chart,a,b,c)
-                    if (limiter.scale === onehour) {
-                        if (chartWidth / window.innerWidth < 0.25) {// 小图
-                            return a.pos % 2 === 0 ? hourvalue  : "";
-                        } else {
-                            return hourvalue ;
-                        }
-                    } else if(limiter.scale === fifteenminute) {
-                        if (chartWidth / window.innerWidth < 0.25) {// 小图
-                            // return a.pos % 4 === 0 ? transminute(hourvalue) : "";
-                            return a.pos % 4 === 0 ? hourvalue : "";
-                        } else {
-                            // return transminute(hourvalue);
-                            return hourvalue;
-                        }
-                    }
                 }
             },
             minPadding: 0,
             maxPadding: 0,
             startOnTick: false,
             endOnTick: false,
-            // tickPositions: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
+            // tickPositions: [0, 6, 12, 18, 24],
             tickWidth: 1,
             min: 0,
-            max: 23,
+            max: xlist.length - 1,
+            reversed: true,
             gridLineWidth: 0,
-            gridLineColor: 'rgba(0,0,0,0)',
         },
         tooltip: {
             headerFormat: title + '<br/>',
             pointFormatter(): string {
-                // console.log(this,a,b,c)
-                const x = timemapx[(this as any).options.x];
-                const y = (this as any).options.y;
+                // console.log((this as any).options.y,(this as any).options.x);
+                const x = (this as any).options.x; // 1365465600000
+                const y = (this as any).options.y; // 0 1 2 3
                 const value = (this as any).options.value;
+                const entityid = namemap[xlist[y]];
+                const readlytime = timelist[inittimelist.indexOf(x)];
                 if (limiter.scale === fifteenminute) {
-                    return "配电柜ID : " + x + "<br/> time:" + transminute(y) + "<br/>value:" + value;
+                    return "配电柜ID : " + entityid + "<br/> time:" + moment(readlytime).format('YYYY-MM-DD HH:mm') + "<br/>value:" + value;
                 } else if (limiter.scale === onehour) {
-                    return "配电柜ID : " + x + "<br/> time:" + y + ":00" + "<br/>value:" + value;
+                    return "配电柜ID : " + entityid + "<br/> time:" + moment(readlytime).format('YYYY-MM-DD HH:mm') + "<br/>value:" + value;
+                } else if (limiter.scale === oneday) {
+                    return "配电柜ID : " + entityid + "<br/> time:" + moment(readlytime).format('YYYY-MM-DD MM-DD') + "<br/>value:" + value;
                 }
                 return "";
             }
@@ -331,13 +326,17 @@ export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, r
             ],
             // min:-1,
             // max:1,
-            // min: -5
+            // min: -5,
+            min: -3,
+            max: 3,
             className: "heatmaplegend"
         },
         series: [{
+            nullColor: '#EFEFEF',
             data: newdatalist,
             borderWidth: 0,
             colsize: 24 * 36e5, // one day
+            turboThreshold: Number.MAX_VALUE,
         }],
         credits: {
             enabled: false
@@ -345,7 +344,288 @@ export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, r
     };
 };
 
+// export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, redrawEntityFunc: any, openInfo: (entity: string, name: string,clientX: number,clientY: number,target: DOMRect)=>void,limiter: HeatMapLimiter) => {// redrawEntityFunc(entityid)
+//     // var title = "用电"
+//     // var listdata= [{x:123456,y:0,value:200},{x:123456,y:1,value:200},{x:123456,y:3,value:200},{x:1222356,y:23,value:200},{x:1234567,y:3,value:200}]
+//     const xmaptime: Xmaptime = {};
+//     // 代表时间与x的映射
+//     const timemapx: Timemapx = {};
+//     const namemap: Namemap = {};
+//     const timelist = getSortedList(listdata);
 
+//     // tslint:disable-next-line:forin
+//     for (const i in listdata) {
+//         xmaptime[listdata[i].id] = 0;
+//     }
+//     const xlist = Object.keys(xmaptime);
+//     const len = xlist.length;
+//     const min = 1364774400000;
+//     const max = 1364774400000 + (len - 1) * 1000 * 60 * 60 * 24;
+//     // tslint:disable-next-line:forin
+//     // for (const i in xlist) {
+//     //     const id = xlist[i];
+//     //     xmaptime[id] = min + i * 1000 * 60 * 60 * 24;
+//     //     timemapx[min + i * 1000 * 60 * 60 * 24] = id;
+//     // }
+//     xlist.forEach(
+//         (value, i) => {
+//             // const id = xlist[i];
+//             xmaptime[value] = min + i * 1000 * 60 * 60 * 24;
+//             timemapx[min + i * 1000 * 60 * 60 * 24] = value;
+//         }
+//     );
+//     const newdatalist = [];
+//     // tslint:disable-next-line:forin
+//     for (const i in listdata) {
+//         const id = listdata[i].id;
+//         const name = listdata[i].name;
+//         newdatalist.push({ x: xmaptime[id], y: timelist.indexOf(listdata[i].time), value: listdata[i].value, name });
+//         namemap[id] = name;
+//     }
+//     console.log("timelist",timelist);
+//     console.log("newdatalist",newdatalist);
+//     console.log("xlist",xlist); // xlist [""977875", "977885", "977985", "978005", "978015", "978025", "1201015", "1201605", "1201615", "1201625", "1204035", "1204045", "1204085", ""]
+//     console.log("xmaptime",xmaptime);
+//     // console.log("newdatalist",newdatalist);
+//     return {
+//         // data: {
+//         //   csv: document.getElementById('csv').innerHTML
+//         // },
+//         chart: {
+//             type: 'heatmap',
+//             inverted: true,
+//             backgroundColor: 'rgba(0,0,0,0)',
+//             zoomType: 'y',
+//             events: {
+//                 render() {
+//                     const xAxis = (this as any).xAxis[0];
+//                     const chart = (this as any);
+//                     // console.log("1");
+//                     // console.log("xAxis",xAxis);
+//                     // console.log("11111111",xAxis.labelGroup)
+//                     // tslint:disable-next-line:only-arrow-functions
+//                     const overlabel2showinfo = ()=> {Highcharts.addEvent(xAxis.labelGroup.element, 'mouseover',(e) => {
+//                         // 将原生事件添加上 chartX 和 chartY 值
+//                         e = chart.pointer.normalize(e);
+//                         e.stopPropagation();
+//                         const categories = xAxis.categories;
+//                         // 计算x轴的坐标位置
+//                         let key = 0;
+//                         let brothers = null;
+//                         if ($((e as any).target)[0].tagName.toLowerCase() === "tspan") {
+//                             brothers = $((e as any).target).parent().parent().children();
+//                             // tslint:disable-next-line:radix
+//                             key = $((e as any).target).parent().index();// xAxisa 轴的位置
+//                             // console.log("tspan",index)
+//                         } else {
+//                             brothers = $((e as any).target).parent().children();
+//                             // tslint:disable-next-line:radix
+//                             key = $((e as any).target).index();// xAxisa 轴的位置
+//                         }
+//                         const len = brothers.length;
+//                         // 计算index位置为第几大
+//                         let index = 0;
+//                         for (let i = 0; i < len; i++) {
+//                             const domid: string = brothers[i];
+//                             let beforid: string | undefined = $(domid).attr("y");
+//                             let nowid: string | undefined = $(brothers[key]).attr("y");
+//                             if(beforid === undefined) {
+//                                 beforid = "";
+//                             }
+//                             if(nowid === undefined) {
+//                                 nowid = "";
+//                             }
+//                             // tslint:disable-next-line:radix
+//                             if (parseInt(beforid) < parseInt(nowid)) {
+//                                 index += 1;
+//                                 // console.log("22222")
+//                             } else {
+//                                 // console.log("3333")
+//                             }
+//                         }
+//                         // 修正一下
+//                         const clientX = (e as any).clientX;
+//                         const clientY = (e as any).clientY;
+//                         // console.log(namemap[xlist[index]],categories[index]);
+//                         // console.log("e.target", (e as any).target.style.left,(e as any).target.style.top,(e as any).target.style.width,(e as any).target.style.height);
+//                         // console.log("e.target", (e as any).target.getBoundingClientRect(),e);
+//                         // 先隐藏 ###########
+//                         openInfo(categories[index],namemap[xlist[index]],clientX,clientY,(e as any).target.getBoundingClientRect());
+//                         // infoObject.createNewInfoDiv(categories[index], namemap[xlist[index]], clientX, clientY, redrawEntityFunc, openInfo);
+//                     });};
+//                     const overlabel2hideinfo = ()=> {Highcharts.addEvent(xAxis.labelGroup.element, 'mouseleave', (e) => {
+//                         // 将原生事件添加上 chartX 和 chartY 值
+//                         // const timeoutid = setTimeout(() => { infoObject.hiddenInfo()}, 300);
+//                         // infoObject.setTimeoutId(timeoutid);
+//                         // console.log("leave");
+//                         PubSub.publish("hidetooltip","none");
+//                     });};
+//                     if(xAxis.visible) {
+//                         overlabel2showinfo();
+//                         overlabel2hideinfo();
+//                         // setTimeout(overlabel2showinfo,20);
+//                         // setTimeout(overlabel2hideinfo,20);
+//                     }
+//                 },
+//                 // render() {
+//                 //     // 先隐藏 ###########
+//                 //     // infoObject.hiddenInfo();
+//                 // }
+//             }
+//         },
+//         title: {
+//             // text: title,
+//             text: null,
+//             align: 'center',
+//             style: {
+//                 fontSize: '16px',
+//                 fontWeight: 'bold',
+//                 color: "white"
+//             }
+//         },
+//         legend: {
+//             y:20,
+//         },
+//         // legend: {
+//         //     title: {
+//         //         text: title,
+//         //         style: {
+//         //             color: 'white'
+//         //         },
+//         //     },
+//         //     backgroundColor: '#303030',
+//         //     // borderColor: '#ffffff',
+//         //     borderWidth: 2,
+//         //     borderRadius: 0,
+//         //     // shadow: true,
+//         //     itemStyle: {
+//         //         color: '#C1FFC1',
+//         //         fontWeight: 'bold'
+//         //     },
+//         //     y:20,
+//         // },
+//         // subtitle: {
+//         //   text: 'Temperature variation by day and hour through April 2013',
+//         //   align: 'left'
+//         // },
+//         xAxis: {
+//             type: "category",
+//             tickInterval: 60 * 60 * 24 * 1000,// 以一天为单位，也就是不同个
+//             min: min - 12 * 60 * 60 * 1000,
+//             max: max + 12 * 60 * 60 * 1000,
+//             labels: {
+//                 // enabled:false,
+//                 formatter() {
+//                     // console.log(this,"2222222222222",timemapx[this.value])
+//                     // console.log(namemap,timemapx,(this as any).value);
+//                     return (this as any).value.slice(0, 5) + "";
+//                 },
+//                 style: {
+//                     color: "white"
+//                 }
+//             },
+//             gridLineWidth: 0,
+//             categories: xlist, // 这个要确保为[id,id,id] 而不是名字
+//             tickmarkPlacement: "on",
+//             gridLineColor: 'rgba(0,0,0,0)'
+//             // type:"category",
+//             // tickPositioner:function(a,b,c){
+//             //   console.log(this,a,b,c)
+//             //   return this.tickPositions
+//             // }
+//         },
+//         yAxis: {
+//             type: "category",
+//             title: {
+//                 text: null
+//             },
+//             labels: {
+//                 // format: '{value}:00',
+//                 style: {
+//                     color: "white"
+//                 },
+//                 formatter(a: { pos: number; }) {
+//                     const chartWidth = (this as any).chart.chartWidth;
+//                     // tslint:disable-next-line:radix
+//                     // 逻辑1
+//                     // const hourvalue = parseInt((this as any).value);
+//                     // 逻辑2
+//                     // tslint:disable-next-line:radix
+//                     const ind = parseInt((this as any).value);
+//                     const time = timelist[ind];
+//                     let hourvalue = moment(time).format('HH:mm');
+//                     if (hourvalue === "00:00") {
+//                         hourvalue = moment(time).format('MM-DD');
+//                     }
+//                     // console.log(chartWidth,this.chart,a,b,c)
+//                     if (limiter.scale === onehour) {
+//                         if (chartWidth / window.innerWidth < 0.25) {// 小图
+//                             return a.pos % 2 === 0 ? hourvalue  : "";
+//                         } else {
+//                             return hourvalue ;
+//                         }
+//                     } else if(limiter.scale === fifteenminute) {
+//                         if (chartWidth / window.innerWidth < 0.25) {// 小图
+//                             // return a.pos % 4 === 0 ? transminute(hourvalue) : "";
+//                             return a.pos % 4 === 0 ? hourvalue : "";
+//                         } else {
+//                             // return transminute(hourvalue);
+//                             return hourvalue;
+//                         }
+//                     } else if ( limiter.scale === oneday) {
+//                         return hourvalue;
+//                     }
+//                 }
+//             },
+//             minPadding: 0,
+//             maxPadding: 0,
+//             startOnTick: false,
+//             endOnTick: false,
+//             // tickPositions: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
+//             tickWidth: 1,
+//             min: 0,
+//             max: 23,
+//             gridLineWidth: 0,
+//             gridLineColor: 'rgba(0,0,0,0)',
+//         },
+//         tooltip: {
+//             headerFormat: title + '<br/>',
+//             pointFormatter(): string {
+//                 // console.log(this,a,b,c)
+//                 const x = timemapx[(this as any).options.x];
+//                 const y = (this as any).options.y;
+//                 const value = (this as any).options.value;
+//                 if (limiter.scale === fifteenminute) {
+//                     return "配电柜ID : " + x + "<br/> time:" + transminute(y) + "<br/>value:" + value;
+//                 } else if (limiter.scale === onehour) {
+//                     return "配电柜ID : " + x + "<br/> time:" + y + ":00" + "<br/>value:" + value;
+//                 } else if (limiter.scale === oneday) {
+//                     return "配电柜ID : " + x + "<br/> time:" + moment(timelist[y]).format('MM-DD') + "<br/>value:" + value;
+//                 }
+//                 return "";
+//             }
+//         },
+//         colorAxis: {
+//             stops: [
+//                 [0, '#3060cf'],
+//                 [0.5, '#fffbbc'],
+//                 [1, '#c4463a']
+//             ],
+//             // min:-1,
+//             // max:1,
+//             // min: -5
+//             className: "heatmaplegend"
+//         },
+//         series: [{
+//             data: newdatalist,
+//             borderWidth: 0,
+//             colsize: 24 * 36e5, // one day
+//         }],
+//         credits: {
+//             enabled: false
+//         }
+//     };
+// };
 // export const drawHeatmapEchartOptions = (listdata: HeatmapChartTrans, title: string) => {
 
 
