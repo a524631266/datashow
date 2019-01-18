@@ -149,9 +149,13 @@ body{
   z-index:400;
   box-shadow: 0 1px 2px #001400;
 }
+.layoutheader:hover {
+    z-index:401;
+}
 .ant-layout-header{
   padding: 0px;
-  background: radial-gradient(circle at center,#000066 0%,#000000 200%);
+  // background: radial-gradient(circle at center,#000066 0%,#000000 200%);
+  background: rgba(0,0,0,0);
 }
 .ant-layout{
   background: transparent;

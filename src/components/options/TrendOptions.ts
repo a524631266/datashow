@@ -91,16 +91,31 @@ export const drawLineOptions = (listdata: TrendChartTrans,title: string) => {
       shared : true,
       crosshairs : true,
     },
+    // legend : {
+    //   enabled:false,
+    //   align : 'center',
+    //   verticalAlign : 'bottom',
+    //   y : 0,
+    //   floating : false,
+    //   borderWidth : 0  ,
+    //   itemStyle: {
+    //     color:"#C1FFC1"
+    //   }
+    // },
     legend : {
-      enabled:false,
-      align : 'center',
-      verticalAlign : 'bottom',
-      y : 0,
-      floating : false,
-      borderWidth : 0  ,
-      itemStyle: {
-        color:"#C1FFC1"
-      }
+        enabled: true,
+        align : 'center',
+        verticalAlign : 'bottom',
+        y : 0,
+        floating : false,
+        itemStyle: {
+          color: "#C1FFC1",
+          fontWeight: 'bold'
+        },
+        backgroundColor: '#303030',
+        // borderColor: '#ffffff',
+        borderWidth: 2,
+        borderRadius: 0,
     },
     credits : {
       enabled : false

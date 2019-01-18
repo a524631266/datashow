@@ -35,8 +35,8 @@
                                 <button class="btn btn-outline-secondary btn-sm" type="button"><i class="fa fa-calendar"></i></button>
                             </div>
                         </div>
-                        <label class="small">scale:</label>
-                        <div class="input-group input-group-sm" @click.stop="()=>{}">
+                        <label class="small" v-show="ShowScale">scale:</label>
+                        <div class="input-group input-group-sm" @click.stop="()=>{}" v-show="ShowScale">
                             <!-- <select class="form-control" v-model="data.scale">
                                     <option label="1h" value="3600">1h</option>
                                     <option label="1d" value="86400" selected="true">1d</option>
@@ -48,10 +48,10 @@
                             <a-radio-group v-model="data.scale">
                                 <a-radio :value="900" :style="{color: 'white'}">15m</a-radio>
                                 <a-radio :value="3600" :style="{color: 'white'}">1h</a-radio>
-                                <a-radio :value="86400" :style="{color: 'white'}">1d</a-radio>
+                                <a-radio :value="86400" :style="{color: 'white'}" v-show="ShowScaleDay">1d</a-radio>
                             </a-radio-group>
                         </div>
-                        <a-row  >
+                        <a-row  v-show="ShowFilter">
                             <a-col :span="24">
                                 <!-- <span class="badge badge-secondary">限制</span> -->
                                 <label class="small">filter:</label>
@@ -172,6 +172,7 @@ import moment,{ DurationInputObject, Moment } from "moment";
 import Antd from "ant-design-vue";
 import { ThresholdLimiter } from '@/types';
 import TimeSlicing from '@/util/TimeSlicing.ts';
+import TitleName from '@/types/elecchartname.ts';
 // (window as any).moment = moment;
 @Component({
     components: {
@@ -221,7 +222,7 @@ import TimeSlicing from '@/util/TimeSlicing.ts';
     },
 })
 export default class LittleBar extends Vue {
-    @Prop({default: ""}) public titlename!: string;
+    @Prop({default: ""}) public titlename!: TitleName;
     @Prop() public appendtimelist!: number[];
     @Prop({default: false}) public showPageSize!: boolean;
     @Prop() public date!: Moment;
@@ -272,6 +273,50 @@ export default class LittleBar extends Vue {
     }
     get ifplay(): boolean {
         return this.play;
+    }
+    get ShowScaleDay(): boolean {
+        if (this.titlename === TitleName.Box) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    get ShowScale(): boolean {
+        let show: boolean = true;
+        switch (this.titlename) {
+            case TitleName.Trend:
+                show = false;
+                break;
+            case TitleName.Top:
+                show = false;
+                break;
+            case TitleName.TimeLine:
+                show = false;
+                break;
+            default:
+                break;
+        }
+        return show;
+    }
+    get ShowFilter(): boolean {
+        let show: boolean = true;
+        switch (this.titlename) {
+            case TitleName.Trend:
+                show = false;
+                break;
+            case TitleName.Top:
+                show = false;
+                break;
+            case TitleName.Box:
+                show = false;
+                break;
+            case TitleName.HeatMap:
+                show = false;
+                break;
+            default:
+                break;
+        }
+        return show;
     }
     private thresholdslidermarks = {
         0: {
@@ -759,10 +804,14 @@ $littlebarheight: 24px;
     // }
 }
 .titlelarge{
-    font-size: large;
+    // font-size: large;
+    font-size: 1.25rem;
+    white-space: nowrap;
 }
 .titlemiddle {
-    font-size: medium;
+    // font-size: medium;
+    font-size: 1.16rem;
+    white-space: nowrap;
 }
 .showpointer {
     color:white;

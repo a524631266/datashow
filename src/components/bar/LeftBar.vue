@@ -4,7 +4,7 @@
             <a :href="'/home/'+nodedataref.key" target="_self" @click.prevent="router2home" class="btn btn-sm">图表</a>
             <a :href="'/info/'+nodedataref.key" target="_self" @click.prevent="router2info" class="btn btn-sm">用户信息</a>
         </template> -->
-        <div class="treepanel" :style="{height:treeheight}">
+        <div class="treepanel" :style="{height:`${treeheigh2}px`}" ref="treepanel">
         <a-tree
             :treeData="treeData"
             :expandedKeys="expandedKeys"
@@ -104,7 +104,7 @@ export interface ChildrenValue {
 })
 export default class LeftBar extends Vue {
     private openLeftBar = false;
-    private treeheight = "1000px";
+    private treeheight = 1000;
     private treeData: ChildrenValue[] = [
                 {
                     id: "99998999",
@@ -340,8 +340,17 @@ export default class LeftBar extends Vue {
                 );
         PubSub.publish("openLeftBar",openLeftBar);
     }
+    get treeheigh2() {
+        return this.treeheight;
+    }
     private mounted() {
-        this.treeheight = (document.body.clientHeight - 24) + 'px';
+
+        this.treeheight = document.body.clientHeight - 24;
+        (window as any).onresize=()=> {
+            // console.log("this.$refs",this.$refs);
+            (this.$refs.treepanel as HTMLDivElement).style.height = (document.body.clientHeight - 24) + "px";
+            // this.treeheight = document.body.clientHeight - 24;
+        }
         // PubSub.publishSync("updateBread",this.treeData);
         this.expandedKeys.push("99998999");
     }

@@ -22,6 +22,8 @@ import { updatestate } from '@/types/updateState';
 import exportHighchart from 'highcharts/modules/exporting';
 import {downloadchart} from '@/util/downloadcanvas.ts';
 exportHighchart(Highcharts);
+// 设置 Highcharts时间问题 为false,采用中国日期时间戳
+Highcharts.setOptions({global: { useUTC: false}});
 @Component({
     components: {
         ASpin: Antd.Spin,

@@ -25,6 +25,7 @@ import Axios from "axios";
 import { AxiosSourceManage } from "@/implements/AxiosSourceManage";
 import moment,{ Moment } from "moment";
 import {orginitconfig} from '@/config/initOptions.ts';
+import TitleName from '@/types/elecchartname.ts';
 // import { Component } from "vue-property-decorator";
 // @Component({
 //     components:{
@@ -47,7 +48,7 @@ export default class BoxHighChart extends Vue implements AxiosSourceManage {
     public option: Options = highchartEmptyOption(undefined);
     public axiosSource = Axios.CancelToken.source();
     private chartLibrary = ChartLibrary.highchart;
-    private titlename = "统计";
+    private titlename = TitleName.Box;
     private candraggable = false;
     private date: Moment = moment();
     @Emit()

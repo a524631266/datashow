@@ -63,7 +63,9 @@ export default class BreadCrumb extends Vue {
 :global(.ant-breadcrumb){
     // color: #69473ff7;
     color: #e2b8ae;
-    font-size: 14px;
+    // font-size: 14px;
+    font-size: 1.16rem;
+    white-space: nowrap;
 }
 
 :global(.ant-breadcrumb > span:last-child){

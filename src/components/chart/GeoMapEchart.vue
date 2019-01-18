@@ -26,6 +26,7 @@ import { baseurl } from "@/util/getRootPath.ts";
 import { ThresholdLimiter } from '@/types';
 import TimerManager from "@/util/timeoutmanage.ts";
 import {orginitconfig} from '@/config/initOptions.ts';
+import TitleName from '@/types/elecchartname.ts';
 // import 'echarts/map/js/province/xinjiang.js';
 // const prev = process.env.NODE_ENV === "development"? "/xinjiang": "";
 // const websocketurlhost = process.env.NODE_ENV === "development"? "192.168.10.63:8088": "192.168.10.63:8088";
@@ -55,7 +56,7 @@ export default class GeoMapEchart extends Vue {
     public geoBodydata: ChartStorePool<ReturnGeoDataWsBody> = {};
     public geoheaddata: ReturnGeoDataWsHead = {geomap:{}} as any;
     public option = {};
-    public titlename = "Geo";
+    public titlename = TitleName.Geo;
     private candraggable = false;
     // private intervalid: number[] = [];
     private timeoutid: number = 0;

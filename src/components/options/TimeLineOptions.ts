@@ -788,24 +788,68 @@ interface inlist  {
 
 // tslint:disable-next-line:no-shadowed-variable
 const getInterData = (inlist: inlist[]) => {
-    return {
-        name: "value",
-        colorByPoint: true,
-        // borderColor: 'rgba(0,0,0,0)',
-        data: inlist,
-        borderRadius: 0,
-        pointPadding: 0,
-        groupPadding: 0,
-        // colors:["red","yellow","blue"],
-        dataLabels: {
-          enabled: false,
-          formatter(): string {
-            return (this as any).key;
+    console.log("inlist",inlist);
+    const negInlist: any = [];
+    const posInlist: any= [];
+    inlist.forEach(
+      (value: inlist) => {
+        if( value.value >=0) {
+          posInlist.push(value);
+        } else {
+          negInlist.push(value);
+        }
+      }
+    );
+    return [
+      {
+          name: "超高",
+          colorByPoint: false, // 为了使的当前的color有效,需要修改为false
+          // borderColor: 'rgba(0,0,0,0)',
+          stack: 0,
+          data: posInlist,
+          borderRadius: 0,
+          pointPadding: 0,
+          groupPadding: 0,
+          // pointPlacement: -0.25,
+          tickmarkPlacement:'on',
+          grouping: false, //  不分组,显示到同一行中
+          // pointWidth: 80,
+          color: "rgba(255,0,0,1)",
+          // colors:["red","yellow","blue"],
+          dataLabels: {
+            enabled: false,
+            formatter(): string {
+              return (this as any).key;
+            },
           },
-        },
-        borderWidth: 0, // 矩形无边框
-        // colsize: 24 * 36e5, // one day
-    };
+          borderWidth: 0, // 矩形无边框
+          // colsize: 24 * 36e5, // one day
+      },
+      {
+          name: "超低",
+          colorByPoint: false,
+          // borderColor: 'rgba(0,0,0,0)',
+          stack: 0,
+          color: "rgba(0,255,0,1)",
+          data: negInlist,
+          borderRadius: 0,
+          pointPadding: 0,
+          groupPadding: 0,
+          // pointWidth: 80,
+          // pointPlacement: 0.25,
+          grouping: false,
+          tickmarkPlacement:'on',
+          // colors:["red","yellow","blue"],
+          dataLabels: {
+            enabled: false,
+            formatter(): string {
+              return (this as any).key;
+            },
+          },
+          borderWidth: 0, // 矩形无边框
+          // colsize: 24 * 36e5, // one day
+      },
+    ];
 };
 
 
@@ -823,15 +867,15 @@ export const drawActionOptions = (objectlist: TimeLineChartTrans, title: string,
     const yAxis: string[] = [];
     // tslint:disable-next-line:forin
     for (const i in objectlist) {
-      const day = Highcharts.dateFormat('%m-%d', objectlist[i].starttime + 8 * 60 * 60 * 1000);
+      const day = Highcharts.dateFormat('%m-%d', objectlist[i].starttime);
       if (!yAxis.includes(day)) {
           yAxis.push(day);
       }
       inlist.push({
-          x: (objectlist[i].starttime + 8 * 60 * 60 * 1000) % (24 * 60 * 60 * 1000),
-          x2: (endtimeMinusOne(objectlist[i].endtime) + 8 * 60 * 60 * 1000) % (24 * 60 * 60 * 1000),
+          x: (objectlist[i].starttime) % (24 * 60 * 60 * 1000),
+          x2: (endtimeMinusOne(objectlist[i].endtime)) % (24 * 60 * 60 * 1000),
           y: yAxis.indexOf(day),
-          name: objectlist[i].type,
+          name: objectlist[i].type==="增加"?"超高":"超低",
           id: objectlist[i].id,
           color: objectlist[i].value > 0 ? "rgba(255,0,0,0.8)" : "rgba(0,255,0,0.8)",
           value: objectlist[i].value,
@@ -878,8 +922,8 @@ export const drawActionOptions = (objectlist: TimeLineChartTrans, title: string,
             color: "white",
           },
         },
-        min: 0,
-        max: 24 * 60 * 60 * 1000-1,
+        min: 0 -  8 * 60 * 60 * 1000,
+        max: 24 * 60 * 60 * 1000-1 - 8 * 60 * 60 * 1000,
       },
       yAxis: {
         type: "catogory",
@@ -921,16 +965,31 @@ export const drawActionOptions = (objectlist: TimeLineChartTrans, title: string,
           },
         },
       },
-      legend: {
-        // enabled: false,
-        align : 'center',
-        // verticalAlign : 'bottom',
-        y : 0,
-        floating : false,
-        borderWidth : 0,
-        itemStyle: {
-          color: "#C1FFC1",
-        },
+      // legend: {
+      //   // enabled: false,
+      //   align : 'center',
+      //   // verticalAlign : 'bottom',
+      //   y : 0,
+      //   floating : false,
+      //   borderWidth : 0,
+      //   itemStyle: {
+      //     color: "#C1FFC1",
+      //   },
+      // },
+      legend : {
+          enabled: true,
+          align : 'center',
+          verticalAlign : 'bottom',
+          y : 0,
+          floating : false,
+          itemStyle: {
+            color: "#C1FFC1",
+            fontWeight: 'bold'
+          },
+          backgroundColor: '#303030',
+          // borderColor: '#ffffff',
+          borderWidth: 2,
+          borderRadius: 0,
       },
         // colorAxis: {
         //   stops: [
@@ -961,7 +1020,7 @@ export const drawActionOptions = (objectlist: TimeLineChartTrans, title: string,
     //         fontWeight: 'bold'
     //     },
     // },
-      series: [getInterData(inlist)],
+      series: [...getInterData(inlist)],
       credits: {
           enabled: false,
       },

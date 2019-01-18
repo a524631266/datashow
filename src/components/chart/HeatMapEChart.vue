@@ -24,6 +24,7 @@ import Axios from "axios";
 import { AxiosSourceManage } from "@/implements/AxiosSourceManage";
 import PageButton from "@/components/base/PageButton.vue";
 import moment,{ Moment } from "moment";
+import TitleName from '@/types/elecchartname.ts';
 @Component({
     components: {
         BaseChartFactory,
@@ -41,7 +42,7 @@ export default class HeatMapHighChart extends Vue implements AxiosSourceManage {
     public option: Options = highchartEmptyOption(undefined);
     public axiosSource = Axios.CancelToken.source();
     private chartLibrary = ChartLibrary.echart;
-    private titlename = "热力图";
+    private titlename = TitleName.HeatMap;
     private candraggable = false;
     private pageid = 1;
     private date: Moment = moment();

@@ -14,7 +14,7 @@ module.exports = {
                 }
             },
             '/xinjiang': {
-                target: 'http://192.168.10.63:8088',
+                target: 'http://192.168.10.63:8098/anomaly',
                 secure:false,
                 changeOrigin: true,
                 pathRewrite: {

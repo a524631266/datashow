@@ -24,6 +24,7 @@ import Axios from "axios";
 import { AxiosSourceManage } from "@/implements/AxiosSourceManage";
 import moment,{ Moment } from "moment";
 import {entityinitconfig, orginitconfig} from '@/config/initOptions.ts';
+import TitleName from '@/types/elecchartname.ts';
 @Component({
     components: {
         BaseChartFactory,
@@ -40,7 +41,7 @@ export default class TrendHighChart extends Vue implements AxiosSourceManage {
     public option: Options = highchartEmptyOption(undefined);
     public axiosSource = Axios.CancelToken.source();
     private chartLibrary = ChartLibrary.highchart;
-    private titlename = "趋势";
+    private titlename = TitleName.Trend;
     private candraggable = false;
     private date: Moment = moment();
     @Emit()

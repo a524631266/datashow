@@ -5,7 +5,7 @@
                     <i class="material-icons">skip_previous</i>
                 </div>
         <div class="btn squareborder nopionter">
-            <span v-text="pagedata.pageid"></span> / <span v-text="maxpage"></span> 
+            <span v-text="pageid"></span> / <span v-text="maxpage"></span> 
         </div>
         <div class="mdl-button mdl-js-button mdl-button--icon ui-stepButton " @click.prevent.stop="nextpage_local">
             <!-- <i class="fa fa-step-forward"></i> -->
@@ -29,6 +29,13 @@ export default class PageButton extends Vue {
     @Model("pagechange") public pagedata!: {pageid: number,entitynums: number,pagesize: number};
     get maxpage() {
         return Math.ceil(this.pagedata.entitynums / this.pagedata.pagesize);
+    }
+    get pageid() {
+        // 更新时间
+        if (this.pagedata.pageid > this.maxpage) {
+            this.pagedata.pageid = this.maxpage;
+        }
+        return this.pagedata.pageid;
     }
     @Emit()
     private prepage_local() {

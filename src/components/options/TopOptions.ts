@@ -213,19 +213,34 @@ function getTwoDirectBarOption(positive_id: string[],datalist: TwoNumberList[],n
     //     }
     //   }
     // },
+    // legend : {
+    //   enabled:false,
+    //   align : 'center',
+    //   verticalAlign : 'bottom',
+    //   y : 0,
+    //   floating : false,
+    //   borderWidth : 0  ,
+    //   itemStyle: {
+    //     color:"#C1FFC1"
+    //   },
+    // },
     legend : {
-      enabled:false,
-      align : 'center',
-      verticalAlign : 'bottom',
-      y : 0,
-      floating : false,
-      borderWidth : 0  ,
-      itemStyle: {
-        color:"#C1FFC1"
-      },
+        enabled: true,
+        align : 'center',
+        verticalAlign : 'bottom',
+        y : 0,
+        floating : false,
+        itemStyle: {
+          color: "#C1FFC1",
+          fontWeight: 'bold'
+        },
+        backgroundColor: '#303030',
+        // borderColor: '#ffffff',
+        borderWidth: 2,
+        borderRadius: 0,
     },
     series: [{
-      name: '负',
+      name: '超低',
       data: datalist2,
       color:"lightgreen",
       dataLabels:{
@@ -240,7 +255,7 @@ function getTwoDirectBarOption(positive_id: string[],datalist: TwoNumberList[],n
           }
       }
     }, {
-      name: '正',
+      name: '超高',
       data: datalist,
       color:"red",
       dataLabels: {
