@@ -23,7 +23,7 @@ import exportHighchart from 'highcharts/modules/exporting';
 import {downloadchart} from '@/util/downloadcanvas.ts';
 exportHighchart(Highcharts);
 // 设置 Highcharts时间问题 为false,采用中国日期时间戳
-// Highcharts.setOptions({global: { useUTC: false}});
+Highcharts.setOptions({global: { useUTC: false}});
 @Component({
     components: {
         ASpin: Antd.Spin,
@@ -101,6 +101,7 @@ export default class BaseChartFactory extends Vue {
                     this.toggleHighChartAxis();
                 }
         }
+        // Highcharts.setOptions({global: { useUTC: true}});
         if(this.chartLibrary === ChartLibrary.echart) {
                 if (this.chartInstance) { // echart增量更新数据的时候操作
                     // console.log("Echart111111111111111111");

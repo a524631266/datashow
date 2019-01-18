@@ -872,8 +872,8 @@ export const drawActionOptions = (objectlist: TimeLineChartTrans, title: string,
           yAxis.push(day);
       }
       inlist.push({
-          x: ((objectlist[i].starttime +  8 * 60 * 60 * 1000) % (24 * 60 * 60 * 1000)),
-          x2: ((endtimeMinusOne(objectlist[i].endtime +  8 * 60 * 60 * 1000)) % (24 * 60 * 60 * 1000)),
+          x: ((objectlist[i].starttime +  8 * 60 * 60 * 1000) % (24 * 60 * 60 * 1000)) -  8 * 60 * 60 * 1000,
+          x2: ((endtimeMinusOne(objectlist[i].endtime +  8 * 60 * 60 * 1000)) % (24 * 60 * 60 * 1000)) -  8 * 60 * 60 * 1000,
           y: yAxis.indexOf(day),
           name: objectlist[i].type==="增加"?"超高":"超低",
           id: objectlist[i].id,
@@ -889,7 +889,7 @@ export const drawActionOptions = (objectlist: TimeLineChartTrans, title: string,
       //     colorByPoint: true,
       //   }
       // },
-      // global: { useUTC: true},
+      global: { useUTC: false},
       chart: {
         type: 'xrange',
         // type:
@@ -923,8 +923,8 @@ export const drawActionOptions = (objectlist: TimeLineChartTrans, title: string,
             color: "white",
           },
         },
-        min: 0,
-        max: 24 * 60 * 60 * 1000  - 1,
+        min: 0 -  8 * 60 * 60 * 1000,
+        max: 24 * 60 * 60 * 1000  - 1 -  8 * 60 * 60 * 1000,
       },
       yAxis: {
         type: "catogory",
@@ -957,7 +957,7 @@ export const drawActionOptions = (objectlist: TimeLineChartTrans, title: string,
           // console.log(this)
           // tslint:disable-next-line:max-line-length
           // return "配电柜 : " + id + "<br/> 开始:" + yAxis[y] +  Highcharts.dateFormat(' %H:%M:%S', x) + "- 结束:" + yAxis[y] + Highcharts.dateFormat(' %H:%M:%S', x2) + "<br/>" + name + ":" +  Math.abs(value);
-          return "配电柜 : " + id + "<br/> 开始:" + yAxis[y] +  moment(x).format("HH:mm:ss") + "- 结束:" + yAxis[y] + moment(x2).format("HH:mm:ss") + "<br/>" + name + ":" +  Math.abs(value);
+          return "配电柜 : " + id + "<br/> 开始:" + yAxis[y] +  moment(x).format("HH:mm:ss") + "- 结束:" + yAxis[y] + moment(x).format("HH:mm:ss") + "<br/>" + name + ":" +  Math.abs(value);
         },
       },
       plotOptions: {

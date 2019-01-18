@@ -24,7 +24,7 @@ export const drawLineOptions = (listdata: TrendChartTrans,title: string) => {
     }
   );
   const option = {
-    global: { useUTC: true},
+    // global: { useUTC: false},
     chart : {
       panning : true,
       panKey : 'ctrl',

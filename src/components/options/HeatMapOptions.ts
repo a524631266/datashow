@@ -156,6 +156,7 @@ export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, r
             // inverted: true,
             backgroundColor: 'rgba(0,0,0,0)',
             zoomType: 'x',
+            panKey : 'ctrl',
             events: {
                 render() {
                     const xAxis = (this as any).yAxis[0];
@@ -264,6 +265,9 @@ export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, r
                     // console.log("getTheFirstTS(inittimelist, initts)",getTheFirstTS(inittimelist, initts));
                     const readlytime = timelist[inittimelist.indexOf(getTheFirstTS(inittimelist, initts))];
                     // console.log("moment(readlytime).format('HH:mm')",moment(readlytime).format('HH:mm'),readlytime);
+                    if (moment(readlytime).format('HH:mm') === "00:00") {
+                        return moment(readlytime).format('MM-DD');
+                    }
                     return moment(readlytime).format('HH:mm');
                     // return (this as any).value.slice(0, 5) + "";
                 },
