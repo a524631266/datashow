@@ -62,6 +62,29 @@ export default class TooltipRoute extends Vue {
                 this.delayhidetooltip();
             // }
         });
+        PubSub.subscribe("leafrouter2home",(mesg: any,data: {entity: string,name: string}) => {
+            this.leafrouter2home(data);
+        });
+        PubSub.subscribe("leafrouter2info",(mesg: any,data: {entity: string,name: string}) => {
+            this.leafrouter2info(data);
+        });
+    }
+    // 最终叶子节点的路由不需要 coord
+    private leafrouter2home(data: {entity: string,name: string}) {
+        this.$router.push({name: "node",query: {
+            entity: data.entity,
+            name: data.name as any,
+            level: -1 as any,
+            isLeaf: true as any,
+            coord: [0 , 0] as any,
+            },params: { entity: data.entity}});
+    }
+    // 最终叶子节点的路由不需要 coord
+    private leafrouter2info(data: {entity: string,name: string}) {
+        PubSub.publish("showUserinfo",{
+                entity: data.entity,
+                name: data.name}
+                );
     }
     // // @Emit()
     // private visibleChange(e: any,b: any) {

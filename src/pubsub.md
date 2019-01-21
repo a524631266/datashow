@@ -124,8 +124,14 @@ PubSub.subscribe("doubleclick2changecenter",(mesg: any, id: string)=> {
         });
 ```
 
+## 添加pubsub时事件 在 TooltipRoute中定义
 
-
+PubSub.subscribe("leafrouter2home",(mesg: any,data: {entity: string,name: string}) => {
+            this.leafrouter2home(data);
+        });
+        PubSub.subscribe("leafrouter2info",(mesg: any,data: {entity: string,name: string}) => {
+            this.leafrouter2info(data);
+        });
 
 
 moment官网

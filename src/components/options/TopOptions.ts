@@ -96,36 +96,49 @@ const option1 = {
     }
   }]
 };
-const genPackedBubble = (datalist: any[]) => {
+function queryHome(entity: string,name: string) {
+  // alert("asdasd:" + entity + ": name:" + name);
+  PubSub.publish("leafrouter2home",{entity, name});
+}
+function queryInfo(entity: string,name: string) {
+  // alert("asdasd:" + entity + ": name:" + name);
+  PubSub.publish("leafrouter2info",{entity, name});
+}
+(window as any).leafrouter2home = queryHome;
+(window as any).leafrouter2info = queryInfo;
+const genPackedBubble2 = (datalist: any[],BubbluSize: {minSize: number,maxSize: number}) => {
   return {
     chart: {
       type: 'packedbubble',
       // height: '100%'
+      // zoomType : 'x',
+      backgroundColor: 'rgba(0,0,0,0)',
     },
     title: {
         text: ''
     },
     tooltip: {
         useHTML: true,
-        pointFormat: '<b>{point.name}:</b> {point.y}m CO<sub>2</sub>'
+        // pointFormat: '<b>name:</b> {point.name} <br/><b>entity:</b> <b>{point.entity}</b><br/><b>value:</b>{point.y}<br/><a onclick="leafrouter2home("{point.entity}","{point.name}")">图表</a> <a onclick="leafrouter2info("{point.entity}","{point.name}")">用户信息</a>',
+    },
+    legend : {
+      enabled: true,
+      align : 'center',
+      verticalAlign : 'bottom',
+      y : 0,
+      floating : false,
+      itemStyle: {
+        color: "#C1FFC1",
+        fontWeight: 'bold'
+      },
+      backgroundColor: '#303030',
+      // borderColor: '#ffffff',
+      borderWidth: 2,
+      borderRadius: 0,
     },
     plotOptions: {
         packedbubble: {
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}',
-                filter: {
-                    property: 'y',
-                    operator: '>',
-                    value: 250
-                },
-                style: {
-                    color: 'black',
-                    textOutline: 'none',
-                    fontWeight: 'normal'
-                }
-            },
-            minPointSize: 5
+            ...BubbluSize
         }
     },
     xAxis:{
@@ -133,6 +146,9 @@ const genPackedBubble = (datalist: any[]) => {
     yAxis: {
     },
     series: datalist,
+    credits: {
+      enabled: false
+    },
     responsive: {
         rules: [{
             condition: {
@@ -150,31 +166,95 @@ const genPackedBubble = (datalist: any[]) => {
   };
 };
 
+const genPackedBubble = (datalist: any[],BubbluSize: {minSize: number}) => {
+  return {
+      chart: {
+        type: "packedbubble",
+        backgroundColor: "rgba(0,0,0,0)"
+      },
+      title: {
+        text: ""
+      },
+      tooltip: {
+        useHTML: true,
+        pointFormat: 	`<b>name:</b> {point.name} <br/><b>entity:</b> <b>{point.entity}</b><br/><b>value:</b>{point.y}<br/><a onclick="leafrouter2home('{point.entity}','{point.name}')">图表</a> <a onclick="leafrouter2info('{point.entity}','{point.name}')">用户信息</a>`
+      },
+      plotOptions: {
+        packedbubble: {
+          ...BubbluSize
+        }
+      },
+      legend : {
+        enabled: true,
+        align : 'center',
+        verticalAlign : 'bottom',
+        y : 0,
+        floating : false,
+        itemStyle: {
+          color: "#C1FFC1",
+          fontWeight: 'bold'
+        },
+        backgroundColor: '#303030',
+        // borderColor: '#ffffff',
+        borderWidth: 2,
+        borderRadius: 0,
+      },
+      series: datalist,
+      credits: {
+        enabled: false
+      },
+      change: "redraw"
+    };
+};
 export const drawTopOptions = (objectlist: TopChartTrans,title: string,redrawEntityFunc: any,openInfo: (entity: string, name: string,clientX: number,clientY: number,target: DOMRect)=>void) => {
   // tslint:disable-next-line:one-variable-per-declaration
   const series: any[] = [
     {
       name:"超低",
       data:[],
+      color:"lightgreen",
+      dataLabels:{
+        enabled: true,
+        format: "{point.name}",
+        style: {
+          color: "black",
+        }
+      },
     },
     {
       name:"超高",
-      data:[]
+      data:[],
+      color:"red",
+      dataLabels:{
+        enabled: true,
+        format: "{point.name}",
+      },
     }
   ];
+  const BubbluSize = {
+    minSize: 0,
+    // maxSize:0,
+  };
   // tslint:disable-next-line:forin
   for (const i in objectlist) {
-    if (objectlist[i].value>=0) {
+    const value = objectlist[i].value;
+    if (value>=0) {
       // ,id: objectlist[i].id
-      (series[1] as any).data.push({name: objectlist[i].name,value: objectlist[i].value});
+      (series[1] as any).data.push({name: objectlist[i].name,value,entity: objectlist[i].id + ""});
     } else {
-      (series[0] as any).data.push({name: objectlist[i].name,value: objectlist[i].value});
+      (series[0] as any).data.push({name: objectlist[i].name,value: -value,entity: objectlist[i].id + ""});
+    }
+    // if(Math.abs(value) > BubbluSize.maxSize) {
+    //   BubbluSize.maxSize = Math.abs(value);
+    // }
+    if(Math.abs(value) < BubbluSize.minSize || (Math.abs(value) !== 0 && BubbluSize.minSize === 0)) {
+      BubbluSize.minSize = Math.abs(value);
     }
   }
-  console.log("series",series);
-  const data = genPackedBubble(JSON.parse(JSON.stringify(series)));
-  (window as any).data = data;
-  return data;
+  console.log("series",series,BubbluSize);
+  // const data = genPackedBubble(JSON.parse(JSON.stringify(series)),BubbluSize);
+  (window as any).series = series;
+  return genPackedBubble(JSON.parse(JSON.stringify(series)),BubbluSize);
 };
 
 export const drawTopOptionsBack = (objectlist: TopChartTrans,title: string,redrawEntityFunc: any,openInfo: (entity: string, name: string,clientX: number,clientY: number,target: DOMRect)=>void) => {

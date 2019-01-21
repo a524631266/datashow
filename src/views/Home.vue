@@ -223,7 +223,9 @@ $antdsliderheight: $sliderbaseheight + px;
     border-right: 15px solid white;
     border-bottom: 7px solid transparent;
 }
-
+#chart-top .highcharts-tooltip{
+    pointer-events: auto !important;
+}
 #bar{
     height: 3rem;
     position: relative;

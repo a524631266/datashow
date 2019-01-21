@@ -1,0 +1,102 @@
+{
+    "chart": {
+        "type": "packedbubble",
+        "backgroundColor": "rgba(0,0,0,0)"
+    },
+    "title": {
+        "text": ""
+    },
+    "tooltip": {
+        "useHTML": true,
+        "pointFormat": "<b>{point.name}:</b> {point.y}m CO<sub>2</sub>"
+    },
+    "plotOptions": {
+        "packedbubble": {
+            "dataLabels": {
+                "enabled": true,
+                "format": "{point.name}",
+                "filter": {
+                    "property": "y",
+                    "operator": ">",
+                    "value": 250
+                },
+                "style": {
+                    "color": "black",
+                    "textOutline": "none",
+                    "fontWeight": "normal"
+                }
+            },
+            "minPointSize": 5
+        }
+    },
+    "xAxis": {},
+    "yAxis": {},
+    "series": [
+        {
+            "name": "超低",
+            "data": [
+                {
+                    "name": "5监区",
+                    "value": -0.013001498663001456,
+                    "entity": "881645"
+                },
+                {
+                    "name": "9监区",
+                    "value": -0.14615719847047495,
+                    "entity": "881675"
+                },
+                {
+                    "name": "洗澡堂",
+                    "value": -0.2940333407039244,
+                    "entity": "982235"
+                },
+                {
+                    "name": "10监区",
+                    "value": -0.503442636588638,
+                    "entity": "881685"
+                },
+                {
+                    "name": "7监区",
+                    "value": -0.594232930958973,
+                    "entity": "881655"
+                }
+            ]
+        },
+        {
+            "name": "超高",
+            "data": [
+                {
+                    "name": "备勤楼2",
+                    "value": 1.6392863275994314,
+                    "entity": "881615"
+                },
+                {
+                    "name": "46监区",
+                    "value": 1.0831445544317653,
+                    "entity": "881635"
+                }
+            ]
+        }
+    ],
+    "credits": {
+        "enabled": false
+    },
+    "responsive": {
+        "rules": [
+            {
+                "condition": {
+                    "maxWidth": 500
+                },
+                "chartOptions": {
+                    "legend": {
+                        "align": "right",
+                        "verticalAlign": "middle",
+                        "layout": "vertical"
+                    }
+                },
+                "_id": "highcharts-pzbv6hg-3091"
+            }
+        ]
+    },
+    "change": "redraw"
+}

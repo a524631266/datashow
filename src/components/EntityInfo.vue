@@ -319,7 +319,7 @@ header {
 	height: 100%;
 	background:#000;
 	background-color: rgb(252,248,227);
-	z-index: 399;
+	z-index: 400;
 }
 .desc {
 	font-size: 18px;
