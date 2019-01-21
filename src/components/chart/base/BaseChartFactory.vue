@@ -23,14 +23,15 @@ import exportHighchart from 'highcharts/modules/exporting';
 import HighchartsMore from 'highcharts/highcharts-more';
 import {downloadchart} from '@/util/downloadcanvas.ts';
 exportHighchart(Highcharts);
+HighchartsMore(Highcharts);
 // tslint:disable-next-line:no-var-requires
 // require('highcharts/highcharts-more')(Highcharts);
 // tslint:disable-next-line:no-var-requires
-require('highcharts/highcharts-more.js');
+// require('highcharts/highcharts-more.js');
 // tslint:disable-next-line:no-var-requires
 require('highcharts/modules/map')(Highcharts);
 // tslint:disable-next-line:no-var-requires
-require("highcharts-oldie")(Highcharts);
+// require("highcharts-oldie")(Highcharts);
 // 设置 Highcharts时间问题 为false,采用中国日期时间戳
 Highcharts.setOptions({global: { useUTC: false}});
 @Component({

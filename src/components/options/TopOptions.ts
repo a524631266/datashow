@@ -1,5 +1,5 @@
 import Highcharts, { Options } from 'highcharts';
-import "./dependentjs/highcharts-more";// 一定要加载，否者无法显示相形图
+// import "./dependentjs/highcharts-more";// 一定要加载，否者无法显示相形图
 // import "./dependentjs/oldie";// 一定要加载，否者无法显示相形图
 import { TopChart, TopChartTrans } from '@/types/postreturnform';
 // tslint:disable-next-line:no-var-requires
@@ -251,9 +251,9 @@ export const drawTopOptions = (objectlist: TopChartTrans,title: string,redrawEnt
       BubbluSize.minSize = Math.abs(value);
     }
   }
-  console.log("series",series,BubbluSize);
+  // console.log("series",series,BubbluSize);
   // const data = genPackedBubble(JSON.parse(JSON.stringify(series)),BubbluSize);
-  (window as any).series = series;
+  // (window as any).series = series;
   return genPackedBubble(JSON.parse(JSON.stringify(series)),BubbluSize);
 };
 

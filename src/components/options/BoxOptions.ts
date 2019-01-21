@@ -36,9 +36,8 @@ export const drawBoxOptions = (listdata: object[], xAxisList: string[], title: s
     const day: string = xAxisList[i].split(" ")[0];
     timedict[day] = timedict[day] === undefined ? 1 : timedict[day] + 1;
   }
-
+  console.log("listdata",listdata);
   const timekey = Object.keys(timedict).sort();
-
   const newxAxis = [-0.5];
   const newdata = [];
   // 存储时间的inex
@@ -167,12 +166,26 @@ export const drawBoxOptions = (listdata: object[], xAxisList: string[], title: s
             gridLineWidth: 0
         },
         tooltip: {
-            pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' +
-            '上边缘: {point.high}<br/>' +
-            'Q3\t: {point.q3}<br/>' +
-            '中位数: {point.median}<br/>' +
-            'Q1\t: {point.q1}<br/>' +
-            '下边缘: {point.low}<br/>'
+            // pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' +
+            // '上边缘: {point.high}<br/>' +
+            // 'Q3\t: {point.q3}<br/>' +
+            // '中位数: {point.median}<br/>' +
+            // 'Q1\t: {point.q1}<br/>' +
+            // '下边缘: {point.low}<br/>',
+            formatter(a: any): string {
+              console.log(a);
+              // if ((this as any).value === (this as any).pos) {
+              //   return "";
+              // } else {
+              //   return JSON.stringify((this as any).value).slice(1,4)+"...";
+              // }
+              return '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' +
+              '上边缘: {point.high}<br/>' +
+              'Q3\t: {point.q3}<br/>' +
+              '中位数: {point.median}<br/>' +
+              'Q1\t: {point.q1}<br/>' +
+              '下边缘: {point.low}<br/>';
+            },
         },
         series: listdata,
         credits: {
