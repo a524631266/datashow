@@ -1,7 +1,13 @@
 import Highcharts, { Options } from 'highcharts';
+import "./dependentjs/highcharts-more";// 一定要加载，否者无法显示相形图
+// import "./dependentjs/oldie";// 一定要加载，否者无法显示相形图
 import { TopChart, TopChartTrans } from '@/types/postreturnform';
+// tslint:disable-next-line:no-var-requires
+// require("highcharts-oldie");
 import PubSub from 'pubsub-js';
 import $ from 'jquery';
+// tslint:disable-next-line:no-var-requires
+// require("highcharts-oldie");
 interface TopValue {
   id: string;
   value: number;
@@ -17,7 +23,161 @@ interface TwoNumberList {
 
 export const objectlist = [{id:"881675", value :3.0238276701684295},{id:"881635", value :2.0785377819430155},{id:"881645", value :1.8775564380364207},{id:"881655", value :1.8453788029667204},{id:"881615", value :0.015448770251847033},{id:"881685", value :-0.1926384253430764},{id:"982235", value :-0.9999399080325635}];
 
+
+const option1 = {
+  chart: {
+    type: 'bubble',
+    plotBorderWidth: 1,
+    zoomType: 'xy'
+  },
+  title: {
+    text: 'Highcharts 3D气泡图'
+  },
+  xAxis: {
+    gridLineWidth: 1
+  },
+  yAxis: {
+    startOnTick: false,
+    endOnTick: false
+  },
+  series: [{
+    name:'气泡1',
+    data: [
+      [9, 81, 63],
+      [98, 5, 89],
+      [51, 50, 73],
+      [41, 22, 14],
+      [58, 24, 20],
+      [78, 37, 34],
+      [55, 56, 53],
+      [18, 45, 70],
+      [42, 44, 28],
+      [3, 52, 59],
+      [31, 18, 97],
+      [79, 91, 63],
+      [93, 23, 23],
+      [44, 83, 22]
+    ],
+    marker: {
+      fillColor: {
+        radialGradient: { cx: 0.4, cy: 0.3, r: 0.7 },
+        stops: [
+          [0, 'rgba(255,255,255,0.5)'],
+          // [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0.5).get('rgba')]
+        ]
+      }
+    }
+  }, {
+    name:'气泡2',
+    data: [
+      [42, 38, 20],
+      [6, 18, 1],
+      [1, 93, 55],
+      [57, 2, 90],
+      [80, 76, 22],
+      [11, 74, 96],
+      [88, 56, 10],
+      [30, 47, 49],
+      [57, 62, 98],
+      [4, 16, 16],
+      [46, 10, 11],
+      [22, 87, 89],
+      [57, 91, 82],
+      [45, 15, 98]
+    ],
+    marker: {
+      fillColor: {
+        radialGradient: { cx: 0.4, cy: 0.3, r: 0.7 },
+        stops: [
+          [0, 'rgba(255,255,255,0.5)'],
+          // [1, Highcharts.Color(Highcharts.getOptions().colors[1]).setOpacity(0.5).get('rgba')]
+        ]
+      }
+    }
+  }]
+};
+const genPackedBubble = (datalist: any[]) => {
+  return {
+    chart: {
+      type: 'packedbubble',
+      // height: '100%'
+    },
+    title: {
+        text: ''
+    },
+    tooltip: {
+        useHTML: true,
+        pointFormat: '<b>{point.name}:</b> {point.y}m CO<sub>2</sub>'
+    },
+    plotOptions: {
+        packedbubble: {
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}',
+                filter: {
+                    property: 'y',
+                    operator: '>',
+                    value: 250
+                },
+                style: {
+                    color: 'black',
+                    textOutline: 'none',
+                    fontWeight: 'normal'
+                }
+            },
+            minPointSize: 5
+        }
+    },
+    xAxis:{
+    },
+    yAxis: {
+    },
+    series: datalist,
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 500
+            },
+            chartOptions: {
+                legend: {
+                    align: 'right',
+                    verticalAlign: 'middle',
+                    layout: 'vertical'
+                }
+            }
+        }]
+    }
+  };
+};
+
 export const drawTopOptions = (objectlist: TopChartTrans,title: string,redrawEntityFunc: any,openInfo: (entity: string, name: string,clientX: number,clientY: number,target: DOMRect)=>void) => {
+  // tslint:disable-next-line:one-variable-per-declaration
+  const series: any[] = [
+    {
+      name:"超低",
+      data:[],
+    },
+    {
+      name:"超高",
+      data:[]
+    }
+  ];
+  // tslint:disable-next-line:forin
+  for (const i in objectlist) {
+    if (objectlist[i].value>=0) {
+      // ,id: objectlist[i].id
+      (series[1] as any).data.push({name: objectlist[i].name,value: objectlist[i].value});
+    } else {
+      (series[0] as any).data.push({name: objectlist[i].name,value: objectlist[i].value});
+    }
+  }
+  console.log("series",series);
+  const data = genPackedBubble(JSON.parse(JSON.stringify(series)));
+  (window as any).data = data;
+  return data;
+};
+
+export const drawTopOptionsBack = (objectlist: TopChartTrans,title: string,redrawEntityFunc: any,openInfo: (entity: string, name: string,clientX: number,clientY: number,target: DOMRect)=>void) => {
   // objectlist [{id:123134,value:12354,}...]
   const datalist: TwoNumberList[] = [];
   // tslint:disable-next-line:variable-name

@@ -12,7 +12,7 @@
 
 <script lang="ts">
 import { Component, Vue, Prop, Emit, Model, Watch, Inject } from 'vue-property-decorator';
-import Highcharts, { Options , HeatMapSeriesOptions} from 'highcharts';
+import Highcharts, { Options } from 'highcharts';
 import echarts,{ ECharts } from "echarts";
 import { PositionClass , PostParams, ChartLibrary } from '@/types/index';
 // import "echarts/map/js/china";
@@ -20,8 +20,17 @@ import 'echarts/lib/chart/heatmap';
 import Antd from "ant-design-vue";
 import { updatestate } from '@/types/updateState';
 import exportHighchart from 'highcharts/modules/exporting';
+import HighchartsMore from 'highcharts/highcharts-more';
 import {downloadchart} from '@/util/downloadcanvas.ts';
 exportHighchart(Highcharts);
+// tslint:disable-next-line:no-var-requires
+// require('highcharts/highcharts-more')(Highcharts);
+// tslint:disable-next-line:no-var-requires
+require('highcharts/highcharts-more.js');
+// tslint:disable-next-line:no-var-requires
+require('highcharts/modules/map')(Highcharts);
+// tslint:disable-next-line:no-var-requires
+require("highcharts-oldie")(Highcharts);
 // 设置 Highcharts时间问题 为false,采用中国日期时间戳
 Highcharts.setOptions({global: { useUTC: false}});
 @Component({
@@ -93,6 +102,7 @@ export default class BaseChartFactory extends Vue {
                         this.$emit("updateData",this.chartInstance,this.option);
                     }
                 } else {
+                    console.log("1111");
                     this.chartInstance = Highcharts.chart(this.id, this.option) as any;
                     // this.showLoading = false;
                 }

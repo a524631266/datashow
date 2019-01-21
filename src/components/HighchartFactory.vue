@@ -16,7 +16,7 @@
 import { Component, Vue, Prop, Emit, Model, Watch } from 'vue-property-decorator';
 import { PositionClass , PostParams } from '@/types/index';
 import LittleBar from "@/components/chart/LittleBar.vue";
-import Highcharts, { Options , HeatMapSeriesOptions} from 'highcharts';
+import Highcharts, { Options } from 'highcharts';
 import { inout, drawActionOptions} from "@/components/options/TimeLineOptions.ts";
 import {boxchart3, xAxis3,drawBoxOptions} from "@/components/options/BoxOptions.ts";
 import {listdata, drawHeatmapOptions } from "@/components/options/HeatMapOptions.ts";

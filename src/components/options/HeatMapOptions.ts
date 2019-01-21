@@ -1,9 +1,9 @@
 import moment,{ DurationInputObject, Moment } from "moment";
 import { onehour, fifteenminute, oneday } from './../../config/initOptions';
-import Highcharts, { Options ,HeatMapChart} from 'highcharts';
+import Highcharts, { Options } from 'highcharts';
 import $ from "jquery";
 // import "highcharts/modules/exporting.js";
-import "./dependentjs/map";
+// import "./dependentjs/map";
 import PubSub from 'pubsub-js';
 import { HeatmapChart, HeatmapChartTrans } from '@/types/postreturnform';
 moment.locale('zh-cn');
@@ -168,7 +168,7 @@ export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, r
                     const overlabel2showinfo = ()=> {Highcharts.addEvent(xAxis.labelGroup.element, 'mouseover',(e) => {
                         // 将原生事件添加上 chartX 和 chartY 值
                         e = chart.pointer.normalize(e);
-                        e.stopPropagation();
+                        // e.stopPropagation();
                         const categories = xAxis.categories;
                         // 计算x轴的坐标位置
                         let key = 0;

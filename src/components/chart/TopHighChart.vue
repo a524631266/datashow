@@ -12,7 +12,7 @@ import { Component, Vue, Prop, Emit, Model, Watch, Provide } from 'vue-property-
 import { PositionClass , PostParams,ChartLibrary } from '@/types/index';
 import BaseChartFactory from "@/components/chart/base/BaseChartFactory.vue";
 import LittleBar from "@/components/chart/LittleBar.vue";
-import { Options , HeatMapSeriesOptions} from 'highcharts';
+import { Options } from 'highcharts';
 import {objectlist, drawTopOptions } from "@/components/options/TopOptions.ts";
 import { getDataPromise, PostPath, insertInitData } from "@/actions/axiosProxy.ts";
 import PubSub from 'pubsub-js';
@@ -37,7 +37,7 @@ export default class TopHighChart extends Vue implements AxiosSourceManage {
     // @Prop() public data!: object;
     @Model("changepostparams") public postparms!: PostParams;
     @Provide('option')
-    public option: Options = highchartEmptyOption(undefined);
+    public option: Options = highchartEmptyOption(undefined) as any;
     public axiosSource = Axios.CancelToken.source();
     private chartLibrary = ChartLibrary.highchart;
     private titlename = TitleName.Top;

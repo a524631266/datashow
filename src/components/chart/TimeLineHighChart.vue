@@ -12,7 +12,7 @@ import { Component, Vue, Prop, Emit, Model, Watch, Provide } from 'vue-property-
 import { PositionClass , PostParams ,ChartLibrary, ThresholdLimiter } from '@/types/index';
 import BaseChartFactory from "@/components/chart/base/BaseChartFactory.vue";
 import LittleBar from "@/components/chart/LittleBar.vue";
-import { Options , HeatMapSeriesOptions} from 'highcharts';
+import { Options } from 'highcharts';
 import { inout, drawActionOptions} from "@/components/options/TimeLineOptions.ts";
 import { getDataPromise, PostPath , insertInitData} from "@/actions/axiosProxy.ts";
 import { TimeLineChart,TimeLineChartTrans, HeatmapChartTrans, TimeLineDataTrans } from "@/types/postreturnform.ts";
@@ -38,7 +38,7 @@ export default class TimeLineHighChart extends Vue implements AxiosSourceManage 
     // @Prop() public data!: object;
     @Model("changepostparams") public postparms!: PostParams;
     @Provide('option')
-    public option: Options = highchartEmptyOption(undefined);
+    public option: Options = highchartEmptyOption(undefined) as any;
     public axiosSource = Axios.CancelToken.source();
     private chartLibrary = ChartLibrary.highchart;
     private titlename = TitleName.TimeLine;
@@ -99,7 +99,7 @@ export default class TimeLineHighChart extends Vue implements AxiosSourceManage 
     @Watch("urlparas.entity",  {deep : true})
     private redraw(entity: string) {
       this.cancelAxios();
-      this.option = highchartEmptyOption(entity);
+      this.option = highchartEmptyOption(entity) as any;
       // console.log("上层图表 TimeLineHighChart",this.postparms,this.id);
       this.getData();
       // 在这里开始做长轮询 定时从后台传数据

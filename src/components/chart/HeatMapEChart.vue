@@ -13,7 +13,7 @@ import { Component, Vue, Prop, Emit, Model, Watch, Provide } from 'vue-property-
 import { PositionClass , PostParams, ChartLibrary } from '@/types/index';
 import BaseChartFactory from "@/components/chart/base/BaseChartFactory.vue";
 import LittleBar from "@/components/chart/LittleBar.vue";
-import { Options , HeatMapSeriesOptions} from 'highcharts';
+import { Options } from 'highcharts';
 import {listdata, drawHeatmapOptions,HeatMapLimiter } from "@/components/options/HeatMapOptions.ts";
 import { getDataPromise, PostPath } from "@/actions/axiosProxy.ts";
 import PubSub from 'pubsub-js';
@@ -39,7 +39,7 @@ export default class HeatMapHighChart extends Vue implements AxiosSourceManage {
     // @Prop() public data!: object;
     @Model("changepostparams") public postparms!: PostParams;
     // @Provide('option')
-    public option: Options = highchartEmptyOption(undefined);
+    public option: Options = highchartEmptyOption(undefined) as any;
     public axiosSource = Axios.CancelToken.source();
     private chartLibrary = ChartLibrary.echart;
     private titlename = TitleName.HeatMap;
@@ -86,7 +86,7 @@ export default class HeatMapHighChart extends Vue implements AxiosSourceManage {
     private redraw(entity: string) {
       this.cancelAxios();
       // this.option = drawHeatmapOptions([{x: "0",name: "",y: 0,value: 0}], "HeatMap","" ,this.showTooltiop) as any;
-      this.option = highchartEmptyOption(entity);
+      this.option = highchartEmptyOption(entity) as any;
       console.log("上层图表 HeatMapHighCHart",this.postparms,this.id);
       this.getData();
       // 在这里开始做长轮询 定时从后台传数据

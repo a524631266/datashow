@@ -12,7 +12,7 @@ import { Component, Vue, Prop, Emit, Model, Watch, Provide } from 'vue-property-
 import { PositionClass , PostParams ,ChartLibrary} from '@/types/index';
 import BaseChartFactory from "@/components/chart/base/BaseChartFactory.vue";
 import LittleBar from "@/components/chart/LittleBar.vue";
-import Highcharts, { Options , HeatMapSeriesOptions} from 'highcharts';
+import Highcharts, { Options } from 'highcharts';
 import {boxchart3, xAxis3,drawBoxOptions} from "@/components/options/BoxOptions.ts";
 import { getDataPromise, PostPath, insertInitData } from "@/actions/axiosProxy.ts";
 import PubSub from 'pubsub-js';
@@ -45,7 +45,7 @@ export default class BoxSingleHighChart extends Vue implements AxiosSourceManage
     // @Prop() public data!: object;
     @Model("changepostparams") public postparms!: PostParams;
     // @Provide('option')
-    public option: Options = highchartEmptyOption(undefined);
+    public option: Options = highchartEmptyOption(undefined) as any;
     public axiosSource = Axios.CancelToken.source();
     private chartLibrary = ChartLibrary.highchart;
     private titlename = TitleName.Box;
@@ -77,7 +77,7 @@ export default class BoxSingleHighChart extends Vue implements AxiosSourceManage
     @Watch("urlparas.entity",  {deep : true})
     private redraw(entity: string) {
       this.cancelAxios();
-      this.option = highchartEmptyOption(entity);
+      this.option = highchartEmptyOption(entity) as any;
       // console.log("上层图表 BoxSingleChart",this.postparms,this.id);
       this.getData();
       // 在这里开始做长轮询 定时从后台传数据
