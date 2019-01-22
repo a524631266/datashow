@@ -91,11 +91,29 @@ export default class BoxSingleHighChart extends Vue implements AxiosSourceManage
       const xAxisList = data.boxchart.xAxis;
       // 转换数据值
       const boxList = data.boxchart.boxs;
+      const firsttime: number = data.boxchart.time;
       const ydata = (echarts as any).dataTool.prepareBoxplotData(boxList);
       const data2 = [
         {
           name: "电流",
-          data: ydata.boxData
+          data: ydata.boxData,
+          tooltip: {
+              pointFormatter(a: any,b: any): string {
+                const that: any = this;
+                // console.log(a,b,this);
+                // if ((this as any).value === (this as any).pos) {
+                //   return "";
+                // } else {
+                //   return JSON.stringify((this as any).value).slice(1,4)+"...";
+                // }
+                return `<span style="color:${that.color}">\u25CF</span> <b> ${that.series.name}</b><br/>
+                上边缘: ${that.high}<br/>
+                Q3\t: ${that.q3}<br/>
+                中位数: ${that.median}<br/>
+                Q1\t: ${that.q1}<br/>
+                下边缘: ${that.low}<br/>`;
+              },
+          }
         },
         {
           name: '异常值',
@@ -109,7 +127,23 @@ export default class BoxSingleHighChart extends Vue implements AxiosSourceManage
               lineColor: "", // (Highcharts as any).getOptions().colors[0] as any,
           },
           tooltip: {
-              pointFormat: 'Observation: {point.y}'
+              // pointFormat: 'Observation: {point.y}',
+              pointFormatter(a: any,b: any): string {
+                const that: any = this;
+                const index = that.x; // 异常点的坐标
+                const value = that.y;
+                // console.log(a,b,this,boxList);
+                const timeindex = boxList[index].indexOf(value);
+                const nowtime = moment(firsttime).add(timeindex,"day").format("YYYY-MM-DD");
+                // if ((this as any).value === (this as any).pos) {
+                //   return "";
+                // } else {
+                //   return JSON.stringify((this as any).value).slice(1,4)+"...";
+                // }
+                return `<br/>
+                        day: ${nowtime}<br/>
+                        value: ${value}`;
+              },
           }
         }
       ];

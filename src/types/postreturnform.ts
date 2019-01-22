@@ -2,6 +2,7 @@ interface BoxData {
     xAxis: string[];
     boxs: number[][];
     name: string;
+    time: number;
 }
 // const data: BoxData = {
 //     xAxis:["1","2","3"],

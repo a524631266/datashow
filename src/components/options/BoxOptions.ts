@@ -165,28 +165,28 @@ export const drawBoxOptions = (listdata: object[], xAxisList: string[], title: s
             min:0,
             gridLineWidth: 0
         },
-        tooltip: {
-            // pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' +
-            // '上边缘: {point.high}<br/>' +
-            // 'Q3\t: {point.q3}<br/>' +
-            // '中位数: {point.median}<br/>' +
-            // 'Q1\t: {point.q1}<br/>' +
-            // '下边缘: {point.low}<br/>',
-            formatter(a: any): string {
-              console.log(a);
-              // if ((this as any).value === (this as any).pos) {
-              //   return "";
-              // } else {
-              //   return JSON.stringify((this as any).value).slice(1,4)+"...";
-              // }
-              return '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' +
-              '上边缘: {point.high}<br/>' +
-              'Q3\t: {point.q3}<br/>' +
-              '中位数: {point.median}<br/>' +
-              'Q1\t: {point.q1}<br/>' +
-              '下边缘: {point.low}<br/>';
-            },
-        },
+        // tooltip: {
+        //     pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' +
+        //     '上边缘: {point.high}<br/>' +
+        //     'Q3\t: {point.q3}<br/>' +
+        //     '中位数: {point.median}<br/>' +
+        //     'Q1\t: {point.q1}<br/>' +
+        //     '下边缘: {point.low}<br/>',
+        //     formatter(a: any,b: any): string {
+        //       console.log(a,b);
+        //       // if ((this as any).value === (this as any).pos) {
+        //       //   return "";
+        //       // } else {
+        //       //   return JSON.stringify((this as any).value).slice(1,4)+"...";
+        //       // }
+        //       return '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' +
+        //       '上边缘: {point.high}<br/>' +
+        //       'Q3\t: {point.q3}<br/>' +
+        //       '中位数: {point.median}<br/>' +
+        //       'Q1\t: {point.q1}<br/>' +
+        //       '下边缘: {point.low}<br/>';
+        //     },
+        // },
         series: listdata,
         credits: {
             enabled: false

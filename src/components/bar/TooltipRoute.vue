@@ -240,7 +240,7 @@ export default class TooltipRoute extends Vue {
     box-shadow: -3px 3px 7px rgba(0, 0, 0, 0.07);
 }
 .ant-popover-arrow {
-    background: #fff;
+    background: rgba(247, 247, 247, 0.85);
     width: 8.48528137px;
     height: 8.48528137px;
     -webkit-transform: rotate(45deg);
@@ -251,14 +251,14 @@ export default class TooltipRoute extends Vue {
     border-style: solid;
 }
 .ant-popover-inner {
-    background-color: #fff;
+    background-color: rgba(247, 247, 247, 0.85);
     background-clip: padding-box;
-    border-radius: 4px;
+    border-radius: 2px;
     -webkit-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 .ant-popover-title {
-    min-width: 177px;
+    min-width: 107px;
     margin: 0;
     padding: 5px 16px 4px;
     min-height: 32px;
@@ -268,7 +268,7 @@ export default class TooltipRoute extends Vue {
 }
 
 .ant-popover-inner-content {
-    padding: 12px 16px;
+    padding: 4px 5px;
     color: rgba(0, 0, 0, 0.65);
 }
 .tooltip2 {

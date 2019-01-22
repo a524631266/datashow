@@ -959,7 +959,7 @@ export const drawActionOptions2 = (objectlist: TimeLineChartTrans, title: string
         // console.log(this)
         // tslint:disable-next-line:max-line-length
         // return "配电柜 : " + id + "<br/> 开始:" + yAxis[y] +  Highcharts.dateFormat(' %H:%M:%S', x) + "- 结束:" + yAxis[y] + Highcharts.dateFormat(' %H:%M:%S', x2) + "<br/>" + name + ":" +  Math.abs(value);
-        return "配电柜 : " + id + "<br/> 开始:" + yAxis[y] + moment(x).format("HH:mm:ss") + "- 结束:" + yAxis[y] + moment(x).format("HH:mm:ss") + "<br/>" + name + ":" + Math.abs(value);
+        return "配电柜 : " + name + "<br/> 开始:" + yAxis[y] + " " + moment(x).format("HH:mm:ss") + "- 结束:" + yAxis[y] + " " + moment(x2).format("HH:mm:ss") + "<br/>" + name + ":" + Math.abs(value);
       },
     },
     plotOptions: {
@@ -1039,138 +1039,138 @@ export const drawActionOptions2 = (objectlist: TimeLineChartTrans, title: string
 
 
 
-// Set to 00:00:00:000 today
-const today = new Date();
-// tslint:disable-next-line:one-variable-per-declaration
-let today2 = 0,
-  // tslint:disable-next-line:prefer-const
-  day = 1000 * 60 * 60 * 1,
-  // tslint:disable-next-line:prefer-const
-  map = Highcharts.map,
-  // tslint:disable-next-line:prefer-const
-  dateFormat = Highcharts.dateFormat,
-  series: any[] = [],
-  cars = null;
-// Set to 00:00:00:000 today
-today.setUTCHours(0);
-today.setUTCMinutes(0);
-today.setUTCSeconds(0);
-today.setUTCMilliseconds(0);
-today2 = today.getTime() as any;
-cars = [{
-  model: 'Nissan Leaf',
-  current: 0,
-  deals: [{
-    rentedTo: 'Lisa Star',
-    from: today2 - 1 * day,
-    to: today2 + 2 * day
-  }, {
-    rentedTo: 'Shane Long',
-    from: today2 - 3 * day,
-    to: today2 - 2 * day
-  }, {
-    rentedTo: 'Jack Coleman',
-    from: today2 + 5 * day,
-    to: today2 + 6 * day
-  }]
-}, {
-  model: 'Jaguar E-type',
-  current: 0,
-  deals: [{
-    rentedTo: 'Martin Hammond',
-    from: today2 - 2 * day,
-    to: today2 + 1 * day
-  }, {
-    rentedTo: 'Linda Jackson',
-    from: today2 - 2 * day,
-    to: today2 + 1 * day
-  }, {
-    rentedTo: 'Robert Sailor',
-    from: today2 + 2 * day,
-    to: today2 + 6 * day
-  }]
-}, {
-  model: 'Volvo V60',
-  current: 0,
-  deals: [{
-    rentedTo: 'Mona Ricci',
-    from: today2 + 0 * day,
-    to: today2 + 3 * day
-  }, {
-    rentedTo: 'Jane Dockerman',
-    from: today2 + 3 * day,
-    to: today2 + 4 * day
-  }, {
-    rentedTo: 'Bob Shurro',
-    from: today2 + 6 * day,
-    to: today2 + 8 * day
-  }]
-}, {
-  model: 'Volkswagen Golf',
-  current: 0,
-  deals: [{
-    rentedTo: 'Hailie Marshall',
-    from: today2 - 1 * day,
-    to: today2 + 1 * day
-  }, {
-    rentedTo: 'Morgan Nicholson',
-    from: today2 - 3 * day,
-    to: today2 - 2 * day
-  }, {
-    rentedTo: 'William Harriet',
-    from: today2 + 2 * day,
-    to: today2 + 3 * day
-  }]
-}, {
-  model: 'Peugeot 208',
-  current: 0,
-  deals: [{
-    rentedTo: 'Harry Peterson',
-    from: today2 - 1 * day,
-    to: today2 + 2 * day
-  }, {
-    rentedTo: 'Emma Wilson',
-    from: today2 + 3 * day,
-    to: today2 + 4 * day
-  }, {
-    rentedTo: 'Ron Donald',
-    from: today2 + 5 * day,
-    to: today2 + 6 * day
-  }]
-}];
-// Parse car data into series.
-series = cars.map((car, i) => {
-  const data = car.deals.map((deal) => {
-    return {
-      id: 'deal-' + i,
-      rentedTo: deal.rentedTo,
-      start: deal.from,
-      end: deal.to,
-      y: i
-    };
-  });
-  return {
-    name: car.model,
-    data,
-    current: car.deals[car.current],
-    borderRadius: 0,
-    pointPadding: 0,
-    groupPadding: 0,
-    colorByPoint: false,
-    color: "rgba(255,0,0,1)",
-    dataLabels: {
-      enabled: false,
-      formatter(a: any) {
-        return (this as any).key;
-      },
-    },
-    borderWidth: 0,
-    tickmarkPlacement: 'on',
-    stack: 0,
-    grouping: false,
-  };
-});
-console.log(series);
+// // Set to 00:00:00:000 today
+// const today = new Date();
+// // tslint:disable-next-line:one-variable-per-declaration
+// let today2 = 0,
+//   // tslint:disable-next-line:prefer-const
+//   day = 1000 * 60 * 60 * 1,
+//   // tslint:disable-next-line:prefer-const
+//   map = Highcharts.map,
+//   // tslint:disable-next-line:prefer-const
+//   dateFormat = Highcharts.dateFormat,
+//   series: any[] = [],
+//   cars = null;
+// // Set to 00:00:00:000 today
+// today.setUTCHours(0);
+// today.setUTCMinutes(0);
+// today.setUTCSeconds(0);
+// today.setUTCMilliseconds(0);
+// today2 = today.getTime() as any;
+// cars = [{
+//   model: 'Nissan Leaf',
+//   current: 0,
+//   deals: [{
+//     rentedTo: 'Lisa Star',
+//     from: today2 - 1 * day,
+//     to: today2 + 2 * day
+//   }, {
+//     rentedTo: 'Shane Long',
+//     from: today2 - 3 * day,
+//     to: today2 - 2 * day
+//   }, {
+//     rentedTo: 'Jack Coleman',
+//     from: today2 + 5 * day,
+//     to: today2 + 6 * day
+//   }]
+// }, {
+//   model: 'Jaguar E-type',
+//   current: 0,
+//   deals: [{
+//     rentedTo: 'Martin Hammond',
+//     from: today2 - 2 * day,
+//     to: today2 + 1 * day
+//   }, {
+//     rentedTo: 'Linda Jackson',
+//     from: today2 - 2 * day,
+//     to: today2 + 1 * day
+//   }, {
+//     rentedTo: 'Robert Sailor',
+//     from: today2 + 2 * day,
+//     to: today2 + 6 * day
+//   }]
+// }, {
+//   model: 'Volvo V60',
+//   current: 0,
+//   deals: [{
+//     rentedTo: 'Mona Ricci',
+//     from: today2 + 0 * day,
+//     to: today2 + 3 * day
+//   }, {
+//     rentedTo: 'Jane Dockerman',
+//     from: today2 + 3 * day,
+//     to: today2 + 4 * day
+//   }, {
+//     rentedTo: 'Bob Shurro',
+//     from: today2 + 6 * day,
+//     to: today2 + 8 * day
+//   }]
+// }, {
+//   model: 'Volkswagen Golf',
+//   current: 0,
+//   deals: [{
+//     rentedTo: 'Hailie Marshall',
+//     from: today2 - 1 * day,
+//     to: today2 + 1 * day
+//   }, {
+//     rentedTo: 'Morgan Nicholson',
+//     from: today2 - 3 * day,
+//     to: today2 - 2 * day
+//   }, {
+//     rentedTo: 'William Harriet',
+//     from: today2 + 2 * day,
+//     to: today2 + 3 * day
+//   }]
+// }, {
+//   model: 'Peugeot 208',
+//   current: 0,
+//   deals: [{
+//     rentedTo: 'Harry Peterson',
+//     from: today2 - 1 * day,
+//     to: today2 + 2 * day
+//   }, {
+//     rentedTo: 'Emma Wilson',
+//     from: today2 + 3 * day,
+//     to: today2 + 4 * day
+//   }, {
+//     rentedTo: 'Ron Donald',
+//     from: today2 + 5 * day,
+//     to: today2 + 6 * day
+//   }]
+// }];
+// // Parse car data into series.
+// series = cars.map((car, i) => {
+//   const data = car.deals.map((deal) => {
+//     return {
+//       id: 'deal-' + i,
+//       rentedTo: deal.rentedTo,
+//       start: deal.from,
+//       end: deal.to,
+//       y: i
+//     };
+//   });
+//   return {
+//     name: car.model,
+//     data,
+//     current: car.deals[car.current],
+//     borderRadius: 0,
+//     pointPadding: 0,
+//     groupPadding: 0,
+//     colorByPoint: false,
+//     color: "rgba(255,0,0,1)",
+//     dataLabels: {
+//       enabled: false,
+//       formatter(a: any) {
+//         return (this as any).key;
+//       },
+//     },
+//     borderWidth: 0,
+//     tickmarkPlacement: 'on',
+//     stack: 0,
+//     grouping: false,
+//   };
+// });
+// console.log(series);
 
 const getInterData2 = (inlist: inlist[]) => {
   // console.log("inlist",inlist);
@@ -1190,8 +1190,8 @@ const getInterData2 = (inlist: inlist[]) => {
       name: "超高",
       data: posInlist,
       borderRadius: 0,
-      pointPadding: 0,
-      groupPadding: 0,
+      // pointPadding: 0,
+      // groupPadding: 0,
       colorByPoint: false,
       color: "rgba(255,0,0,1)",
       dataLabels: {
@@ -1209,8 +1209,8 @@ const getInterData2 = (inlist: inlist[]) => {
       name: "超低",
       data: negInlist,
       borderRadius: 0,
-      pointPadding: 0,
-      groupPadding: 0,
+      // pointPadding: 0,
+      // groupPadding: 0,
       colorByPoint: false,
       color: "rgba(0,255,0,1)",
       dataLabels: {
@@ -1228,7 +1228,7 @@ const getInterData2 = (inlist: inlist[]) => {
 };
 
 export const drawActionOptions = (objectlist: TimeLineChartTrans, title: string, limiter: ThresholdLimiter) => {
-  console.log("height",((window.innerHeight / 3.1) / (window.innerWidth * 0.2 )) * 100 + '%');
+  // console.log("height",((window.innerHeight / 3.1) / (window.innerWidth * 0.2 )) * 100 + '%');
   // tslint:disable-next-line:radix
   const whscale = parseInt((window.innerHeight / 3.2) / (window.innerWidth * 0.2 ) * 100 + "") ;
   // tslint:disable-next-line:no-shadowed-variable
@@ -1298,7 +1298,7 @@ export const drawActionOptions = (objectlist: TimeLineChartTrans, title: string,
         // console.log(this)
         // tslint:disable-next-line:max-line-length
         // return "配电柜 : " + id + "<br/> 开始:" + yAxis[y] +  Highcharts.dateFormat(' %H:%M:%S', x) + "- 结束:" + yAxis[y] + Highcharts.dateFormat(' %H:%M:%S', x2) + "<br/>" + name + ":" +  Math.abs(value);
-        return "配电柜 : " + id + "<br/> 开始:" + yAxis[y] + moment(x).format("HH:mm:ss") + "- 结束:" + yAxis[y] + moment(x).format("HH:mm:ss") + "<br/>" + name + ":" + Math.abs(value);
+        return "配电柜 : " + name + "<br/> 开始:" + yAxis[y] + " " + moment(x).format("HH:mm:ss") + "<br/>结束:" + yAxis[y] + " "  + moment(x2).format("HH:mm:ss") + "<br/>" + name + ":" + Math.abs(value);
       },
     },
     xAxis: [{
@@ -1326,6 +1326,7 @@ export const drawActionOptions = (objectlist: TimeLineChartTrans, title: string,
         fontWeight: 'bold',
       },
       color: "white",
+      min: 0,
     }],
     yAxis: {
       labels: {
@@ -1334,6 +1335,7 @@ export const drawActionOptions = (objectlist: TimeLineChartTrans, title: string,
         },
       },
       type: 'category',
+      gridLineWidth: 0.5,
       grid: {
         columns: [
           {

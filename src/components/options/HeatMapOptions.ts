@@ -276,47 +276,61 @@ export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, r
                     color: "white"
                 },
                 // step: 4,
-                formatter(a: { pos: number, isFirst: any, axis: { paddedTicks: any, tickPositions: any},value: number}) {
-                    const chartWidth  = (this as any).chart.chartWidth;
-                    const arr = a.axis.paddedTicks;
-                    const selectxarr = a.axis.tickPositions;
-                    const initts = a.value; // 1365465600000
-                    const readlytime = timelist[inittimelist.indexOf(getTheFirstTS(inittimelist, initts))]; // 1515155151515
-                    const index = arr.indexOf(a.pos); // 当前x轴的刻度第几个
-                    const realintervaltime  =  timelist[1] - timelist[0];
-                    let basenum = 6;
-                    let maxLength = 24;
-                    if (chartWidth / window.innerWidth < 0.25) {
-                        basenum = 12;
-                    }
-                    if( realintervaltime === 15 * 60 * 1000) {
-                        basenum = basenum * 4;
-                        maxLength = maxLength * 4 ;
-                    }
-                    const hourEven = index % basenum === 0;
-                    // console.log("hourEven",hourEven, "arr", "a",a,moment(readlytime).format('HH:mm'),realintervaltime);
+                // formatter(a: { pos: number, isFirst: any, axis: { paddedTicks: any, tickPositions: any},value: number}) {
+                //     const chartWidth  = (this as any).chart.chartWidth;
+                //     const arr = a.axis.paddedTicks;
+                //     const selectxarr = a.axis.tickPositions;
+                //     const initts = a.value; // 1365465600000
+                //     const readlytime = timelist[inittimelist.indexOf(getTheFirstTS(inittimelist, initts))]; // 1515155151515
+                //     const index = arr.indexOf(a.pos); // 当前x轴的刻度第几个
+                //     const realintervaltime  =  timelist[1] - timelist[0];
+                //     let basenum = 6;
+                //     let maxLength = 24;
+                //     if (chartWidth / window.innerWidth < 0.25) {
+                //         basenum = 12;
+                //     }
+                //     if( realintervaltime === 15 * 60 * 1000) {
+                //         basenum = basenum * 4;
+                //         maxLength = maxLength * 4 ;
+                //     }
+                //     const hourEven = index % basenum === 0;
+                //     // console.log("hourEven",hourEven, "arr", "a",a,moment(readlytime).format('HH:mm'),realintervaltime);
+                //     if (moment(readlytime).format('HH:mm') === "00:00") {
+                //         return "<span style='color:lightgreen;font-weight: 800;'>" + moment(readlytime).format('MM-DD') + "</span>";
+                //     }
+                //     if (a.isFirst) {
+                //         return "<span style='color:lightgreen;font-weight: 800;'>" + moment(readlytime).format('MM-DD HH:mm') + "</span>";
+                //     }
+                //     if(hourEven) {
+                //         return moment(readlytime).format('HH:mm');
+                //     }
+                //     if (selectxarr.length < maxLength) { // 太少的时候 当小于1天的时候
+                //         return moment(readlytime).format('HH:mm');
+                //     }
+                //     return "";
+                //     // return "";
+                //     // return (this as any).value.slice(0, 5) + "";
+                // },
+                formatter() {
+                    // console.log(this,"2222222222222",timemapx[this.value])
+                    // console.log(inittimelist,timelist,(this as any).value);
+                    // console.log("(this as any)",(this as any));
+                    const initts = (this as any).value; // 1365465600000
+                    // console.log("getTheFirstTS(inittimelist, initts)",getTheFirstTS(inittimelist, initts));
+                    const readlytime = timelist[inittimelist.indexOf(getTheFirstTS(inittimelist, initts))];
+                    // console.log("moment(readlytime).format('HH:mm')",moment(readlytime).format('HH:mm'),readlytime);
                     if (moment(readlytime).format('HH:mm') === "00:00") {
-                        return "<span style='color:lightgreen;font-weight: 800;'>" + moment(readlytime).format('MM-DD') + "</span>";
+                        return moment(readlytime).format('MM-DD');
                     }
-                    if (a.isFirst) {
-                        return "<span style='color:lightgreen;font-weight: 800;'>" + moment(readlytime).format('MM-DD HH:mm') + "</span>";
-                    }
-                    if(hourEven) {
-                        return moment(readlytime).format('HH:mm');
-                    }
-                    if (selectxarr.length < maxLength) { // 太少的时候 当小于1天的时候
-                        return moment(readlytime).format('HH:mm');
-                    }
-                    return "";
-                    // return "";
+                    return moment(readlytime).format('HH:mm');
                     // return (this as any).value.slice(0, 5) + "";
                 },
                 // rotation: -75,
             },
-            tickPositions: inittimelist,
-            // showLastLabel: true,
+            // tickPositions: inittimelist,
+            showLastLabel: true,
             // tickLength: 16
-            tickInterval: 24 * 60 * 60 * 1000, // 相当于 1天多少格子但是要保证 零点得来
+            // tickInterval: 24 * 60 * 60 * 1000, // 相当于 1天多少格子但是要保证 零点得来
         },
         yAxis: {
             type: "category",
@@ -347,7 +361,7 @@ export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, r
             gridLineWidth: 0,
         },
         tooltip: {
-            headerFormat: title + '<br/>',
+            headerFormat: null,
             pointFormatter(): string {
                 // console.log((this as any).options.y,(this as any).options.x);
                 const x = (this as any).options.x; // 1365465600000
@@ -356,11 +370,11 @@ export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, r
                 const entityid = namemap[xlist[y]];
                 const readlytime = timelist[inittimelist.indexOf(x)];
                 if (limiter.scale === fifteenminute) {
-                    return "配电柜ID : " + entityid + "<br/> time:" + moment(readlytime).format('YYYY-MM-DD HH:mm') + "<br/>value:" + value;
+                    return "配电柜 : " + entityid + "<br/> time:" + moment(readlytime).format('YYYY-MM-DD HH:mm') + "<br/>value:" + value;
                 } else if (limiter.scale === onehour) {
-                    return "配电柜ID : " + entityid + "<br/> time:" + moment(readlytime).format('YYYY-MM-DD HH:mm') + "<br/>value:" + value;
+                    return "配电柜 : " + entityid + "<br/> time:" + moment(readlytime).format('YYYY-MM-DD HH:mm') + "<br/>value:" + value;
                 } else if (limiter.scale === oneday) {
-                    return "配电柜ID : " + entityid + "<br/> time:" + moment(readlytime).format('YYYY-MM-DD MM-DD') + "<br/>value:" + value;
+                    return "配电柜 : " + entityid + "<br/> time:" + moment(readlytime).format('YYYY-MM-DD MM-DD') + "<br/>value:" + value;
                 }
                 return "";
             }

@@ -76,6 +76,7 @@ export default class BaseChartFactory extends Vue {
         // console.log("entity变化了 :new entity",this.id,newVal,";oldeVal",oldVal);
         const createfunction = this.id === "chart-single-action"? Highcharts.ganttChart : Highcharts.chart;
         // 如果之前有图表的话直接销毁图表
+        console.time(this.id);
         if (this.chartInstance && this.chartLibrary === ChartLibrary.highchart) {
             // (this.chartInstance as any).showLoading();
             (this.chartInstance as any).destroy();
@@ -86,6 +87,7 @@ export default class BaseChartFactory extends Vue {
             this.chartInstance = null;
         }
         this.showLoading = true;
+        console.timeEnd(this.id);
         // this.redrawChart(newVal, oldVal);
         // this.$emit("getData");
         // tslint:disable-next-line:no-unused-expression
@@ -197,18 +199,26 @@ export default class BaseChartFactory extends Vue {
      */
     @Watch('positionClass',{deep: true})
     private reflowChart(newVal: object, oldVal: object) {
-        console.log("posiontClass Change");
+        // console.log("posiontClass Change");
         // console.log("positionClass",this.id,this.chartInstance,this.chartLibrary);
         if (this.chartInstance && this.chartLibrary === ChartLibrary.highchart) {
             this.toggleHighChartLegend();
             if (this.id === "chart-heatmap") {
                 this.toggleHighChartAxis();
             }
+            console.time(this.id);
+            // 这里性能用散点图点击性能太慢
+            // if (this.id === "chart-region-linechart") {
+            //     // (this.chartInstance as any).reflow();
+            //     (this.chartInstance as any).destroy();
+            //     this.chartInstance = Highcharts.chart(this.id, this.option) as any;
+            // } else {
             (this.chartInstance as any).reflow();
+            // }
+            console.timeEnd(this.id);
         }
         if (this.chartInstance && this.chartLibrary === ChartLibrary.echart) {
             (this.chartInstance as any).resize();
-
         }
     }
     /**

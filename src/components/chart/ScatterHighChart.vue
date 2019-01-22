@@ -14,7 +14,7 @@ import { PositionClass , PostParams ,ChartLibrary} from '@/types/index';
 import BaseChartFactory from "@/components/chart/base/BaseChartFactory.vue";
 import LittleBar from "@/components/chart/LittleBar.vue";
 import { Options } from 'highcharts';
-import {listdata, drawLineOptions } from "@/components/options/TrendOptions.ts";
+import {getOption } from "@/components/options/ScatterOption.ts";
 import { getDataPromise, PostPath , insertInitData} from "@/actions/axiosProxy.ts";
 import PubSub from 'pubsub-js';
 import { SingleTrendChart, RegionTrendChart,TrendChartTrans } from '@/types/postreturnform';
@@ -56,13 +56,13 @@ export default class ScatterHighChart extends Vue implements AxiosSourceManage {
       const promise = getDataPromise<SingleTrendChart | RegionTrendChart,TrendChartTrans>(this.urlparas,this.urlparas.isLeaf?PostPath.singleLineChart:PostPath.regionLineChart,this.axiosSource,this.dealData);
       promise.then(
         (data: string | TrendChartTrans) => {
-          if ( typeof data !== "string") {
+          // if ( typeof data !== "string") {
             const change = (this.option as any).change;
-            const option2 = drawLineOptions(data, "趋势图");
+            const option2 = getOption(data, "趋势图");
             (option2 as any).change = updatestate.redraw;
             this.option = option2 as any;
             // console.log("TopHighChartdata",this.option);
-          }
+          // }
         }
       );
     }

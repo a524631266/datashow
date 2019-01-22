@@ -440,6 +440,11 @@ $antdsliderheight: $sliderbaseheight + px;
 .highcharts-exporting-group {
     display: none!important;
 };
-
+#chart-single-action .highcharts-yaxis {
+    display: none;
+}
+#chart-single-action .highcharts-yaxis:nth-child(4) {
+    display: block;
+}
 </style>
 

@@ -177,7 +177,7 @@ const genPackedBubble = (datalist: any[],BubbluSize: {minSize: number}) => {
       },
       tooltip: {
         useHTML: true,
-        pointFormat: 	`<b>name:</b> {point.name} <br/><b>entity:</b> <b>{point.entity}</b><br/><b>value:</b>{point.y}<br/><a onclick="leafrouter2home('{point.entity}','{point.name}')">图表</a> <a onclick="leafrouter2info('{point.entity}','{point.name}')">用户信息</a>`
+        pointFormat: 	`<b>name:</b> {point.name} <br/><b>value:</b>{point.y}<br/><a onclick="leafrouter2home('{point.entity}','{point.name}')">图表</a> <a onclick="leafrouter2info('{point.entity}','{point.name}')">用户信息</a>`
       },
       plotOptions: {
         packedbubble: {
