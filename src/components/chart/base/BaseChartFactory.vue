@@ -1,6 +1,6 @@
 <template>
-    <div style="absolute" class="innerChart">
-        <div  ref="id" :id="id" class="innerChart">
+    <div style="absolute" class="innerChart" ref="container">
+        <div  ref="id" :id="id" class="innerChart" :style="{height: containerheight}">
         </div>
         <a-spin tip="Loading..." v-show="showLoading" :style="{position:'absolute',top: '50%',left: '50%',transform: 'translateY(-50%) translateX(-50%)' }">
             <!-- <div class="spin-content">
@@ -12,7 +12,7 @@
 
 <script lang="ts">
 import { Component, Vue, Prop, Emit, Model, Watch, Inject } from 'vue-property-decorator';
-import Highcharts, { Options } from 'highcharts';
+// import Highcharts1, { Options } from 'highcharts';
 import echarts,{ ECharts } from "echarts";
 import { PositionClass , PostParams, ChartLibrary } from '@/types/index';
 // import "echarts/map/js/china";
@@ -20,10 +20,16 @@ import 'echarts/lib/chart/heatmap';
 import Antd from "ant-design-vue";
 import { updatestate } from '@/types/updateState';
 import exportHighchart from 'highcharts/modules/exporting';
+// import gantt from 'highcharts/modules/gantt';
+import Highcharts from "highcharts/highcharts-gantt";
 import HighchartsMore from 'highcharts/highcharts-more';
 import {downloadchart} from '@/util/downloadcanvas.ts';
 exportHighchart(Highcharts);
 HighchartsMore(Highcharts);
+// 加载甘特图插件
+// gantt(Highcharts);
+// tslint:disable-next-line:no-var-requires
+// require("highcharts/modules/gantt")(Highcharts);
 // tslint:disable-next-line:no-var-requires
 // require('highcharts/highcharts-more')(Highcharts);
 // tslint:disable-next-line:no-var-requires
@@ -48,11 +54,13 @@ export default class BaseChartFactory extends Vue {
     @Prop() public urlparas!: PostParams;
     @Prop() public handleclick!: (elementdata: any)=>void;
     @Prop() public getData!: ()=> void;
+    // private factoryMethod = this.chartLibrary === ChartLibrary.echart? echarts.init: this.id === "chart-single-action"? Highcharts.ganttChart : Highcharts.chart;
     // tslint:disable-next-line:ban-types
     // @Prop() public updateData!: Function;
     private data = [];
     private chartInstance = null;
     private showLoading = false;
+    private containerheight = "100%";
     public mounted() {
         // console.log("1111111")
         PubSub.subscribe("downloadchart",this.downloadchart);
@@ -66,11 +74,12 @@ export default class BaseChartFactory extends Vue {
     @Watch("urlparas.entity",{deep:true})
     private initChart(newVal: object, oldVal: object) {
         // console.log("entity变化了 :new entity",this.id,newVal,";oldeVal",oldVal);
+        const createfunction = this.id === "chart-single-action"? Highcharts.ganttChart : Highcharts.chart;
         // 如果之前有图表的话直接销毁图表
         if (this.chartInstance && this.chartLibrary === ChartLibrary.highchart) {
             // (this.chartInstance as any).showLoading();
             (this.chartInstance as any).destroy();
-            this.chartInstance = Highcharts.chart(this.id, this.option) as any;
+            this.chartInstance = createfunction(this.id, this.option) as any;
         }
         if (this.chartInstance && this.chartLibrary === ChartLibrary.echart) {
             (this.chartInstance as any).dispose();
@@ -80,6 +89,17 @@ export default class BaseChartFactory extends Vue {
         // this.redrawChart(newVal, oldVal);
         // this.$emit("getData");
         // tslint:disable-next-line:no-unused-expression
+        // window.onresize = () => {
+        //     this.adjustSubHeight();
+        // };
+    }
+    /**
+     * 在画highchart之前要调整一下图表高度
+     */
+    @Emit()
+    private adjustSubHeight() {
+        console.log("this.ref",this.$refs);
+        // this.containerheight = this.$refs.container;
     }
     @Watch("option.change",{deep: true})
     private redrawChart(newVal: updatestate, oldVal: updatestate) {
@@ -88,23 +108,24 @@ export default class BaseChartFactory extends Vue {
         }
         //    console.log("options变化",newVal, oldVal,this.id);
         if(this.chartLibrary === ChartLibrary.highchart) {
+                const createfunction = this.id === "chart-single-action"? Highcharts.ganttChart : Highcharts.chart;
                 if (this.chartInstance) {
                     // console.log("1");
                     // (this.chartInstance as any).reflow();
                     if(newVal === updatestate.redraw) { // 前一次数据为undefined的时候，为新的option因此需要重画
                         // this.destroyed();
-                        this.chartInstance = Highcharts.chart(this.id, this.option) as any;
+                        this.chartInstance =createfunction(this.id, this.option) as any;
                         this.showLoading = false;
                     } else if (newVal === updatestate.empty) {
                         this.showLoading = true;
-                        this.chartInstance = Highcharts.chart(this.id, this.option) as any;
+                        this.chartInstance =createfunction(this.id, this.option) as any;
                     } else { // highchart增量更新数据的时候操作
                         // this.showLoading = false;
                         this.$emit("updateData",this.chartInstance,this.option);
                     }
                 } else {
                     console.log("1111");
-                    this.chartInstance = Highcharts.chart(this.id, this.option) as any;
+                    this.chartInstance =createfunction(this.id, this.option) as any;
                     // this.showLoading = false;
                 }
                 this.toggleHighChartLegend();
@@ -134,6 +155,7 @@ export default class BaseChartFactory extends Vue {
                     // (window as any).echart = mychart as any;
                     // 窗口变动自动变换数据
                     window.onresize = ()=> {
+                        this.adjustSubHeight();
                         (this.chartInstance as any).resize();
                         // console.log("resize.........");
                     };
@@ -175,7 +197,7 @@ export default class BaseChartFactory extends Vue {
      */
     @Watch('positionClass',{deep: true})
     private reflowChart(newVal: object, oldVal: object) {
-        // console.log("posiontClass Change");
+        console.log("posiontClass Change");
         // console.log("positionClass",this.id,this.chartInstance,this.chartLibrary);
         if (this.chartInstance && this.chartLibrary === ChartLibrary.highchart) {
             this.toggleHighChartLegend();

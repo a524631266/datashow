@@ -1,102 +1,213 @@
-{
-    "chart": {
-        "type": "packedbubble",
-        "backgroundColor": "rgba(0,0,0,0)"
-    },
-    "title": {
-        "text": ""
-    },
-    "tooltip": {
-        "useHTML": true,
-        "pointFormat": "<b>{point.name}:</b> {point.y}m CO<sub>2</sub>"
-    },
-    "plotOptions": {
-        "packedbubble": {
-            "dataLabels": {
-                "enabled": true,
-                "format": "{point.name}",
-                "filter": {
-                    "property": "y",
-                    "operator": ">",
-                    "value": 250
-                },
-                "style": {
-                    "color": "black",
-                    "textOutline": "none",
-                    "fontWeight": "normal"
-                }
-            },
-            "minPointSize": 5
-        }
-    },
-    "xAxis": {},
-    "yAxis": {},
-    "series": [
-        {
-            "name": "超低",
-            "data": [
-                {
-                    "name": "5监区",
-                    "value": -0.013001498663001456,
-                    "entity": "881645"
-                },
-                {
-                    "name": "9监区",
-                    "value": -0.14615719847047495,
-                    "entity": "881675"
-                },
-                {
-                    "name": "洗澡堂",
-                    "value": -0.2940333407039244,
-                    "entity": "982235"
-                },
-                {
-                    "name": "10监区",
-                    "value": -0.503442636588638,
-                    "entity": "881685"
-                },
-                {
-                    "name": "7监区",
-                    "value": -0.594232930958973,
-                    "entity": "881655"
-                }
-            ]
-        },
-        {
-            "name": "超高",
-            "data": [
-                {
-                    "name": "备勤楼2",
-                    "value": 1.6392863275994314,
-                    "entity": "881615"
-                },
-                {
-                    "name": "46监区",
-                    "value": 1.0831445544317653,
-                    "entity": "881635"
-                }
-            ]
-        }
-    ],
-    "credits": {
-        "enabled": false
-    },
-    "responsive": {
-        "rules": [
-            {
-                "condition": {
-                    "maxWidth": 500
-                },
-                "chartOptions": {
-                    "legend": {
-                        "align": "right",
-                        "verticalAlign": "middle",
-                        "layout": "vertical"
-                    }
-                },
-                "_id": "highcharts-pzbv6hg-3091"
-            }
-        ]
-    },
-    "change": "redraw"
+// Set to 00:00:00:000 today
+var today = new Date(),
+	day = 1000 * 60 * 60 * 1,
+	map = Highcharts.map,
+	dateFormat = Highcharts.dateFormat,
+	series,
+	cars;
+// Set to 00:00:00:000 today
+today.setUTCHours(0);
+today.setUTCMinutes(0);
+today.setUTCSeconds(0);
+today.setUTCMilliseconds(0);
+today = today.getTime();
+cars = [{
+	model: 'Nissan Leaf',
+	current: 0,
+	deals: [{
+		rentedTo: 'Lisa Star',
+		from: today - 1 * day,
+		to: today + 2 * day
+	}, {
+		rentedTo: 'Shane Long',
+		from: today - 3 * day,
+		to: today - 2 * day
+	}, {
+		rentedTo: 'Jack Coleman',
+		from: today + 5 * day,
+		to: today + 6 * day
+	}]
+}, {
+	model: 'Jaguar E-type',
+	current: 0,
+	deals: [{
+		rentedTo: 'Martin Hammond',
+		from: today - 2 * day,
+		to: today + 1 * day
+	}, {
+		rentedTo: 'Linda Jackson',
+		from: today - 2 * day,
+		to: today + 1 * day
+	}, {
+		rentedTo: 'Robert Sailor',
+		from: today + 2 * day,
+		to: today + 6 * day
+	}]
+}, {
+	model: 'Volvo V60',
+	current: 0,
+	deals: [{
+		rentedTo: 'Mona Ricci',
+		from: today + 0 * day,
+		to: today + 3 * day
+	}, {
+		rentedTo: 'Jane Dockerman',
+		from: today + 3 * day,
+		to: today + 4 * day
+	}, {
+		rentedTo: 'Bob Shurro',
+		from: today + 6 * day,
+		to: today + 8 * day
+	}]
+}, {
+	model: 'Volkswagen Golf',
+	current: 0,
+	deals: [{
+		rentedTo: 'Hailie Marshall',
+		from: today - 1 * day,
+		to: today + 1 * day
+	}, {
+		rentedTo: 'Morgan Nicholson',
+		from: today - 3 * day,
+		to: today - 2 * day
+	}, {
+		rentedTo: 'William Harriet',
+		from: today + 2 * day,
+		to: today + 3 * day
+	}]
+}, {
+	model: 'Peugeot 208',
+	current: 0,
+	deals: [{
+		rentedTo: 'Harry Peterson',
+		from: today - 1 * day,
+		to: today + 2 * day
+	}, {
+		rentedTo: 'Emma Wilson',
+		from: today + 3 * day,
+		to: today + 4 * day
+	}, {
+		rentedTo: 'Ron Donald',
+		from: today + 5 * day,
+		to: today + 6 * day
+	}]
+}];
+// Parse car data into series.
+series = cars.map(function (car, i) {
+	var data = car.deals.map(function (deal) {
+		return {
+			id: 'deal-' + i,
+			rentedTo: deal.rentedTo,
+			start: deal.from,
+			end: deal.to,
+			y: i
+		};
+	});
+	return {
+		name: car.model,
+		data: data,
+		current: car.deals[car.current],
+		borderRadius: 0,
+		pointPadding: 0,
+		groupPadding: 0,
+		colorByPoint: false,
+		color: "rgba(255,0,0,1)",
+		dataLabels: {
+			enabled: false,
+			formatter: function(){
+				return this.key;
+			},
+		},
+		borderWidth: 0,
+		tickmarkPlacement:'on',
+		stack: 0,
+		grouping: false,
+	};
+});
+console.log(series)
+series[0].data[1].y = 4
+function create() {
+	return {
+		chart: {
+			backgroundColor: 'rgba(0,0,0,0)',
+			zoomType: 'x',
+			height: '50%'
+		},
+		legend : {
+			enabled: true,
+			align : 'center',
+			verticalAlign : 'bottom',
+			y : 0,
+			floating : false,
+			itemStyle: {
+				color: "#C1FFC1",
+				fontWeight: 'bold'
+			},
+			backgroundColor: '#303030',
+			// borderColor: '#ffffff',
+			borderWidth: 2,
+			borderRadius: 0,
+		},
+		series: series,
+		title: {
+			text: 'Car Rental Schedule',
+			style: {
+				fontSize: '16px',
+				fontWeight: 'bold',
+				color: "white",
+			},
+		},
+		tooltip: {
+			pointFormat: '<span>Rented To: {point.rentedTo}</span><br/><span>From: {point.start:%e. %b}</span><br/><span>To: {point.end:%e. %b}</span>'
+		},
+		xAxis: [{
+			type: 'datetime',
+			grid: false,
+			currentDateIndicator: false,
+			labels: {
+				format: undefined,
+				style: {
+					color: "white",
+				},
+			},
+			style: {
+				fontSize: '16px',
+				fontWeight: 'bold',
+			},
+			color: "white",
+		}],
+		yAxis: {
+			labels: {
+				userHTML: true,
+				style: {
+					color: "white",
+				},
+			},
+			// gridLineWidth: 0,
+			type: 'category',
+			grid: {
+				columns: [
+					{
+						title: {
+							text: '日期',
+							style: {
+								fontSize: '16px',
+								fontWeight: 'bold',
+								color: "white",
+							},
+						},
+						categories: map(series, function (s) {
+							return dateFormat('%e. %b', s.current.to);
+						})
+					}],
+				maxPadding: 0,
+				staticScale:100,
+			}
+		},
+		credits: {
+			enabled: false,
+		},
+	}
 }
+Highcharts.ganttChart('container', create());
+console.log(create());

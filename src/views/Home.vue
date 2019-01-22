@@ -37,6 +37,7 @@ import BoxHighChart from "@/components/chart/BoxHighChart.vue";
 import TimeLineHighChart from "@/components/chart/TimeLineHighChart.vue";
 import HeatMapHighChart from "@/components/chart/HeatMapHighChart.vue";
 import TrendHighChart from "@/components/chart/TrendHighChart.vue";
+import ScatterHighChart from "@/components/chart/ScatterHighChart.vue";
 import TopHighChart from "@/components/chart/TopHighChart.vue";
 import GeoMapEchart from "@/components/chart/GeoMapEchart.vue";
 import BoxSingleHighChart from "@/components/chart/BoxSingleHighChart.vue";
@@ -68,6 +69,7 @@ const geo = Object.assign({},InitGeomapUrlProps);
     GeoMapEchart,
     BoxSingleHighChart,
     EntityInfo,
+    ScatterHighChart
     // FloatBotton
   },
 })
@@ -82,7 +84,7 @@ export default class Home extends Vue {
         {id: "chart-single-linechart", urlparas: enttrend,
           option: {xAxis: "2"}, positionClass: PositionClass.LeftMiddle,chartName:"TrendHighChart"},
         {id: "chart-region-linechart", urlparas: orgtrend,
-          option: {xAxis: "4"}, positionClass: PositionClass.RightMiddle,chartName:"TrendHighChart"},
+          option: {xAxis: "4"}, positionClass: PositionClass.RightMiddle,chartName:"ScatterHighChart"},
           {id: "chart-heatmap", urlparas: orghp,
         option: {xAxis: "4"}, positionClass: PositionClass.Center,chartName:"HeatMapHighChart"},
         {id: "chart-geomap", urlparas: geo,
