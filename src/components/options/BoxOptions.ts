@@ -36,7 +36,7 @@ export const drawBoxOptions = (listdata: object[], xAxisList: string[], title: s
     const day: string = xAxisList[i].split(" ")[0];
     timedict[day] = timedict[day] === undefined ? 1 : timedict[day] + 1;
   }
-  console.log("listdata",listdata);
+  // console.log("listdata",listdata);
   const timekey = Object.keys(timedict).sort();
   const newxAxis = [-0.5];
   const newdata = [];

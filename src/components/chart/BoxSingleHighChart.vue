@@ -123,7 +123,7 @@ export default class BoxSingleHighChart extends Vue implements AxiosSourceManage
           marker: {
               fillColor: 'white',
               lineWidth: 1,
-              radius:1,
+              radius: 2,
               lineColor: "", // (Highcharts as any).getOptions().colors[0] as any,
           },
           tooltip: {

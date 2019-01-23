@@ -66,6 +66,7 @@ export default class HeatMapHighChart extends Vue implements AxiosSourceManage {
             const option2 = drawHeatmapOptions(data, "HeatMap","" ,this.showTooltiop,this.limiter);
             (option2 as any).change = updatestate.redraw;
             this.option = option2 as any;
+            console.log("heamt",data);
             // console.log("timelinedata",this.option);
           }
         }
@@ -91,9 +92,11 @@ export default class HeatMapHighChart extends Vue implements AxiosSourceManage {
       this.getData();
       // 在这里开始做长轮询 定时从后台传数据
     }
+    @Emit()
     private dealData(data: HeatmapChart): HeatmapChartTrans {
       let result: HeatmapChartTrans = [];
       result = data.table;
+      this.pageid = data.totalpages;
       return result;
     }
     private showTooltiop(entity: string, name: string,clientX: number,clientY: number,target: DOMRect) {

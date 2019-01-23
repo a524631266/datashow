@@ -113,7 +113,7 @@ export default class Home extends Vue {
     // }
     @Watch("$route.query.entity",{deep: true})
     private routerchange(val: any) {
-        // console.log("路由变化",val,this.$route.query.entity);
+        console.log("路由变化",val,this.$route.query.entity);
         // 当路由返回的时候，此时的isLeaf变成了文本字符串，需要判断
         const bool =  (this.$route.query.isLeaf === "false" || !this.$route.query.isLeaf)?false:true;
         // console.log("this.$route.query.isLeaf",this.$route.query.isLeaf);

@@ -83,6 +83,7 @@ interface RegionTrendChart {
     region: SingleTrendChart;
 }
 
+
 interface TrendDataTrans {
     data: Array<[number,number]>;// [时间，value]
     name: string;
@@ -92,8 +93,21 @@ interface TrendChartTrans {
     [index: number]: TrendDataTrans;
 }
 
+interface ScatterData {
+    id: number; // id 代表entityid
+    // value: number;
+    // time: number;
+    y: number; // y 代表值
+    x: number; // x代表 时间 13位
+}
+interface ScatterChart {
+    linechart: ScatterData[];
+}
 
 
+interface ScatterChartTrans {
+    [index: number]: ScatterData;
+}
 
 // const data: SingleTrendChart = {
 //     linechart: [
@@ -168,6 +182,7 @@ interface HeatmapData {
 }
 interface HeatmapChart {
     table: HeatmapData[];
+    totalpages: number;
 }
 
 interface HeatmapDataTrans {
@@ -215,5 +230,5 @@ interface TopChartTrans {
 
 export {
     SingleBoxChart,RegionBoxChart,SingleTrendChart,RegionTrendChart,TimeLineChart,HeatmapChart,TopChart,
-    TimeLineChartTrans,TopChartTrans,HeatmapChartTrans,BoxChartTrans,TrendChartTrans
+    TimeLineChartTrans,TopChartTrans,HeatmapChartTrans,BoxChartTrans,TrendChartTrans,ScatterChart,ScatterChartTrans
 };

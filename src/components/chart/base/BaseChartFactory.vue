@@ -2,7 +2,7 @@
     <div style="absolute" class="innerChart" ref="container">
         <div  ref="id" :id="id" class="innerChart" :style="{height: containerheight}">
         </div>
-        <a-spin tip="Loading..." v-show="showLoading" :style="{position:'absolute',top: '50%',left: '50%',transform: 'translateY(-50%) translateX(-50%)' }">
+        <a-spin class="loading" :tip="loadingtext" v-show="showLoading" :style="{position:'absolute',top: '50%',left: '50%',transform: 'translateY(-50%) translateX(-50%)' }">
             <!-- <div class="spin-content">
                 {{""}}
             </div> -->
@@ -61,6 +61,7 @@ export default class BaseChartFactory extends Vue {
     private chartInstance = null;
     private showLoading = false;
     private containerheight = "100%";
+    private loadingtext = "Loading...";
     public mounted() {
         // console.log("1111111")
         PubSub.subscribe("downloadchart",this.downloadchart);
@@ -76,7 +77,7 @@ export default class BaseChartFactory extends Vue {
         // console.log("entity变化了 :new entity",this.id,newVal,";oldeVal",oldVal);
         const createfunction = this.id === "chart-single-action"? Highcharts.ganttChart : Highcharts.chart;
         // 如果之前有图表的话直接销毁图表
-        console.time(this.id);
+        // console.time(this.id);
         if (this.chartInstance && this.chartLibrary === ChartLibrary.highchart) {
             // (this.chartInstance as any).showLoading();
             (this.chartInstance as any).destroy();
@@ -87,7 +88,7 @@ export default class BaseChartFactory extends Vue {
             this.chartInstance = null;
         }
         this.showLoading = true;
-        console.timeEnd(this.id);
+        // console.timeEnd(this.id);
         // this.redrawChart(newVal, oldVal);
         // this.$emit("getData");
         // tslint:disable-next-line:no-unused-expression
@@ -141,18 +142,27 @@ export default class BaseChartFactory extends Vue {
                     // console.log("Echart111111111111111111");
                     // this.updateData(this.chartInstance,this.option); //
                     if(newVal === updatestate.redraw) {
+                        this.loadingtext = "Loading...";
+                        this.showLoading = true;
+                    } else if(newVal === updatestate.error) {
+                        this.loadingtext = "无数据";
                         this.showLoading = true;
                     } else {
                         this.showLoading = false; // 因为echart是默认先加载地图，数据还没有返回的情况下
                     }
-                    // console.log("newVal",newVal);
-                    // this.showLoading = false; // 因为echart是默认先加载地图，数据还没有返回的情况下
-                    this.$emit("updateData",this.chartInstance,this.option);
+                    //  ehcart中散点图为100万个所有要单独处理
+                    // if(this.id === "chart-region-linechart") {
+                    // } else {
+                    this.$emit("updateData",this.chartInstance,this.option,this);
+                    // }
                 } else {
                     // console.log("resechart");
                     const nodeid = document.getElementById(this.id);
                     const mychart = echarts.init(nodeid as any);
+                    console.time(this.id);
                     mychart.setOption(JSON.parse(JSON.stringify(this.option)));
+                    console.timeEnd(this.id);
+                    // console.log("this.opton2",this.option);
                     this.chartInstance = mychart as any;
                     // (window as any).echart = mychart as any;
                     // 窗口变动自动变换数据
@@ -206,7 +216,7 @@ export default class BaseChartFactory extends Vue {
             if (this.id === "chart-heatmap") {
                 this.toggleHighChartAxis();
             }
-            console.time(this.id);
+            // console.time(this.id);
             // 这里性能用散点图点击性能太慢
             // if (this.id === "chart-region-linechart") {
             //     // (this.chartInstance as any).reflow();
@@ -215,7 +225,7 @@ export default class BaseChartFactory extends Vue {
             // } else {
             (this.chartInstance as any).reflow();
             // }
-            console.timeEnd(this.id);
+            // console.timeEnd(this.id);
         }
         if (this.chartInstance && this.chartLibrary === ChartLibrary.echart) {
             (this.chartInstance as any).resize();
@@ -324,5 +334,7 @@ export default class BaseChartFactory extends Vue {
 .anchorBL{
     display:none;
 }
-
+.loading {
+    pointer-events: none;
+}
 </style>

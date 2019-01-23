@@ -316,6 +316,9 @@ export default class LittleBar extends Vue {
             case TitleName.HeatMap:
                 show = false;
                 break;
+            case TitleName.Scatter:
+                show = false;
+                break;
             default:
                 break;
         }
