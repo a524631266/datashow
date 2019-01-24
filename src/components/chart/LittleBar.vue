@@ -473,10 +473,10 @@ export default class LittleBar extends Vue {
         this.dopostionClassChange(this.positionClass);
         PubSub.subscribe("showCenterBar",(mesg: any, nothing: any)=> {
             if(this.positionClass === PositionClass.Center) {
-                console.log("111111111111111");
+                // console.log("111111111111111");
                 setTimeout(()=>this.showcontroler(true,nothing),100);
             } else {
-                console.log("2222222222222");
+                // console.log("2222222222222");
                 setTimeout(()=>this.showcontroler(false,nothing),0);
             }
         });

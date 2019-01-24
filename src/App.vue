@@ -10,6 +10,9 @@ import { Component, Vue, Prop, Emit } from 'vue-property-decorator';
   }
 })
 export default class App extends Vue {
+  private destroyed() {
+    window.localStorage.clear();
+  }
 }
 </script>
 

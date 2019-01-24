@@ -875,7 +875,7 @@ export const drawActionOptions2 = (objectlist: TimeLineChartTrans, title: string
     }
     inlist.push({
       x: ((objectlist[i].starttime + 8 * 60 * 60 * 1000) % (24 * 60 * 60 * 1000)) - 8 * 60 * 60 * 1000,
-      x2: ((endtimeMinusOne(objectlist[i].endtime + 8 * 60 * 60 * 1000)) % (24 * 60 * 60 * 1000)) - 8 * 60 * 60 * 1000,
+      x2: ((endtimeMinusOne(objectlist[i].endtime) + 8 * 60 * 60 * 1000) % (24 * 60 * 60 * 1000)) - 8 * 60 * 60 * 1000,
       y: yAxis.indexOf(day),
       name: objectlist[i].type === "增加" ? "超高" : "超低",
       id: objectlist[i].id,
@@ -1242,7 +1242,7 @@ export const drawActionOptions = (objectlist: TimeLineChartTrans, title: string,
       yAxis.push(day);
     }
     const start = ((objectlist[i].starttime + 8 * 60 * 60 * 1000) % (24 * 60 * 60 * 1000)) - 8 * 60 * 60 * 1000;
-    const end = ((endtimeMinusOne(objectlist[i].endtime + 8 * 60 * 60 * 1000)) % (24 * 60 * 60 * 1000)) - 8 * 60 * 60 * 1000;
+    const end = ((endtimeMinusOne(objectlist[i].endtime) + 8 * 60 * 60 * 1000) % (24 * 60 * 60 * 1000)) - 8 * 60 * 60 * 1000;
     inlist.push({
       x: start,
       x2: end,
@@ -1257,6 +1257,7 @@ export const drawActionOptions = (objectlist: TimeLineChartTrans, title: string,
     });
   }
   const series = getInterData2(inlist);
+  console.log("sereis",series,objectlist);
   return {
     chart: {
       backgroundColor: 'rgba(0,0,0,0)',
@@ -1328,8 +1329,11 @@ export const drawActionOptions = (objectlist: TimeLineChartTrans, title: string,
         fontSize: '11px',
         fontWeight: 'bold',
       },
+      showLastLabel: true,
       color: "white",
-      min: 0,
+      // min: 0,
+      min: 0 - 8 * 60 * 60 * 1000,
+      max: 24 * 60 * 60 * 1000 - 8 * 60 * 60 * 1000,
     }],
     yAxis: {
       labels: {
