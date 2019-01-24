@@ -1,6 +1,7 @@
 import { PostParams } from '@/types';
 import Axios,{AxiosPromise, CancelTokenSource} from "axios";
 import { Component, Vue } from 'vue-property-decorator';
+import Volidater from '@/controller/sessionStorageController';
 // 新疆接口
 export const projectname = "anomaly";
 const prev = process.env.NODE_ENV === "development"? "/xinjiang": "/" + projectname;
@@ -18,6 +19,9 @@ export enum PostPath {
     geomap = "geomap",
 }
 
+// const validater = new Volidater(window.sessionStorage);
+
+
 /**
  * 获取数据的promise 返回T目标的格式或者返回 "err"string(代表返回错误)
  * @param urlparas 参数列表 {postpath}?entity=${entity}&start=${starttime}&end=${endtime}&entitynums=${entitynums}&scale=${scale}&winlen=${winlen}`,
@@ -25,31 +29,46 @@ export enum PostPath {
  * @param callback 处理函数 R 为后端return的数据格式,T 为目标需要转化成的格式(画图专用)
  */
 export function getDataPromise<R,T>(urlparas: PostParams,postpath: PostPath,cancelTokenSource: CancelTokenSource,callback: (data: R)=> T): Promise< string | T> {
-    const {entity,starttime,endtime,entitynums,scale,winlen,pageid,pagesize,thresholder:{range}} = urlparas;
-    let posturl = "";
-    if(pageid) {
-        posturl = `${prev}/elecnum/${postpath}?entity=${entity}&start=${starttime}&end=${endtime}&scale=${scale}&winlen=${winlen}&pageid=${pageid}&pagesize=${pagesize}&neger=${range[0]}&poser=${range[1]}`;
+    const {pass, data} = new Volidater(window.sessionStorage).postVolidate(urlparas,postpath);
+    console.log("pass",pass);
+    let promise: Promise<string | T>;
+    if (pass) {
+        const {entity,starttime,endtime,entitynums,scale,winlen,pageid,pagesize,thresholder:{range}} = urlparas;
+        let posturl = "";
+        if(pageid) {
+            posturl = `${prev}/elecnum/${postpath}?entity=${entity}&start=${starttime}&end=${endtime}&scale=${scale}&winlen=${winlen}&pageid=${pageid}&pagesize=${pagesize}&neger=${range[0]}&poser=${range[1]}`;
+        } else {
+            posturl = `${prev}/elecnum/${postpath}?entity=${entity}&start=${starttime}&end=${endtime}&scale=${scale}&winlen=${winlen}&neger=${range[0]}&poser=${range[1]}`;
+        }
+        promise = Axios({
+            baseURL: baseUrl,
+            method: "get",
+            url: posturl,
+            cancelToken: cancelTokenSource.token
+        }).then(
+            (result) => {
+                // return data;
+                // validater.s()
+                new Volidater(window.sessionStorage).storeData(urlparas,postpath,result.data);
+                const data: T = callback(result.data);
+                return data;
+            }
+        ).catch(
+            (err) => {
+                console.log("err",err);
+                // const data: T = callback(data);
+                return "err";
+            }
+        );
     } else {
-        posturl = `${prev}/elecnum/${postpath}?entity=${entity}&start=${starttime}&end=${endtime}&scale=${scale}&winlen=${winlen}&neger=${range[0]}&poser=${range[1]}`;
+        promise = new Promise(
+            (resolve , reject) => {
+                resolve(
+                    callback(data)
+                );
+            }
+        );
     }
-    const promise = Axios({
-        baseURL: baseUrl,
-        method: "get",
-        url: posturl,
-        cancelToken: cancelTokenSource.token
-    }).then(
-        (result) => {
-            // return data;
-            const data: T = callback(result.data);
-            return data;
-        }
-    ).catch(
-        (err) => {
-            console.log("err",err);
-            // const data: T = callback(data);
-            return "err";
-        }
-    );
     return promise;
 }
 

@@ -60,11 +60,6 @@ export default class ScatterHighChart extends Vue implements AxiosSourceManage {
     private candraggable = false;
     private date: Moment = moment();
     // private lazyBigData: number = [];
-    get localStorageKey() {
-      // 添加md5 根据 图表id + entityid + 开始时间  + 结束时间 做md5转换 几乎唯一
-      const md5 = require("crypto").createHash("md5");
-      return md5.update(this.id + this.postparms.entity + this.postparms.starttime + this.postparms.endtime).digest("hex");
-    }
     @Emit()
     public cancelAxios() {
       this.axiosSource.cancel("趋势图关闭");
