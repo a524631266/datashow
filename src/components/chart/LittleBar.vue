@@ -471,6 +471,15 @@ export default class LittleBar extends Vue {
         this.innershowInterval = this.postparms.showinterval / 1000 * 20 ;
         this.showdayLocal = this.date;
         this.dopostionClassChange(this.positionClass);
+        PubSub.subscribe("showCenterBar",(mesg: any, nothing: any)=> {
+            if(this.positionClass === PositionClass.Center) {
+                console.log("111111111111111");
+                setTimeout(()=>this.showcontroler(true,nothing),100);
+            } else {
+                console.log("2222222222222");
+                setTimeout(()=>this.showcontroler(false,nothing),0);
+            }
+        });
     }
     private destroyed() {
         // console.log((this as any).some);
@@ -529,6 +538,9 @@ export default class LittleBar extends Vue {
         // console.log("leave",evn);
         if (this.positionClass === PositionClass.Center) {
             this.showtopbar = show ;// this.positionClass === PositionClass.Center?show:false;
+        }
+        if (show === false) {
+            this.showtopbar = false;
         }
         // this.showrange = show;
     }

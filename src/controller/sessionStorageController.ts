@@ -6,7 +6,7 @@ class Volidater {
     private local = window.sessionStorage;
     constructor(local: Storage) {
         this.local = local;
-        (window as any).ddd = this.md5;
+        // (window as any).ddd = this.md5;
     }
     /**
      * 用来在post之前参考本地是否有存储
@@ -36,6 +36,12 @@ class Volidater {
         const str = `${postpath}${urlparas.entity}${urlparas.starttime}${urlparas.endtime}${urlparas.pageid}${urlparas.pagesize}${urlparas.scale}${urlparas.thresholder.range}`;
         // console.log("daaat" ,str,require("crypto").createHash("md5").update(str).digest("hex"));
         return require("crypto").createHash("md5").update(str).digest("hex");
+    }
+    private zip(sourcedata: any): any {
+        console.log("压缩方式");
+    }
+    private unzip(targetdata: any): any {
+        console.log("解压方式");
     }
 }
 

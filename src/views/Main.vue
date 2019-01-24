@@ -48,7 +48,7 @@ import PubSub from 'pubsub-js';
 import { PositionClass , PostParams , Dimension } from "@/types/index.ts";
 
 import { InitBoxUrlProps,InitHeatMapUrlProps,InitTimeLineUrlProps,
-        InitTopUrlProps,InitTrendUrlProps,InitGeomapUrlProps } from "@/config/initOptions.ts";
+        InitTopUrlProps,InitTrendUrlProps,InitGeomapUrlProps, orginitconfig, entityinitconfig } from "@/config/initOptions.ts";
 const orgbox = Object.assign({},InitBoxUrlProps);
 const entbox = Object.assign({},InitBoxUrlProps,{isLeaf:true});
 const enttrend = Object.assign({},InitTrendUrlProps,{isLeaf:true});
@@ -113,22 +113,38 @@ export default class Main extends Vue {
     // }
     @Watch("$route.query.entity",{deep: true})
     private routerchange(val: any) {
-        console.log("路由变化",val,this.$route.query.entity);
+        console.log("路由变化",val,this.$route);
         // 当路由返回的时候，此时的isLeaf变成了文本字符串，需要判断
         const bool =  (this.$route.query.isLeaf === "false" || !this.$route.query.isLeaf)?false:true;
         // console.log("this.$route.query.isLeaf",this.$route.query.isLeaf);
-        this.datalist.forEach(
-            (data: any,index: number)=> {
-                // 根据是否是子节点，导入更新
-                if(this.datalist[index].urlparas.isLeaf === bool) {
-                    this.datalist[index].urlparas.entity = val;
-                    this.datalist[index].urlparas.name = this.$route.query.name as any;
-                    this.datalist[index].urlparas.level = this.$route.query.level as any;
-                    this.datalist[index].urlparas.coord = this.$route.query.coord as any;
-                    this.datalist[index].urlparas.entitynums = this.$route.query.entitynums as any;
+        // 默认当val为undefined的时候或者 当前的 this.$route.query为空的时候使用默认选项，即用户开始登陆的界面
+        if ( val !== undefined ) {
+            this.datalist.forEach(
+                (data: any,index: number)=> {
+                    // 根据是否是子节点，导入更新
+                    if(this.datalist[index].urlparas.isLeaf === bool) {
+                        this.datalist[index].urlparas.entity = val;
+                        this.datalist[index].urlparas.name = this.$route.query.name as any;
+                        this.datalist[index].urlparas.level = this.$route.query.level as any;
+                        this.datalist[index].urlparas.coord = this.$route.query.coord as any;
+                        // this.datalist[index].urlparas.entitynums = this.$route.query.entitynums as any;
+                    }
                 }
-            }
-        );
+            );
+        } else {
+            const org = orginitconfig;
+            const entity = entityinitconfig;
+            this.datalist.forEach(
+                (data: any,index: number)=> {
+                    // 根据是否是子节点，导入更新
+                    const isLeaf = this.datalist[index].urlparas.isLeaf;
+                    this.datalist[index].urlparas.entity = isLeaf?entity.entity:org.entity;
+                    this.datalist[index].urlparas.name = isLeaf?entity.name: org.name;
+                    this.datalist[index].urlparas.level = isLeaf?entity.level: org.pidlevel + 1;
+                    this.datalist[index].urlparas.coord = [0,0];
+                }
+            );
+        }
         // 同时更新标题
         if (bool) {
             PubSub.publish("updaterightbarname",this.$route.query.name);
@@ -138,7 +154,7 @@ export default class Main extends Vue {
     }
     private mounted() {
         const that = this;
-        // 1. home订阅交互的消息
+        // 1. home订阅交互的消息 用来处理双击交换中心图
         PubSub.subscribe("doubleclick2changecenter",(mesg: any, id: string)=> {
             let idindex= 0;
             let beforepositionClass = "";
@@ -188,6 +204,7 @@ export default class Main extends Vue {
                     }
                 );
             }
+            PubSub.publish("showCenterBar",null);
         });
     }
 }
