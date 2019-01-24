@@ -1,8 +1,9 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Home from './views/Home.vue';
-import Main from './views/Main.vue';
-import Login from "./views/Login.vue";
+import Main from '../views/Main.vue';
+import Home from '../views/Home.vue';
+
+import Login from "../views/Login.vue";
 import ColorSelectBar from "@/components/bar/ColorSelectBar.vue";
 // import App from './App.vue';
 // import ChartPanel from '@/views/ChartPanel.vue';
@@ -14,7 +15,7 @@ export default new Router({
     {
       path: '/login',
       name: 'login',
-      component: () => import(/* webpackChunkName: "login" */ './views/Login.vue'),
+      component: () => import(/* webpackChunkName: "group-login" */ '@/views/Login.vue'),
     },
     {
       path: '/color',
@@ -23,9 +24,9 @@ export default new Router({
     },
     {
       path: '/',
-      name: 'app',
+      name: 'app2',
       redirect: "login"
-      // component: () => import(/* webpackChunkName: "about" */ './views/Login.vue'),
+      // component: () => import(/* webpackChunkName: "about" */ '@/views/Login.vue'),
     },
     // {
     //   path: '/about',
@@ -33,7 +34,7 @@ export default new Router({
     //   // route level code-splitting
     //   // this generates a separate chunk (about.[hash].js) for this route
     //   // which is lazy-loaded when the route is visited.
-    //   component: () => import(/* webpackChunkName: "about" */ './views/About.vue'),
+    //   component: () => import(/* webpackChunkName: "about" */ '@/views/About.vue'),
     // },
     {
       path: '/home',
@@ -41,11 +42,11 @@ export default new Router({
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "main" */ './views/Main.vue'),
+      component: () => import(/* webpackChunkName: "group-home" */ '@/views/Home.vue'),
       children: [{
-        path: "/:entity",
+        path: "/home/:entity",// 动态路由根据params更改路由组件
         name: "node",
-        component: () => import(/* webpackChunkName: "main" */ './views/Main.vue'),
+        component: () => import(/* webpackChunkName: "group-home1" */ '@/views/Main.vue'),
         meta: {
           id: 0,
           name : "",

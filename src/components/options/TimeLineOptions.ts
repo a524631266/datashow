@@ -1247,7 +1247,8 @@ export const drawActionOptions = (objectlist: TimeLineChartTrans, title: string,
       x: start,
       x2: end,
       y: yAxis.indexOf(day),
-      name: objectlist[i].type === "增加" ? "超高" : "超低",
+      // name: objectlist[i].type === "增加" ? "超高" : "超低",
+      name: objectlist[i].name,
       id: objectlist[i].id,
       // color: objectlist[i].value > 0 ? "rgba(255,0,0,0.8)" : "rgba(0,255,0,0.8)",
       value: objectlist[i].value,
@@ -1285,20 +1286,21 @@ export const drawActionOptions = (objectlist: TimeLineChartTrans, title: string,
       dateTimeLabelFormats: {
         day: '%Y-%m-%d',
       },
-      headerFormat: title + '<br/>',
+      headerFormat: '',
       pointFormatter(): string {
-        // console.log(this,a,b,c)
+        // console.log(this);
         const id = (this as any).options.id;
         const x = (this as any).options.x;
         const x2 = (this as any).options.x2;
         const y = (this as any).options.y;
         const name = (this as any).options.name;
         const value = (this as any).options.value;
+        const type = (this as any).series.name;
         // console.log(this.options)
         // console.log(this)
         // tslint:disable-next-line:max-line-length
         // return "配电柜 : " + id + "<br/> 开始:" + yAxis[y] +  Highcharts.dateFormat(' %H:%M:%S', x) + "- 结束:" + yAxis[y] + Highcharts.dateFormat(' %H:%M:%S', x2) + "<br/>" + name + ":" +  Math.abs(value);
-        return "配电柜 : " + name + "<br/> 开始:" + yAxis[y] + " " + moment(x).format("HH:mm:ss") + "<br/>结束:" + yAxis[y] + " "  + moment(x2).format("HH:mm:ss") + "<br/>" + name + ":" + Math.abs(value);
+        return name+ "<br/>" + type + ": " + Math.abs(value) + "<br/> 开始: " + yAxis[y] + " " + moment(x).format("HH:mm:ss") + "<br/>结束: " + yAxis[y] + " "  + moment(x2).format("HH:mm:ss");
       },
     },
     xAxis: [{
@@ -1332,6 +1334,7 @@ export const drawActionOptions = (objectlist: TimeLineChartTrans, title: string,
     yAxis: {
       labels: {
         style: {
+          fontSize: '11px',
           color: "white",
         },
       },
@@ -1344,7 +1347,7 @@ export const drawActionOptions = (objectlist: TimeLineChartTrans, title: string,
             title: {
               text: null,
               style: {
-                fontSize: '16px',
+                fontSize: '11px',
                 fontWeight: 'bold',
                 color: "white",
               },

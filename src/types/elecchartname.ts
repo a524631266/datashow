@@ -5,6 +5,6 @@ enum TitleName {
     Trend = "趋势",
     TimeLine = "异常",
     HeatMap = "热力图",
-    Scatter = "组织散点",
+    Scatter = "区域散点",
 }
 export default TitleName;

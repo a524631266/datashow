@@ -22,6 +22,14 @@ import { ChildrenValue } from "@/components/bar/LeftBar.vue";
 import PubSub from 'pubsub-js';
 import { InitGeomapUrlProps } from "@/config/initOptions.ts";
 import {orginitconfig, entityinitconfig} from '@/config/initOptions.ts';
+interface BreadValue {
+    entity: string;
+    name: string;
+    level: number;
+    isLeaf: boolean;
+    coord: [number, number];
+}
+
 @Component({
     components: {
         ABreadcrumb:Antd.Breadcrumb,
@@ -29,9 +37,9 @@ import {orginitconfig, entityinitconfig} from '@/config/initOptions.ts';
     },
 })
 export default class BreadCrumb extends Vue {
-    private routes: ChildrenValue[] = [InitGeomapUrlProps,
+    private routes: BreadValue[] = [InitGeomapUrlProps,
                                             {
-                                                key: orginitconfig.entity,
+                                                entity: orginitconfig.entity,
                                                 name: orginitconfig.name,
                                                 level: orginitconfig.pidlevel + 1,
                                                 isLeaf: false as any,
@@ -39,8 +47,13 @@ export default class BreadCrumb extends Vue {
                                             }
                                         ] as any;
     private mounted() {
-        PubSub.subscribe("updateBread",(msg: any,data: ChildrenValue[])=> {
+        PubSub.subscribe("updateBread",(msg: any,data: BreadValue[])=> {
             this.routes = data;
+        });
+        // 在下钻地图的时候添加
+        PubSub.subscribe("appendBread",(msg: any,data: BreadValue)=> {
+            // name是核心
+            this.routes.push(data);
         });
     }
     @Emit()

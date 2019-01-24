@@ -177,7 +177,23 @@ const genPackedBubble = (datalist: any[],BubbluSize: {minSize: number}) => {
       },
       tooltip: {
         useHTML: true,
-        pointFormat: 	`<b>name:</b> {point.name} <br/><b>value:</b>{point.y}<br/><a onclick="leafrouter2home('{point.entity}','{point.name}')">图表</a> <a onclick="leafrouter2info('{point.entity}','{point.name}')">用户信息</a>`
+        headerFormat: null,
+        pointFormat: 	`<b>{point.name}</b> <br/><b>{series.name}:</b>{point.y}<br/><a onclick="leafrouter2home('{point.entity}','{point.name}')">图表</a> <a onclick="leafrouter2info('{point.entity}','{point.name}')">用户信息</a>`
+        // pointFormatter(): string {
+        //   // console.log(this);
+        //   const id = (this as any).options.id;
+        //   const x = (this as any).options.x;
+        //   const x2 = (this as any).options.x2;
+        //   const y = (this as any).options.y;
+        //   const name = (this as any).options.name;
+        //   const value = (this as any).options.value;
+        //   const type = (this as any).series.name;
+        //   // console.log(this.options)
+        //   // console.log(this)
+        //   // tslint:disable-next-line:max-line-length
+        //   // return "配电柜 : " + id + "<br/> 开始:" + yAxis[y] +  Highcharts.dateFormat(' %H:%M:%S', x) + "- 结束:" + yAxis[y] + Highcharts.dateFormat(' %H:%M:%S', x2) + "<br/>" + name + ":" +  Math.abs(value);
+        //   return name+ "<br/>" + type + ": " + Math.abs(value);
+        // },
       },
       plotOptions: {
         packedbubble: {

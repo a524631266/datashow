@@ -615,6 +615,13 @@ export default class GeoMapEchart extends Vue {
                                         },
                                         params: { entity: id as any}
                                         });
+                    PubSub.publish("appendBread",{
+                        name,
+                        entity:id,
+                        coord,
+                        level,
+                        isLeaf: false,
+                    });
                 }
             },
             onCancel() {

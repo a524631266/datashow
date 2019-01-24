@@ -98,6 +98,7 @@ export default class BoxSingleHighChart extends Vue implements AxiosSourceManage
           name: "电流",
           data: ydata.boxData,
           tooltip: {
+              headerFormat: null,
               pointFormatter(a: any,b: any): string {
                 const that: any = this;
                 // console.log(a,b,this);
@@ -106,7 +107,7 @@ export default class BoxSingleHighChart extends Vue implements AxiosSourceManage
                 // } else {
                 //   return JSON.stringify((this as any).value).slice(1,4)+"...";
                 // }
-                return `<span style="color:${that.color}">\u25CF</span> <b> ${that.series.name}</b><br/>
+                return `${that.category.split(" ")[1].padStart(2,"0")}<br/><span style="color:${that.color}">\u25CF</span> <b> ${that.series.name}</b><br/>
                 上边缘: ${that.high}<br/>
                 Q3\t: ${that.q3}<br/>
                 中位数: ${that.median}<br/>
@@ -140,8 +141,10 @@ export default class BoxSingleHighChart extends Vue implements AxiosSourceManage
                 // } else {
                 //   return JSON.stringify((this as any).value).slice(1,4)+"...";
                 // }
+                // console.log("that.series",that.series);
+                // const hour = that.series
                 return `<br/>
-                        day: ${nowtime}<br/>
+                        day: ${nowtime + " " + that.category.split(" ")[1].padStart(2,"0")}<br/>
                         value: ${value}`;
               },
           }

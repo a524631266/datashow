@@ -127,6 +127,7 @@ interface TimeLineData {
     id: string;// "1329545",
     type: string; // "增加",
     value: number; // 2.2010863334209785
+    name: string;
 }
 interface TimeLineChart {
     action: TimeLineData[];
@@ -138,6 +139,7 @@ export interface TimeLineDataTrans {
     id: string;// "1329545",
     type: string; // "增加",
     value: number; // 2.2010863334209785
+    name: string;
 }
 interface TimeLineChartTrans {
   [index: number]: TimeLineDataTrans;
