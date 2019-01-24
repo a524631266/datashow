@@ -75,7 +75,7 @@ export default class ScatterHighChart extends Vue implements AxiosSourceManage {
           if ( typeof data !== "string") {
             const change = (this.option as any).change;
             // const option2 = getOption(data, "趋势图");
-            const option2 = {} as any ;// getEchartOption(data,"散点图");
+            const option2 = getEchartOption(data,"散点图");// {} as any ;//
             // console.log("optin",rawdata,this.localStorageKey);
             (option2 as any).change = updatestate.success;
             // (window as any).loooo = this.localStorageKey;
@@ -133,6 +133,7 @@ export default class ScatterHighChart extends Vue implements AxiosSourceManage {
                 // mychart.setOption(JSON.parse(JSON.stringify((baseChartFactory as any).option)));
                 // 2.设置空配置
                 mychart.setOption(newoption);
+                // console.log("newoption",newoption);
                 // 3. 依次加载数据
                 // console.log("datas",datas);
                 // 方式 1 利用echarts的异步加载技术

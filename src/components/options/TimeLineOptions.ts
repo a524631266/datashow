@@ -1257,7 +1257,7 @@ export const drawActionOptions = (objectlist: TimeLineChartTrans, title: string,
     });
   }
   const series = getInterData2(inlist);
-  console.log("sereis",series,objectlist);
+  // console.log("sereis",series,objectlist);
   return {
     chart: {
       backgroundColor: 'rgba(0,0,0,0)',

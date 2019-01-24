@@ -40,7 +40,7 @@ class Volidater {
         try {
             this.local.setItem(this.localStorageKey(urlparas, postpath), JSON.stringify(data));
         } catch (error) {
-            console.log("存储错误", error);
+            // console.log("存储错误", error);
             storageSpareData[this.localStorageKey(urlparas, postpath)] = JSON.stringify(data);
         }
     }

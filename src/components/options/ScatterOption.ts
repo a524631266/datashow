@@ -1,3 +1,4 @@
+import moment from 'moment';
 // // Prepare the data
 // const data: any = [];
 // // const n = 1000000;
@@ -9,8 +10,6 @@
 //         Math.pow(Math.random(), 2) * 100
 //     ]);
 // }
-
-
 export const getOption = (data2: any,title: string) => {
     return {
         chart: {
@@ -98,6 +97,12 @@ export const getOption = (data2: any,title: string) => {
 // console.log("rawdata",rawdata);
 export const getEchartOption = (data2: any,title: string) => {
     // const
+    const newdata = Array.from(data2).map(
+        (data: {x: number,y: number, id: number}) => {
+            return [data.x,data.y,data.id];
+        }
+    );
+    // console.log("data2",data2);
     return {
         backgroundColor: 'rgba(0,0,0,0)',
         title: {
@@ -114,24 +119,26 @@ export const getEchartOption = (data2: any,title: string) => {
         },
         tooltip: {
             formatter(params: any, ticket: string, callback: (ticket: string, html: string) => string) {
-                console.log("params",params,ticket);
-                return "id:" +params.data[2] + "<br/>" + "value:" +  params.data[1] ;
+                // console.log("params",params,ticket);
+                return moment(params.data[0]).format("YYYY-MM-DD HH:mm:ss") + "<br/>" + "id:" +params.data[2] + "<br/>" + "value:" +  params.data[1] ;
             }
         },
-        toolbox: {
-            right: 20,
-            iconStyle: {
-                borderColor: '#eee'
-            },
-            feature: {
-                dataZoom: {
-                    yAxisIndex: 'none'
-                }
-            }
-        },
+        // toolbox: {
+        //     right: 20,
+        //     iconStyle: {
+        //         borderColor: '#eee'
+        //     },
+        //     feature: {
+        //         dataZoom: {
+        //             yAxisIndex: 'none'
+        //         }
+        //     }
+        // },
         grid: {
-            right: 70,
-            bottom: 70
+            right: 30,
+            bottom: 40,
+            left:30,
+            top:10,
         },
         // visualMap: {
         //     // min: 15202,
@@ -208,7 +215,7 @@ export const getEchartOption = (data2: any,title: string) => {
         animation: true,
         series : [{
             type: 'scatter',
-            data: data2,
+            data: newdata,
             dimensions: ['x', 'y', 'id'],
             symbolSize: 4,
             itemStyle: {
@@ -217,7 +224,7 @@ export const getEchartOption = (data2: any,title: string) => {
             },
             blendMode: 'lighter',
             large: true,
-            largeThreshold: 50000
+            largeThreshold: 100
         }]
     };
 };

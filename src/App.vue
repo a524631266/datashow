@@ -25,9 +25,7 @@ $vheight:100vh;
   // opacity: 0.98;
   //  background-image: url("<%= BASE_URL %>xinjiang/img/background5.png");
 }
-#panel {
-  //  background-image: url("/xinjiang/img/background5.png");
-}
+
 body {
   overflow: hidden;
   overflow-x: visible;

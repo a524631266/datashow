@@ -528,7 +528,7 @@ export default class LittleBar extends Vue {
     }
     // tslint:disable-next-line:no-empty
     private donothing() {
-        console.log("1111111111");
+        // console.log("1111111111");
     }
     @Emit()
     private showcontroler(show: boolean,evn: any) {

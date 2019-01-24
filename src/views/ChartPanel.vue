@@ -119,10 +119,10 @@ export default class ChartPanel extends Vue {
     }
     @Emit()
     public ajaxFunc(paras: PostParams) {
-        console.log("11111111", paras.entity, paras.starttime,
-                  paras.endtime, paras.entitynums, paras.scale, paras.winlen, paras.dimension,
-                  (this as any),
-                  );
+        // console.log("11111111", paras.entity, paras.starttime,
+        //           paras.endtime, paras.entitynums, paras.scale, paras.winlen, paras.dimension,
+        //           (this as any),
+        //           );
         this.datalist[0].option.xAxis = "10000";
         return {};
     }

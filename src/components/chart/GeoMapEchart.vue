@@ -445,7 +445,7 @@ export default class GeoMapEchart extends Vue {
     //   this.clearIntervalnow();
       this.timer.pause();
       this.initData();
-      console.log("删除Geo组件,并关闭当前的WebSocket");
+    //   console.log("删除Geo组件,并关闭当前的WebSocket");
       this.websocket.close();
     }
     @Emit()
@@ -561,7 +561,7 @@ export default class GeoMapEchart extends Vue {
     }
     @Emit()
     private wsonopen() {
-        console.log("open geo",new Date());
+        // console.log("open geo",new Date());
     }
     @Emit()
     private wsonmessage(evt: MessageEvent) {
@@ -578,7 +578,7 @@ export default class GeoMapEchart extends Vue {
     }
     @Emit()
     private wsonclose() {
-        console.log("wsonclose close",new Date(),this.geoheaddata,this.geoBodydata);
+        // console.log("wsonclose close",new Date(),this.geoheaddata,this.geoBodydata);
         // this.initWebSocket(this.urlparas);
         // setTimeout(()=> {this.initWebSocket(this.urlparas);},1000);
     }
@@ -625,7 +625,7 @@ export default class GeoMapEchart extends Vue {
                 }
             },
             onCancel() {
-                console.log("取消数据");
+                // console.log("取消数据");
             },
         });
     }

@@ -101,7 +101,7 @@ export default class BaseChartFactory extends Vue {
      */
     @Emit()
     private adjustSubHeight() {
-        console.log("this.ref",this.$refs);
+        // console.log("this.ref",this.$refs);
         // this.containerheight = this.$refs.container;
     }
     @Watch("option.change",{deep: true})
@@ -127,7 +127,7 @@ export default class BaseChartFactory extends Vue {
                         this.$emit("updateData",this.chartInstance,this.option);
                     }
                 } else {
-                    console.log("1111");
+                    // console.log("1111");
                     this.chartInstance =createfunction(this.id, this.option) as any;
                     // this.showLoading = false;
                 }
@@ -159,9 +159,9 @@ export default class BaseChartFactory extends Vue {
                     // console.log("resechart");
                     const nodeid = document.getElementById(this.id);
                     const mychart = echarts.init(nodeid as any);
-                    console.time(this.id);
+                    // console.time(this.id);
                     mychart.setOption(JSON.parse(JSON.stringify(this.option)));
-                    console.timeEnd(this.id);
+                    // console.timeEnd(this.id);
                     // console.log("this.opton2",this.option);
                     this.chartInstance = mychart as any;
                     // (window as any).echart = mychart as any;

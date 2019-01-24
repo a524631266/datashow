@@ -30,7 +30,7 @@ export enum PostPath {
  */
 export function getDataPromise<R,T>(urlparas: PostParams,postpath: PostPath,cancelTokenSource: CancelTokenSource,callback: (data: R)=> T): Promise< string | T> {
     const {pass, data} = new Volidater(window.localStorage).postVolidate(urlparas,postpath);
-    console.log("pass",pass);
+    // console.log("pass",pass);
     let promise: Promise<string | T>;
     if (pass) {
         const {entity,starttime,endtime,entitynums,scale,winlen,pageid,pagesize,thresholder:{range}} = urlparas;
@@ -55,7 +55,7 @@ export function getDataPromise<R,T>(urlparas: PostParams,postpath: PostPath,canc
             }
         ).catch(
             (err) => {
-                console.log("err",err);
+                // console.log("err",err);
                 // const data: T = callback(data);
                 return "err";
             }

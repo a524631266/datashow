@@ -56,7 +56,7 @@ export default class Home extends Vue {
     private collapsed = true;
     private openLeftBar = false;
     public destroyed() {
-        console.log((this as any).some);
+        // console.log((this as any).some);
     }
     public mounted() {
       PubSub.subscribe("openLeftBar",(mesg: any,action: boolean) => {

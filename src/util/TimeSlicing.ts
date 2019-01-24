@@ -33,7 +33,7 @@ class TimeSlicing<T> {
         } else {
             setTimeout(
                 () => {
-                    console.log("that.params[num]",that.params[num]);
+                    // console.log("that.params[num]",that.params[num]);
                     that.task(that.params[num]);
                     that.nextExecute(num + 1);
                 },

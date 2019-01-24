@@ -66,7 +66,7 @@ export default class HeatMapHighChart extends Vue implements AxiosSourceManage {
             const option2 = drawHeatmapOptions(data, "HeatMap","" ,this.showTooltiop,this.limiter);
             (option2 as any).change = updatestate.redraw;
             this.option = option2 as any;
-            console.log("heamt",data);
+            // console.log("heamt",data);
             // console.log("timelinedata",this.option);
           }
         }
@@ -88,7 +88,7 @@ export default class HeatMapHighChart extends Vue implements AxiosSourceManage {
       this.cancelAxios();
       // this.option = drawHeatmapOptions([{x: "0",name: "",y: 0,value: 0}], "HeatMap","" ,this.showTooltiop) as any;
       this.option = highchartEmptyOption(entity) as any;
-      console.log("上层图表 HeatMapHighCHart",this.postparms,this.id);
+      // console.log("上层图表 HeatMapHighCHart",this.postparms,this.id);
       this.getData();
       // 在这里开始做长轮询 定时从后台传数据
     }
@@ -102,7 +102,7 @@ export default class HeatMapHighChart extends Vue implements AxiosSourceManage {
     private showTooltiop(entity: string, name: string,clientX: number,clientY: number,target: DOMRect) {
       // 方法在 LeftBar中订阅
       const level = -1;
-      console.log("clientX:",clientX,";clientY",clientY,"target:",target);
+      // console.log("clientX:",clientX,";clientY",clientY,"target:",target);
       PubSub.publish("showtooltip",{entity,name,isLeaf:true,level,clientX,clientY,target});
     }
     private destroyed() {
