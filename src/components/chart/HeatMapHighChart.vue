@@ -103,9 +103,16 @@ export default class HeatMapHighChart extends Vue implements AxiosSourceManage {
     private updateEntityNums() {
       this.pagedata.entitynums = this.urlparas.entitynums;
     }
+    private resetPageInfo() {
+      this.pagedata.pageid = 1;
+    }
+    /**
+     * 一旦更新entity就要重置page
+     */
     @Watch("urlparas.entity",  {deep : true})
     private redraw(entity: string) {
       // this.updateEntityNums();
+      // this.resetPageInfo();
       this.cancelAxios();
       // this.option = drawHeatmapOptions([{x: "0",name: "",y: 0,value: 0}], "HeatMap","" ,this.showTooltiop) as any;
       this.option = highchartEmptyOption(entity) as any;

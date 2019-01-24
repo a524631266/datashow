@@ -29,7 +29,7 @@ export enum PostPath {
  * @param callback 处理函数 R 为后端return的数据格式,T 为目标需要转化成的格式(画图专用)
  */
 export function getDataPromise<R,T>(urlparas: PostParams,postpath: PostPath,cancelTokenSource: CancelTokenSource,callback: (data: R)=> T): Promise< string | T> {
-    const {pass, data} = new Volidater(window.sessionStorage).postVolidate(urlparas,postpath);
+    const {pass, data} = new Volidater(window.localStorage).postVolidate(urlparas,postpath);
     console.log("pass",pass);
     let promise: Promise<string | T>;
     if (pass) {
@@ -49,7 +49,7 @@ export function getDataPromise<R,T>(urlparas: PostParams,postpath: PostPath,canc
             (result) => {
                 // return data;
                 // validater.s()
-                new Volidater(window.sessionStorage).storeData(urlparas,postpath,result.data);
+                new Volidater(window.localStorage).storeData(urlparas,postpath,result.data);
                 const data: T = callback(result.data);
                 return data;
             }

@@ -3,7 +3,7 @@ import moment,{ DurationInputObject, Moment } from "moment";
 const starttime = moment().subtract(3,"d").format("YYYY-MM-DD HH:mm:ss");
 const endtime = moment().format("YYYY-MM-DD HH:mm:ss");
 export const entity = "";
-export const level = 2;
+export const level = 2; // 本项目中的level就是后台数据库中的level
 export const name = "新疆维吾尔自治区";
 export const coord: [number,number] = [0,0];
 export const onehour = 3600;

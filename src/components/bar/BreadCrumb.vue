@@ -7,8 +7,8 @@
         <!-- <i class="material-icons">chevronright</i> -->
         </i>
     </a-breadcrumb-item>
-    <a-breadcrumb-item v-for="(data,index) in routes" :key="index">
-        <span v-show="index>=(routes.length-3)" @click.stop.prevent="onClick(index)">{{data.name.substr(0,5)}}</span>
+    <a-breadcrumb-item v-for="(data,index) in routes" :key="index" v-show="(index>=(routes.length-3)) && (showMaxLength<0 || index < showMaxLength)">
+        <span @click.stop.prevent="onClick(index)">{{data.name.substr(0,5)}}</span>
     </a-breadcrumb-item>
 
   </a-breadcrumb>
@@ -46,14 +46,18 @@ export default class BreadCrumb extends Vue {
                                                 coord: [0,0] as any,
                                             }
                                         ] as any;
+    private showMaxLength = -1;
     private mounted() {
         PubSub.subscribe("updateBread",(msg: any,data: BreadValue[])=> {
             this.routes = data;
         });
         // 在下钻地图的时候添加
         PubSub.subscribe("appendBread",(msg: any,data: BreadValue)=> {
-            // name是核心
-            this.routes.push(data);
+            // name是核心 level = 2 保留一个
+            const data2  = Array.from(this.routes).splice(0,data.level - 2);
+            data2.push(data);
+            this.routes = data2 as any;
+            // this.routes.push(data);
         });
     }
     @Emit()
@@ -68,6 +72,17 @@ export default class BreadCrumb extends Vue {
         //     coord:data.coord as any,
         //     },params: { entity: data.key}});
         PubSub.publish("toggleLeftBar",data);
+    }
+    @Watch("$route.query",{ deep: true})
+    private showBreadCrumbTotal(query: any) {
+        // console.log("this.showBreadCrumbTotal",level);
+        if (!query.isLeaf) {
+            if(query.entity === undefined) {
+                this.showMaxLength = 2 ;
+            } else {
+                this.showMaxLength = query.level - 1;
+            }
+        }
     }
 }
 </script>
