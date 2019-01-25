@@ -47,6 +47,7 @@ export default class PageButton extends Vue {
     private nextpage_local() {
         if (this.pagedata.pageid< this.maxpage) {
             this.pagedata.pageid = this.pagedata.pageid + 1;
+            // console.log("inner pagesize",this.pagedata.pagesize);
             this.$emit("nextpage",this.pagedata.pageid, this.pagedata.pagesize);
         }
     }

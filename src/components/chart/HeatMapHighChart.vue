@@ -82,16 +82,18 @@ export default class HeatMapHighChart extends Vue implements AxiosSourceManage {
     }
     @Emit()
     private prepage(pageid: number,pagesize: number) {
-      // this.pagedata.pageid = pageid;
       this.urlparas.pageid = pageid;
       this.urlparas.pagesize = pagesize;
+      // this.pagedata.pageid = pageid;
+      // this.pagedata.pagesize = pagesize;
       this.redraw(this.urlparas.entity);
     }
     @Emit()
     private nextpage(pageid: number,pagesize: number) {
-      // this.pagedata.pageid = pageid;
       this.urlparas.pageid = pageid;
       this.urlparas.pagesize = pagesize;
+      // this.pagedata.pageid = pageid;
+      // this.pagedata.pagesize = pagesize;
       this.redraw(this.urlparas.entity);
     }
 
@@ -124,6 +126,7 @@ export default class HeatMapHighChart extends Vue implements AxiosSourceManage {
       let result: HeatmapChartTrans = [];
       result = data.table;
       this.pagedata.entitynums = data.totalpages * (this.pagedata.pagesize as number);
+      // this.pagedata.pagesize =
       return result;
     }
     private showTooltiop(entity: string, name: string,clientX: number,clientY: number,target: DOMRect) {
@@ -153,6 +156,7 @@ export default class HeatMapHighChart extends Vue implements AxiosSourceManage {
     @Emit()
     private start() {
       // 重新画图
+      this.pagedata.pagesize = this.urlparas.pagesize;
       this.redraw(this.postparms.entity);
     }
 }
