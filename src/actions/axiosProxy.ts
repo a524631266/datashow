@@ -33,10 +33,13 @@ export function getDataPromise<R,T>(urlparas: PostParams,postpath: PostPath,canc
     // console.log("pass",pass);
     let promise: Promise<string | T>;
     if (pass) {
-        const {entity,starttime,endtime,entitynums,scale,winlen,pageid,pagesize,thresholder:{range}} = urlparas;
+        const {entity,starttime,endtime,entitynums,scale,winlen,pageid,pagesize,thresholder:{range},topsize} = urlparas;
+        console.log("topsize",topsize);
         let posturl = "";
         if(pageid) {
             posturl = `${prev}/elecnum/${postpath}?entity=${entity}&start=${starttime}&end=${endtime}&scale=${scale}&winlen=${winlen}&pageid=${pageid}&pagesize=${pagesize}&neger=${range[0]}&poser=${range[1]}`;
+        } else if(topsize) {
+            posturl = `${prev}/elecnum/${postpath}?entity=${entity}&start=${starttime}&end=${endtime}&scale=${scale}&winlen=${winlen}&neger=${range[0]}&poser=${range[1]}&topsize=${topsize}`;
         } else {
             posturl = `${prev}/elecnum/${postpath}?entity=${entity}&start=${starttime}&end=${endtime}&scale=${scale}&winlen=${winlen}&neger=${range[0]}&poser=${range[1]}`;
         }

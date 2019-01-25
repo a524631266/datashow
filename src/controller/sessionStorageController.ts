@@ -46,7 +46,7 @@ class Volidater {
     }
     private localStorageKey(urlparas: PostParams,postpath: PostPath): string {
         // 添加md5 根据 图表id + entityid + 开始时间  + 结束时间 做md5转换 几乎唯一
-        const str = `${postpath}${urlparas.entity}${urlparas.starttime}${urlparas.endtime}${urlparas.pageid}${urlparas.pagesize}${urlparas.scale}${urlparas.thresholder.range}`;
+        const str = `${postpath}${urlparas.entity}${urlparas.starttime}${urlparas.endtime}${urlparas.pageid}${urlparas.pagesize}${urlparas.scale}${urlparas.thresholder.range}${urlparas.topsize}`;
         // console.log("daaat" ,str,require("crypto").createHash("md5").update(str).digest("hex"));
         return require("crypto").createHash("md5").update(str).digest("hex");
     }

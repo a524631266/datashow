@@ -38,6 +38,7 @@ interface PostParams {
     thresholder: ThresholdLimiter;
     pageid?: number;
     pagesize?: number;
+    topsize?: number;
 }
 // function Test (firstName:String, lastName:String) {
 //     let firstName2:String = firstName

@@ -78,17 +78,28 @@
                         </div> -->
                     </div>
                     <div class="col-2">
-                        <h3 class="section-heading">other</h3>
-                        <label class="small" v-show="showPageSize">Pagesize:</label>
-                        <div class="input-group input-group-sm" v-show="showPageSize" >
-                            <!-- <select class="form-control" v-model="data.pagesize" @click.stop="()=>{}" >
-                                <option label="20" value="20" selected="true" @mouseleave.stop="()=>{}">20</option>
-                            </select> -->
+                        <h3 class="section-heading">其他选项</h3>
+                        <!-- <label class="small" v-show="showPageSize">Pagesize:</label> -->
+                        <!-- <div class="input-group input-group-sm" v-show="showPageSize" >
                             <a-select defaultValue="20">
                                 <a-select-option value="10"  @mouseenter="enterPageSize">10</a-select-option>
                                 <a-select-option value="20"  @mouseenter="enterPageSize">20</a-select-option>
                             </a-select>
-                        </div>
+                        </div> -->
+                        <a-row  v-show="showPageSize">
+                                <a-col :span="24">
+                                    <!-- <span class="badge badge-secondary">限制</span> -->
+                                    <label class="small" >Pagesize:</label>
+                                    <a-slider :step="20"  :tipFormatter="topsizeformatter" :marks="topsizeslidermarks"  v-model="postparms.pagesize" />
+                                </a-col>
+                            </a-row>
+                        <a-row  v-show="ShowTopSize">
+                            <a-col :span="24">
+                                <!-- <span class="badge badge-secondary">限制</span> -->
+                                <label class="small">topsize:</label>
+                                <a-slider :step="10"  :tipFormatter="topsizeformatter" :marks="topsizeslidermarks"  v-model="postparms.topsize" />
+                            </a-col>
+                        </a-row>
                         <label class="small">download:</label>
                         <div  :class="showid === 3 && showrange?'active':''" @click="downloadchart(positionClass)">
                             <a-icon class="container2 mdl-button" type="download" />
@@ -333,6 +344,17 @@ export default class LittleBar extends Vue {
         }
         return show;
     }
+    get ShowTopSize(): boolean {
+        let show: boolean = false;
+        switch (this.titlename) {
+            case TitleName.Top:
+                show = true;
+                break;
+            default:
+                break;
+        }
+        return show;
+    }
     private thresholdslidermarks = {
         0: {
           style: {
@@ -351,6 +373,26 @@ export default class LittleBar extends Vue {
             color: 'white',
           },
           label: "10",
+        }
+    };
+    private topsizeslidermarks = {
+        0: {
+          style: {
+            color: 'white',
+          },
+          label: "0",
+        },
+        50: {
+          style: {
+            color: 'white',
+          },
+          label: "50",
+        },
+        100: {
+          style: {
+            color: 'white',
+          },
+          label: "100",
         }
     };
     private rangeselectlist = [
@@ -527,6 +569,9 @@ export default class LittleBar extends Vue {
         //     return `${value/20}s`;
         // }
         return value / 5 - 10;
+    }
+    private topsizeformatter(value: any) {
+        return value;
     }
     private progressformat(value: any) {
         return `${value}%`;

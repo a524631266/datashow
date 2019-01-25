@@ -107,7 +107,8 @@ const InitTopUrlProps: PostParams = {
         negative: true,
         positive: true,
         range: [-3,3]
-    }
+    },
+    topsize: 10,
 };
 const InitTrendUrlProps: PostParams = {
     entity,
