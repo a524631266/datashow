@@ -1,8 +1,10 @@
+import { PostParams } from '@/types';
 import { ThresholdLimiter } from '@/types';
 import Highcharts, { Options } from 'highcharts';
 import "./dependentjs/xrange";
 import { TimeLineChart, TimeLineChartTrans } from "@/types/postreturnform";
 import moment, { DurationInputObject, Moment } from "moment";
+import { oneday } from '@/config/initOptions';
 export const inout2 = [
   { starttime: 1542681155000, endtime: 1542695555000, id: '881675', type: '减少', value: -16 },
   { starttime: 1542798935000, endtime: 1542807515000, id: '881675', type: '减少', value: -21 },
@@ -1227,7 +1229,7 @@ const getInterData2 = (inlist: inlist[]) => {
   ];
 };
 
-export const drawActionOptions = (objectlist: TimeLineChartTrans, title: string, limiter: ThresholdLimiter) => {
+export const drawActionOptions = (objectlist: TimeLineChartTrans, title: string, limiter: ThresholdLimiter,postparmas: PostParams) => {
   // console.log("height",((window.innerHeight / 3.1) / (window.innerWidth * 0.2 )) * 100 + '%');
   // tslint:disable-next-line:radix
   const whscale = parseInt((window.innerHeight / 3.2) / (window.innerWidth * 0.2 ) * 100 + "") ;
@@ -1235,12 +1237,16 @@ export const drawActionOptions = (objectlist: TimeLineChartTrans, title: string,
   const inlist: inlist[] = [];
   // tslint:disable-next-line:no-shadowed-variable
   const yAxis: string[] = [];
+  console.log("postparmas",postparmas);
+  const starttime = moment(moment(postparmas.starttime).format("YYYY-MM-DD")).valueOf();
+  const endtime = moment(moment(postparmas.endtime).format("YYYY-MM-DD")).valueOf();
+  for(let i = 0;i<= ((endtime - starttime) / oneday / 1000);i++) {
+    const day = starttime + oneday * 1000 * i;
+    yAxis.push(moment(day).format("YYYY-MM-DD"));
+  }
   // tslint:disable-next-line:forin
   for (const i in objectlist) {
-    const day = moment(objectlist[i].starttime).format("MM-DD");
-    if (!yAxis.includes(day)) {
-      yAxis.push(day);
-    }
+    const day = moment(objectlist[i].starttime).format("YYYY-MM-DD");
     const start = ((objectlist[i].starttime + 8 * 60 * 60 * 1000) % (24 * 60 * 60 * 1000)) - 8 * 60 * 60 * 1000;
     const end = ((endtimeMinusOne(objectlist[i].endtime) + 8 * 60 * 60 * 1000) % (24 * 60 * 60 * 1000)) - 8 * 60 * 60 * 1000;
     inlist.push({
@@ -1256,6 +1262,19 @@ export const drawActionOptions = (objectlist: TimeLineChartTrans, title: string,
       end
     });
   }
+  // 显示最后一天
+  inlist.push({
+    x: 0,
+    x2: 0,
+    y: yAxis.length-1,
+    // name: objectlist[i].type === "增加" ? "超高" : "超低",
+    name: "",
+    id: "",
+    // color: objectlist[i].value > 0 ? "rgba(255,0,0,0.8)" : "rgba(0,255,0,0.8)",
+    value: 0,
+    start: 0,
+    end: 0
+  });
   const series = getInterData2(inlist);
   // console.log("sereis",series,objectlist);
   return {
@@ -1341,6 +1360,14 @@ export const drawActionOptions = (objectlist: TimeLineChartTrans, title: string,
           fontSize: '11px',
           color: "white",
         },
+        formatter(a: any) {
+          // console.log("1111",this,a);
+          let date = moment((this as any).value).format("MM-DD");
+          if(date.endsWith("01-01")) {
+            date = moment((this as any).value).format("YYYY-MM-DD");
+          }
+          return date;
+        }
       },
       reversed: false,
       type: 'category',

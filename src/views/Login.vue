@@ -67,7 +67,7 @@ export default class Login extends Vue {
             this.subtitleleft = 140;
             // this.loadingscale = 0.8;
         }
-        window.onresize = ()=> {
+        window.addEventListener("resize",()=> {
                    if (window.innerWidth > 1366) {
                         this.scale = 0.85;
                         this.wordleft = 500;
@@ -78,7 +78,7 @@ export default class Login extends Vue {
                         // this.loadingscale = 0.8;
                     }
                 //    this.innerWidth = window.innerWidth;
-                };
+                });
     }
 }
 </script>

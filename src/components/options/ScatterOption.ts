@@ -67,7 +67,7 @@ export const getOption = (data2: any,title: string) => {
             borderRadius: 0,
         },
         series: [{
-            name:"电流总量",
+            name:"电量",
             type: 'scatter',
             color: 'white',
             data: data2,

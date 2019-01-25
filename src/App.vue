@@ -1,6 +1,8 @@
 <template>
   <div id="panel">
-    <router-view  id="container" />
+    <keep-alive>
+      <router-view  id="container" />
+    </keep-alive>
   </div>
 </template>
 <script lang="ts">

@@ -234,18 +234,18 @@ export default class LittleBar extends Vue {
     @Model("changepostparams") public postparms!: PostParams;
     private showdayLocal: Moment = moment();
     private showclockbutton: boolean = false; // 显示日期小图标
-    private showrange = false;// 点击日期小图标显示选择日期框
+    private showrange2 = false;// 点击日期小图标显示选择日期框
     private activeitem = "";
     private highlightbarclass = "";
     private totaltimelen = 0;
     private show = true;
-    private data: PostParams = this.postparms;
+    private data: PostParams = {} as any;
     private showdownicon: string = "";
-    private showtopbar: boolean = false;
+    private showtopbar2: boolean = false;
     private innershowInterval = 0;
-    private showid = 0;
+    private showid2 = 0;
     private timeslice = new TimeSlicing(this.timeslicing,500);
-    private thresholder: ThresholdLimiter = {threshold:0,negative:true,positive:true,range: [(this.postparms.thresholder.range[0] + 10) * 5,(this.postparms.thresholder.range[1] + 10) * 5]}; // 阈值为0的时候为不过滤
+    private thresholder: ThresholdLimiter = {} as any; // 阈值为0的时候为不过滤
     private slidermarks = {
         0: {
           style: {
@@ -266,6 +266,15 @@ export default class LittleBar extends Vue {
           label: "5s",
         }
     };
+    get showrange() {
+        return this.showrange2;
+    }
+    get showid() {
+        return this.showid2;
+    }
+    get showtopbar(): boolean {
+        return this.showtopbar2;
+    }
     get validRange(): [Moment,Moment] {
         return [moment(this.postparms.starttime),moment(this.postparms.endtime)];
     }
@@ -423,11 +432,11 @@ export default class LittleBar extends Vue {
     @Emit()
     public changeShow(showv: boolean | Event,ind: number) {
         if(this.showid === ind) {
-            this.showrange = showv instanceof Event ? !this.showrange : showv;
+            this.showrange2 = showv instanceof Event ? !this.showrange : showv;
             // console.log("一样");
         } else {
-            this.showid = ind;
-            this.showrange = true;
+            this.showid2 = ind;
+            this.showrange2 = true;
             // console.log("不一样");
         }
         // console.log(this.show,showv , showv instanceof Event);
@@ -460,6 +469,11 @@ export default class LittleBar extends Vue {
     }
     private timeslicing() {
         this.onSelect(this.showdayLocal);
+    }
+    private created() {
+        this.data = this.postparms;
+        console.log("this",this.positionClass,this.positionClass);
+        this.thresholder = {threshold:0,negative:true,positive:true,range: [(this.postparms.thresholder.range[0] + 10) * 5,(this.postparms.thresholder.range[1] + 10) * 5]};
     }
     private mounted() {
         // console.log("111111","加载");
@@ -494,7 +508,7 @@ export default class LittleBar extends Vue {
     private queryInitWebSocket(value: any) {
         // this.$emit("changepostparams", this.data);
         this.$emit("initWebSocket");
-        this.showrange = false;
+        this.showrange2 = false;
     }
     private formatter(value: any) {
         if (value/20 < 1) {
@@ -537,17 +551,17 @@ export default class LittleBar extends Vue {
         // this.showdownicon = show?"fa-clock-o":"";
         // console.log("leave",evn);
         if (this.positionClass === PositionClass.Center) {
-            this.showtopbar = show ;// this.positionClass === PositionClass.Center?show:false;
+            this.showtopbar2 = show ;// this.positionClass === PositionClass.Center?show:false;
         }
         if (show === false) {
-            this.showtopbar = false;
+            this.showtopbar2 = false;
         }
         // this.showrange = show;
     }
     @Watch("positionClass")
     private dopostionClassChange(newvalue: string) {
         if(newvalue !== PositionClass.Center) {
-            this.showrange = false;
+            this.showrange2 = false;
             this.showclockbutton = false;
         } else {
             this.showclockbutton = true;

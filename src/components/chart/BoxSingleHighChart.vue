@@ -95,7 +95,7 @@ export default class BoxSingleHighChart extends Vue implements AxiosSourceManage
       const ydata = (echarts as any).dataTool.prepareBoxplotData(boxList);
       const data2 = [
         {
-          name: "电流",
+          name: "电量",
           data: ydata.boxData,
           tooltip: {
               headerFormat: null,

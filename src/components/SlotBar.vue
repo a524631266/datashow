@@ -21,8 +21,8 @@
             </div>
         
         <div  class="middleslot" style="width: 60%;">
-            <LittleBar :show="true" v-model="postparms">
-            </LittleBar>
+            <!-- <LittleBar :show="true" v-model="postparms">
+            </LittleBar> -->
         </div>
         <div  class="rightslot" v-text="rightbarname"></div>
   </div>
@@ -31,12 +31,12 @@
 <script lang='ts'>
 import { Component, Vue, Prop, Emit } from 'vue-property-decorator';
 import PubSub from 'pubsub-js';
-import LittleBar from "@/components/chart/LittleBar.vue";
+// import LittleBar from "@/components/chart/LittleBar.vue";
 import { PositionClass , PostParams, ChartLibrary } from '@/types/index';
 import {entityinitconfig} from '@/config/initOptions.ts';
 @Component({
     components: {
-        LittleBar,
+        // LittleBar,
     },
 })
 export default class SlotBar extends Vue {

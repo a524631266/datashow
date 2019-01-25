@@ -24,6 +24,7 @@ import exportHighchart from 'highcharts/modules/exporting';
 import Highcharts from "highcharts/highcharts-gantt";
 import HighchartsMore from 'highcharts/highcharts-more';
 import {downloadchart} from '@/util/downloadcanvas.ts';
+// import { chartspool } from "@/util/windowResize.ts";
 exportHighchart(Highcharts);
 HighchartsMore(Highcharts);
 // 加载甘特图插件
@@ -101,7 +102,7 @@ export default class BaseChartFactory extends Vue {
      */
     @Emit()
     private adjustSubHeight() {
-        // console.log("this.ref",this.$refs);
+        console.log("this.ref",this.$refs,this.id);
         // this.containerheight = this.$refs.container;
     }
     @Watch("option.change",{deep: true})
@@ -166,11 +167,13 @@ export default class BaseChartFactory extends Vue {
                     this.chartInstance = mychart as any;
                     // (window as any).echart = mychart as any;
                     // 窗口变动自动变换数据
-                    window.onresize = ()=> {
+                    window.addEventListener("resize",()=> {
                         this.adjustSubHeight();
                         (this.chartInstance as any).resize();
                         // console.log("resize.........");
-                    };
+                    });
+                    // chartspool.push(this.chartInstance);
+                    console.log("echart",this.id);
                     // console.log("geochartoption",this.option);
                     if(newVal === updatestate.redraw) {
                         this.showLoading = true;
@@ -208,27 +211,30 @@ export default class BaseChartFactory extends Vue {
      * 2.如果是echart的话，由于目前版本只有地图，所以只要重新布局就行了
      */
     @Watch('positionClass',{deep: true})
-    private reflowChart(newVal: object, oldVal: object) {
+    private reflowChart(newVal: PositionClass, oldVal: PositionClass) {
         // console.log("posiontClass Change");
         // console.log("positionClass",this.id,this.chartInstance,this.chartLibrary);
-        if (this.chartInstance && this.chartLibrary === ChartLibrary.highchart) {
-            this.toggleHighChartLegend();
-            if (this.id === "chart-heatmap") {
-                this.toggleHighChartAxis();
+        if( newVal === PositionClass.Center || oldVal === PositionClass.Center) {
+            if (this.chartInstance && this.chartLibrary === ChartLibrary.highchart) {
+                // console.time(this.id);
+                // 这里性能用散点图点击性能太慢
+                // if (this.id === "chart-region-linechart") {
+                //     // (this.chartInstance as any).reflow();
+                //     (this.chartInstance as any).destroy();
+                //     this.chartInstance = Highcharts.chart(this.id, this.option) as any;
+                // } else {
+                // 防止由于热力图数据太大重复渲染导致卡顿现象
+                this.toggleHighChartLegend();
+                if (this.id === "chart-heatmap") {
+                    this.toggleHighChartAxis();
+                }
+                (this.chartInstance as any).reflow();
+                // }
+                // console.timeEnd(this.id);
             }
-            // console.time(this.id);
-            // 这里性能用散点图点击性能太慢
-            // if (this.id === "chart-region-linechart") {
-            //     // (this.chartInstance as any).reflow();
-            //     (this.chartInstance as any).destroy();
-            //     this.chartInstance = Highcharts.chart(this.id, this.option) as any;
-            // } else {
-            (this.chartInstance as any).reflow();
-            // }
-            // console.timeEnd(this.id);
-        }
-        if (this.chartInstance && this.chartLibrary === ChartLibrary.echart) {
-            (this.chartInstance as any).resize();
+            if (this.chartInstance && this.chartLibrary === ChartLibrary.echart) {
+                (this.chartInstance as any).resize();
+            }
         }
     }
     /**
