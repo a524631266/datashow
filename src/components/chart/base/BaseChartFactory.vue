@@ -104,7 +104,7 @@ export default class BaseChartFactory extends Vue {
      */
     @Emit()
     private adjustSubHeight() {
-        console.log("this.ref",this.$refs,this.id);
+        // console.log("this.ref",this.$refs,this.id);
         // this.containerheight = this.$refs.container;
     }
     @Watch("option.change",{deep: true})

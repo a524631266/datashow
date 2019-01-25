@@ -34,7 +34,6 @@ export function getDataPromise<R,T>(urlparas: PostParams,postpath: PostPath,canc
     let promise: Promise<string | T>;
     if (pass) {
         const {entity,starttime,endtime,entitynums,scale,winlen,pageid,pagesize,thresholder:{range},topsize} = urlparas;
-        console.log("topsize",topsize);
         let posturl = "";
         if(pageid) {
             posturl = `${prev}/elecnum/${postpath}?entity=${entity}&start=${starttime}&end=${endtime}&scale=${scale}&winlen=${winlen}&pageid=${pageid}&pagesize=${pagesize}&neger=${range[0]}&poser=${range[1]}`;
