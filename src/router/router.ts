@@ -1,9 +1,5 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Main from '../views/Main.vue';
-import Home from '../views/Home.vue';
-
-import Login from "../views/Login.vue";
 import ColorSelectBar from "@/components/bar/ColorSelectBar.vue";
 // import App from './App.vue';
 // import ChartPanel from '@/views/ChartPanel.vue';

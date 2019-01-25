@@ -100,13 +100,21 @@ interface ScatterData {
     y: number; // y 代表值
     x: number; // x代表 时间 13位
 }
+interface EntityValue {
+    name: string;
+    id: number;
+}
 interface ScatterChart {
-    linechart: ScatterData[];
+    linechart: {
+        valuelist: Array<[number,number,number]>,
+        entitylist: EntityValue[]
+    };
 }
 
 
 interface ScatterChartTrans {
-    [index: number]: ScatterData;
+    valuelist: Array<[number,number,number]>;
+    entitylist: EntityValue[];
 }
 
 // const data: SingleTrendChart = {

@@ -101,13 +101,12 @@ export default class BoxSingleHighChart extends Vue implements AxiosSourceManage
               headerFormat: null,
               pointFormatter(a: any,b: any): string {
                 const that: any = this;
-                // console.log(a,b,this);
                 // if ((this as any).value === (this as any).pos) {
                 //   return "";
                 // } else {
                 //   return JSON.stringify((this as any).value).slice(1,4)+"...";
                 // }
-                return `${that.category.split(" ")[1].padStart(2,"0")}<br/><span style="color:${that.color}">\u25CF</span> <b> ${that.series.name}</b><br/>
+                return `${that.category}<br/><span style="color:${that.color}">\u25CF</span> <b> ${that.series.name}</b><br/>
                 上边缘: ${that.high}<br/>
                 Q3\t: ${that.q3}<br/>
                 中位数: ${that.median}<br/>
@@ -128,6 +127,7 @@ export default class BoxSingleHighChart extends Vue implements AxiosSourceManage
               lineColor: "", // (Highcharts as any).getOptions().colors[0] as any,
           },
           tooltip: {
+              headerFormat: null,
               // pointFormat: 'Observation: {point.y}',
               pointFormatter(a: any,b: any): string {
                 const that: any = this;
@@ -143,9 +143,9 @@ export default class BoxSingleHighChart extends Vue implements AxiosSourceManage
                 // }
                 // console.log("that.series",that.series);
                 // const hour = that.series
-                return `<br/>
-                        day: ${nowtime + " " + that.category.split(" ")[1].padStart(2,"0")}<br/>
-                        value: ${value}`;
+                //  根据尺度判断坐标
+                return `${nowtime + " " + that.category}<br/><br/>
+                        异常值: ${value}`;
               },
           }
         }

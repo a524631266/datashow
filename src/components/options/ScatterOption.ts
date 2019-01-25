@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { ScatterChartTrans } from '@/types/postreturnform';
 // // Prepare the data
 // const data: any = [];
 // // const n = 1000000;
@@ -95,13 +96,16 @@ export const getOption = (data2: any,title: string) => {
 //     );
 // }
 // console.log("rawdata",rawdata);
-export const getEchartOption = (data2: any,title: string) => {
+export const getEchartOption = (data2: ScatterChartTrans,title: string) => {
     // const
-    const newdata = Array.from(data2).map(
-        (data: {x: number,y: number, id: number}) => {
-            return [data.x,data.y,data.id];
-        }
-    );
+    // const newdata = Array.from(data2.).map(
+    //     (data: [number,number number]) => {
+    //         return [data.x,data.y,data.id];
+    //     }
+    // );
+    // Array.from(data2)
+    const newdata = data2.valuelist;
+    const entitylist = data2.entitylist;
     // console.log("data2",data2);
     return {
         backgroundColor: 'rgba(0,0,0,0)',
@@ -120,20 +124,21 @@ export const getEchartOption = (data2: any,title: string) => {
         tooltip: {
             formatter(params: any, ticket: string, callback: (ticket: string, html: string) => string) {
                 // console.log("params",params,ticket);
-                return moment(params.data[0]).format("YYYY-MM-DD HH:mm:ss") + "<br/>" + "id:" +params.data[2] + "<br/>" + "value:" +  params.data[1] ;
+                return moment(params.data[0]).format("YYYY-MM-DD HH:mm:ss") + "<br/>" + "name:" +entitylist[params.data[2]].name + "<br/>" + "value:" +  params.data[1] ;
             }
         },
-        // toolbox: {
-        //     right: 20,
-        //     iconStyle: {
-        //         borderColor: '#eee'
-        //     },
-        //     feature: {
-        //         dataZoom: {
-        //             yAxisIndex: 'none'
-        //         }
-        //     }
-        // },
+        toolbox: {
+            show: true,
+            right: 20,
+            iconStyle: {
+                borderColor: '#eee'
+            },
+            feature: {
+                dataZoom: {
+                    // yAxisIndex: 'none' // y????
+                }
+            }
+        },
         grid: {
             right: 30,
             bottom: 40,

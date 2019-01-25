@@ -83,9 +83,10 @@ export default class ScatterHighChart extends Vue implements AxiosSourceManage {
             this.option = option2 as any;
             // console.log("TopHighChartdata",this.option);
           } else {
-             const option2 = getEchartOption([],"散点图");
-             (option2 as any).change = updatestate.error;
-             this.option = option2 as any;
+            //  const option2 = getEchartOption([] an,"散点图");
+            //  (option2 as any).change = updatestate.error;
+            //  this.option = option2 as any;
+            this.$message.error("无法正常获取scatter");
           }
         }
       );
@@ -99,7 +100,7 @@ export default class ScatterHighChart extends Vue implements AxiosSourceManage {
       // 在这里开始做长轮询 定时从后台传数据
     }
     private dealData(data: ScatterChart): ScatterChartTrans {
-      let result: ScatterChartTrans = [];
+      let result: ScatterChartTrans = {entitylist: [],valuelist: []};
       result = data.linechart;
       return result;
     }
@@ -130,6 +131,7 @@ export default class ScatterHighChart extends Vue implements AxiosSourceManage {
                 ((baseChartFactory as any).chartInstance as any).dispose();
                 const nodeid = document.getElementById(this.id);
                 const mychart = echarts.init(nodeid as any);
+                // console.log("切换图表");
                 // mychart.setOption(JSON.parse(JSON.stringify((baseChartFactory as any).option)));
                 // 2.设置空配置
                 mychart.setOption(newoption);

@@ -28,41 +28,55 @@ interface Timeindex {
 
 export const drawBoxOptions = (listdata: object[], xAxisList: string[], title: string) => {
   const showLegend = false ;
-  let controlxAias = true ;
-  const timedict: TimeDict = {};
+  // let controlxAias = true ;
+  // const timedict: TimeDict = {};
   // tslint:disable-next-line:forin
-  for (const i in xAxisList) {
-    // tslint:disable-next-line:no-shadowed-variable
-    const day: string = xAxisList[i].split(" ")[0];
-    timedict[day] = timedict[day] === undefined ? 1 : timedict[day] + 1;
-  }
-  // console.log("listdata",listdata);
-  const timekey = Object.keys(timedict).sort();
-  const newxAxis = [-0.5];
-  const newdata = [];
-  // 存储时间的inex
-  const timeindex: Timeindex = {};
-  let calcount = 0;
-  let count = 0;
-  // tslint:disable-next-line:forin
-  for (const i in timekey) {
-    const day = timekey[i];
-    const n = timedict[day];
-    const before = calcount;
-    calcount  = calcount + n;
-    // 中间点插入数据
-    timeindex[day] = before + n / 2 - 0.5;
-    // var need2 = n%2// 中间点插入数据
-    // var count = 0
-    const b = newxAxis[newxAxis.length - 1 ];
-    newxAxis.push(before + n / 2 - 0.5);
-    newxAxis.push(2 * (before + n / 2 - 0.5 ) - b );
-    // tslint:disable-next-line:no-shadowed-variable
-    for (let i = 0; i < n ; i++ ) {
-      newdata.push([count, 0 ]);
-      count += 1;
+  // for (const i in xAxisList) {
+  //   // tslint:disable-next-line:no-shadowed-variable
+  //   const day: string = xAxisList[i].split(" ")[0];
+  //   timedict[day] = timedict[day] === undefined ? 1 : timedict[day] + 1;
+  // }
+  const xlist: any[]= [];
+  const datalenth = (listdata[0] as any).data.length;
+  if( datalenth === 24) {
+    for(let i = 0; i < datalenth; i++) {
+      xlist.push(`${i}`.padStart(2,"0")+":00");
+    }
+  } else if (datalenth === 4 * 24 ) {
+    for(let i = 0; i < datalenth; i++) {
+      const hour = i % 4;
+      const mins = (i - (i % 4) * 4) * 15;
+      xlist.push(`${hour}`.padStart(2,"0")+`:${mins}`);
     }
   }
+  // console.log("listdata",listdata,xlist,datalenth);
+  // console.log("listdata",listdata);
+  // const timekey = Object.keys(timedict).sort();
+  // const newxAxis = [-0.5];
+  // const newdata = [];
+  // // 存储时间的inex
+  // const timeindex: Timeindex = {};
+  // let calcount = 0;
+  // let count = 0;
+  // tslint:disable-next-line:forin
+  // for (const i in timekey) {
+  //   const day = timekey[i];
+  //   const n = timedict[day];
+  //   const before = calcount;
+  //   calcount  = calcount + n;
+  //   // 中间点插入数据
+  //   timeindex[day] = before + n / 2 - 0.5;
+  //   // var need2 = n%2// 中间点插入数据
+  //   // var count = 0
+  //   const b = newxAxis[newxAxis.length - 1 ];
+  //   newxAxis.push(before + n / 2 - 0.5);
+  //   newxAxis.push(2 * (before + n / 2 - 0.5 ) - b );
+  //   // tslint:disable-next-line:no-shadowed-variable
+  //   for (let i = 0; i < n ; i++ ) {
+  //     newdata.push([count, 0 ]);
+  //     count += 1;
+  //   }
+  // }
   const option = {
         chart: {
             type: 'boxplot',
@@ -97,49 +111,11 @@ export const drawBoxOptions = (listdata: object[], xAxisList: string[], title: s
         },
         xAxis: [{
             type: "category",
-            categories: xAxisList,
+            categories: xlist,
             title: {
               text: ''
             },
             labels: {
-              // enabled:false,
-              formatter(a: { pos: number; isFirst: any; axis: { paddedTicks: any; }; }) {
-                // console.log(this,"2222222222222",timemapx[this.value])
-                // console.log(this.value)
-                // console.log(this)
-                const chartHeigh = (this as any).chart.chartHeigh;
-                const chartWidth  = (this as any).chart.chartWidth;
-                const category = (this as any).axis.categories;
-                const value = (this as any).value; // 2018/5/10 8
-                const timevalue = (this as any).value.split(" ")[0];
-                const hourvalue = (this as any).value.split(" ")[1];
-                const pos = a.pos;
-                const isFirst  = a.isFirst;
-                // tslint:disable-next-line:radix
-                if (isFirst && parseInt(hourvalue) > 9) {
-                  controlxAias = false;
-                }
-                // tslint:disable-next-line:radix
-                if (isFirst && parseInt(hourvalue) < 10) {
-                  controlxAias = true;
-                }
-                const arr = a.axis.paddedTicks;
-                // console.log(chartWidth,this.chart,a,b,c)
-                if (chartWidth / window.innerWidth < 0.25) {
-                  if (hourvalue > 9 && controlxAias && arr.length > 15 ) {
-                    const time1 = JSON.stringify(hourvalue);
-                    // console.log(time1)
-                    // console.log("22222222",time1,parseInt(time1[0]) + "<br/>" + parseInt(time1[1]))
-                    return time1[1] + "<br/>" + time1[2];
-                  } else if (arr.length > 20) {
-                    return a.pos % 2 === 0 ? hourvalue + ":00" : "";
-                  } else {
-                    return hourvalue + ":00";
-                  }
-                } else {
-                  return hourvalue + ":00";
-                }
-              },
               rotation: -45,  // 设置轴标签旋转角度
               style: {
                 color: "white"
@@ -270,3 +246,45 @@ export const drawBoxOptions2 = () => {
       }]
     };
 };
+
+
+
+
+              // // enabled:false,
+              // formatter(a: { pos: number; isFirst: any; axis: { paddedTicks: any; }; }) {
+              //   // console.log(this,"2222222222222",timemapx[this.value])
+              //   // console.log(this.value)
+              //   // console.log(this)
+              //   const chartHeigh = (this as any).chart.chartHeigh;
+              //   const chartWidth  = (this as any).chart.chartWidth;
+              //   const category = (this as any).axis.categories;
+              //   const value = (this as any).value; // 2018/5/10 8
+              //   const timevalue = (this as any).value.split(" ")[0];
+              //   const hourvalue = (this as any).value.split(" ")[1];
+              //   const pos = a.pos;
+              //   const isFirst  = a.isFirst;
+              //   // tslint:disable-next-line:radix
+              //   if (isFirst && parseInt(hourvalue) > 9) {
+              //     controlxAias = false;
+              //   }
+              //   // tslint:disable-next-line:radix
+              //   if (isFirst && parseInt(hourvalue) < 10) {
+              //     controlxAias = true;
+              //   }
+              //   const arr = a.axis.paddedTicks;
+              //   // console.log(chartWidth,this.chart,a,b,c)
+              //   if (chartWidth / window.innerWidth < 0.25) {
+              //     if (hourvalue > 9 && controlxAias && arr.length > 15 ) {
+              //       const time1 = JSON.stringify(hourvalue);
+              //       // console.log(time1)
+              //       // console.log("22222222",time1,parseInt(time1[0]) + "<br/>" + parseInt(time1[1]))
+              //       return time1[1] + "<br/>" + time1[2];
+              //     } else if (arr.length > 20) {
+              //       return a.pos % 2 === 0 ? hourvalue + ":00" : "";
+              //     } else {
+              //       return hourvalue + ":00";
+              //     }
+              //   } else {
+              //     return hourvalue + ":00";
+              //   }
+              // }

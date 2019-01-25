@@ -249,6 +249,16 @@ export default class BaseChartFactory extends Vue {
                 // console.timeEnd(this.id);
             }
             if (this.chartInstance && this.chartLibrary === ChartLibrary.echart) {
+                // if(this.id === "chart-region-linechart") {
+                //     const option = (this.chartInstance as any).getOption();
+                //     if(newVal === PositionClass.Center) {
+                //         option.toolbox[0].show = true;
+                //     } else {
+                //         option.toolbox[0].show = false;
+                //     }
+                //     // console.log("this",option);
+                //     (this.chartInstance as any).setOption(option);
+                // }
                 (this.chartInstance as any).resize();
             }
         }
