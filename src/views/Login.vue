@@ -1,24 +1,17 @@
 <template>
   <div id="container" class="row">
         <div  class="left"> 
-            <!-- <ul  class="icon">
-                <li  class="sword">
-                </li>
-            </ul> -->
             <div class="word" :style='{transform: `scale(${scale})`,marginLeft: `-${wordleft}px`}'>
             </div>
             <div class="sword" :style='{transform: `scale(${scale})`}'>
                 <h1 :style='{marginLeft: `-${subtitleleft}px`}'>智能情报分析系统</h1>
             </div>
-            
-            
         </div> 
-        
         <div class="login" :style="{transform: `scaleX(${loadingscale})`}">
             <form :action="`/${baseUrl}/login`" method="post">
                 <table>
-                <tr><td colspan="2"><input class="bar" type="text" required="required" placeholder="用户名" name="username"></input></td></tr>
-                <tr><td colspan="2"><input class="bar" type="password" required="required" placeholder="密码" name="password"></input></td></tr>
+                <tr><td colspan="2"><input class="bar" type="text" required="required" placeholder="用户名" name="username"/></td></tr>
+                <tr><td colspan="2"><input class="bar" type="password" required="required" placeholder="密码" name="password"/></td></tr>
                 <!-- <tr><td><input type="text" required="required" style="width: 180px;display:inline;" placeholder="验证码" name="code"></input></td><td><img id="codevalidate" required="required" style="display:inline;" onclick="changeUrl()" /></td></tr> -->
                 <tr><td colspan="2"><button class="but btn btn-info " type="submit">登录</button></td></tr>
                 </table>

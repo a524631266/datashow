@@ -15,7 +15,8 @@ export default new Router({
     {
       path: '/login',
       name: 'login',
-      component: () => import(/* webpackChunkName: "group-login" */ '@/views/Login.vue'),
+      // component: () => import(/* webpackChunkName: "group-login" */ '@/views/Login.vue'),
+      component: (resolve) => require(['@/views/Login.vue'],resolve),
     },
     {
       path: '/color',
@@ -42,11 +43,13 @@ export default new Router({
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "group-home" */ '@/views/Home.vue'),
+      // component: () => import(/* webpackChunkName: "group-home" */ '@/views/Home.vue'),
+      component: (resolve) => require(['@/views/Home.vue'],resolve),
       children: [{
         path: "/home/:entity",// 动态路由根据params更改路由组件
         name: "node",
-        component: () => import(/* webpackChunkName: "group-home1" */ '@/views/Main.vue'),
+        // component: () => import(/* webpackChunkName: "group-home1" */ '@/views/Main.vue'),
+        component: (resolve) => require(['@/views/Main.vue'],resolve),
         meta: {
           id: 0,
           name : "",

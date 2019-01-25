@@ -64,9 +64,6 @@ export default class PageButton extends Vue {
     border: 1px;
     border-color: white;
 }
-.squareborder{
-//   border: 1px solid white;
-}
 .nopionter {
     cursor: none!important;
 }
