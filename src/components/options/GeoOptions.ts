@@ -620,7 +620,7 @@ export const getGeoChinaProvinceOptionConfig = (provincesArray: ProvinceMapData[
                             // // formatter: "{a}{b}({c})",
                             // formatter: "{b} --- {c}"
                             formatter(params: ProvinceMapData) {
-                                console.log("geo地图格式",params);
+                                // console.log("geo地图格式",params);
                                 return params.coord;
                             }
                         },

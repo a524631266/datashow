@@ -131,7 +131,7 @@ export default class Main extends Vue {
                     }
                 }
             );
-        } else {
+        } else { // 这里主要是因为首页状态下，即无参数的情况下的数据
             const org = orginitconfig;
             const entity = entityinitconfig;
             this.datalist.forEach(
@@ -144,6 +144,7 @@ export default class Main extends Vue {
                     this.datalist[index].urlparas.coord = [0,0];
                 }
             );
+            PubSub.publish("updaterightbarname",entity.name);
         }
         // 同时更新标题
         if (bool) {

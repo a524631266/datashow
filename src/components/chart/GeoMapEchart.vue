@@ -1,5 +1,5 @@
 <template>
-  <div :class="positionClass" :draggable="candraggable" @dblclick="handledoubleclick">
+  <div :class="positionClass" :draggable="candraggable" @click.native="()=>{}" @dblclick.capture.stop="handledoubleclick">
        <LittleBar :play="play" @pause="pause" @toggledrag="toggledrag" @initWebSocket="start" :positionClass="positionClass" :date="date" @querydate="querydate" @restarttodraw="restarttodraw" :appendtimelist="appendtimelist" :titlename="titlename" :show="positionClass === 'center'?false:true" v-model="postparms">
             <BaseChartFactory :urlparas="urlparas" :positionClass="positionClass" :id="id" :option="option" :chartLibrary="chartLibrary" :handleclick="handleclick" @updateData="way2UpdateData" slot="chart"/>
         </LittleBar>

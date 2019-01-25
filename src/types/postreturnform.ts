@@ -217,6 +217,7 @@ interface TopData {
     name: string; // "A7_6号楼用电主用",
     id: string; // "978025",
     value: number; // 1.823430980425617
+    // time?: number;
 }
 interface TopChart {
     top: TopData[];

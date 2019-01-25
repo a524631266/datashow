@@ -472,7 +472,7 @@ export default class LittleBar extends Vue {
     }
     private created() {
         this.data = this.postparms;
-        console.log("this",this.positionClass,this.positionClass);
+        // console.log("this",this.positionClass,this.positionClass);
         this.thresholder = {threshold:0,negative:true,positive:true,range: [(this.postparms.thresholder.range[0] + 10) * 5,(this.postparms.thresholder.range[1] + 10) * 5]};
     }
     private mounted() {

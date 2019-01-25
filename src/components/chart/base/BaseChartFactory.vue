@@ -55,6 +55,8 @@ export default class BaseChartFactory extends Vue {
     @Prop() public urlparas!: PostParams;
     @Prop() public handleclick!: (elementdata: any)=>void;
     @Prop() public getData!: ()=> void;
+    private clickTimouId = 0;
+    private clicknum = 0;
     // private factoryMethod = this.chartLibrary === ChartLibrary.echart? echarts.init: this.id === "chart-single-action"? Highcharts.ganttChart : Highcharts.chart;
     // tslint:disable-next-line:ban-types
     // @Prop() public updateData!: Function;
@@ -173,12 +175,26 @@ export default class BaseChartFactory extends Vue {
                         // console.log("resize.........");
                     });
                     // chartspool.push(this.chartInstance);
-                    console.log("echart",this.id);
+                    // console.log("echart",this.id);
                     // console.log("geochartoption",this.option);
                     if(newVal === updatestate.redraw) {
                         this.showLoading = true;
                     }
-                    mychart.on("click",this.handleclick);
+                    const that = this;
+                    // 修正双击事件影响向下捕获单击事件的处理了
+                    mychart.on("click",(args: any)=> {
+                        if(that.clicknum === 0 ) {
+                            that.clicknum = 1;
+                            clearTimeout(that.clickTimouId);
+                            that.clickTimouId = setTimeout(()=> {
+                                that.handleclick(args);
+                                that.clicknum = 0;
+                                },200);
+                        } else { // 第二次
+                            clearTimeout(that.clickTimouId);
+                            that.clicknum = 0;
+                        }
+                    });
                 }
         }
     }

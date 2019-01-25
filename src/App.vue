@@ -30,7 +30,7 @@ $vheight:100vh;
 
 body {
   overflow: hidden;
-  overflow-x: visible;
+  // overflow-x: visible;
   overflow-y: hidden;
   min-width: 800px;
   // background-image: radial-gradient(circle at center, #006 0,#000 100%);

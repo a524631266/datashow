@@ -1237,7 +1237,7 @@ export const drawActionOptions = (objectlist: TimeLineChartTrans, title: string,
   const inlist: inlist[] = [];
   // tslint:disable-next-line:no-shadowed-variable
   const yAxis: string[] = [];
-  console.log("postparmas",postparmas);
+  // console.log("postparmas",postparmas);
   const starttime = moment(moment(postparmas.starttime).format("YYYY-MM-DD")).valueOf();
   const endtime = moment(moment(postparmas.endtime).format("YYYY-MM-DD")).valueOf();
   for(let i = 0;i<= ((endtime - starttime) / oneday / 1000);i++) {
