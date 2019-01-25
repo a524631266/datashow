@@ -38,9 +38,11 @@ class Volidater {
     }
     public storeData(urlparas: PostParams,postpath: PostPath,data: any) {
         try {
-            this.local.setItem(this.localStorageKey(urlparas, postpath), JSON.stringify(data));
+            storageSpareData[this.localStorageKey(urlparas, postpath)] = JSON.stringify(data);
+            // 由于只能存几M的数据,取消localstorage缓存
+            // this.local.setItem(this.localStorageKey(urlparas, postpath), JSON.stringify(data));
         } catch (error) {
-            console.log("存储错误", error);
+            // console.log("存储错误", error);
             storageSpareData[this.localStorageKey(urlparas, postpath)] = JSON.stringify(data);
         }
     }
