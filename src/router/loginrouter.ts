@@ -8,7 +8,7 @@ export default new Router({
   base: process.env.BASE_URL,
   routes: [
     {
-      path: '/login',
+      path: '/',
       name: 'login',
       component: () => import(/* webpackChunkName: "group-login" */ '@/views/Login.vue'),
       // component: (resolve) => require(['@/views/Login.vue'],resolve),
