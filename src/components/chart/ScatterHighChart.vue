@@ -75,7 +75,7 @@ export default class ScatterHighChart extends Vue implements AxiosSourceManage {
           if ( typeof data !== "string") {
             const change = (this.option as any).change;
             // const option2 = getOption(data, "趋势图");
-            const option2 = getEchartOption(data,"散点图");// {} as any ;//
+            const option2 = getEchartOption(data,this.positionClass === PositionClass.Center? true: false);// {} as any ;//
             // console.log("optin",rawdata,this.localStorageKey);
             (option2 as any).change = updatestate.success;
             // (window as any).loooo = this.localStorageKey;

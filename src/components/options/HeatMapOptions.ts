@@ -172,7 +172,7 @@ export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, r
                     const xAxis = (this as any).yAxis[0];
                     const chart = (this as any);
                     // console.log("1");
-                    console.log("xAxis",xAxis,this);
+                    // console.log("xAxis",xAxis,this);
                     // console.log("11111111",xAxis.labelGroup)
                     // tslint:disable-next-line:only-arrow-functions
                     const overlabel2showinfo = ()=> {Highcharts.addEvent(xAxis.labelGroup.element, 'mouseover',(e) => {

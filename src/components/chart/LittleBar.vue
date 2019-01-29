@@ -8,7 +8,8 @@
             <div :style="{position:'relative'}" v-show="showtopbar">
                 <!-- <div class="fa icondown middlebutton" :class="showdownicon"></div> -->
                 <div class="container2 chartrange" :class="showid === 0 && showrange?'active':''" style="{color:white}" @click="changeShow($event,0)"   @mouseenter="highlightbar(true)" @mouseleave="highlightbar(false)">
-                    <i class="fa fa-clock-o"></i>
+                    <!-- <i class="fa fa-clock-o"></i> -->
+                    <i class="material-icons small" >access_time</i>
                     <div class="container2 mdl-button" v-html="dayrange"></div>
                 </div>
                 <!-- <time-botton :class="middlebutton"></time-botton> -->
@@ -28,7 +29,7 @@
                             <input class="form-control" :placeholder="data.starttime" v-model="data.starttime" type="text" />
                             <div class="input-group-addon">
                                 <!-- <button class="btn btn-outline-secondary btn-sm" type="button"><i class="fa fa-calendar"></i></button> -->
-                                <i class="material-icons">date</i>
+                                <i class="material-icons">date_range</i>
                             </div>
                         </div>
                         <label class="small">To:</label>
@@ -36,7 +37,7 @@
                             <input class="form-control" :placeholder="data.endtime" v-model="data.endtime" type="text"/>
                             <div class="input-group-addon">
                                 <!-- <button class="btn btn-outline-secondary btn-sm" type="button"><i class="fa fa-calendar"></i></button> -->
-                                <i class="material-icons">date</i>
+                                <i class="material-icons">date_range</i>
                             </div>
                         </div>
                         <label class="small" v-show="ShowScale">scale:</label>
@@ -102,10 +103,15 @@
                                 <a-slider :step="10"  :tipFormatter="topsizeformatter" :marks="topsizeslidermarks"  v-model="postparms.topsize" />
                             </a-col>
                         </a-row>
-                        <label class="small">download:</label>
-                        <div  :class="showid === 3 && showrange?'active':''" @click="downloadchart(positionClass)">
-                            <a-icon class="container2 mdl-button" type="download" />
-                        </div>
+                        <a-row  :class="showid === 3 && showrange?'active':''">
+                            <a-col :span="24">
+                                <label class="small">download:</label>
+                                <div   @click="downloadchart(positionClass)" class="container2 mdl-button">
+                                    <!-- <a-icon class="container2 mdl-button" type="download" /> -->
+                                    <i class="material-icons">file_download</i>
+                                </div>
+                            </a-col>
+                        </a-row>
                     </div>
                     
                 </template>
