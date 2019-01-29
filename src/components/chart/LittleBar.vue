@@ -22,19 +22,21 @@
             <div class="row options1 table-dark" :class="showid=== 1 || showid === 2?'hiddenbackground':''" v-show="showrange" @click.stop="donothing" >
                 <template v-if="showid === 0 && showtopbar">
                     <form class="col-4" >
-                        <h3 class="section-heading">用户选项</h3>
+                        <label class="big">用户选项</label>
                         <label class="small">From:</label>
                         <div class="input-group input-group-sm" >
                             <input class="form-control" :placeholder="data.starttime" v-model="data.starttime" type="text" />
                             <div class="input-group-addon">
-                                <button class="btn btn-outline-secondary btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                                <!-- <button class="btn btn-outline-secondary btn-sm" type="button"><i class="fa fa-calendar"></i></button> -->
+                                <i class="material-icons">date</i>
                             </div>
                         </div>
                         <label class="small">To:</label>
                         <div class="input-group input-group-sm" @click.stop="()=>{}">
                             <input class="form-control" :placeholder="data.endtime" v-model="data.endtime" type="text"/>
                             <div class="input-group-addon">
-                                <button class="btn btn-outline-secondary btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                                <!-- <button class="btn btn-outline-secondary btn-sm" type="button"><i class="fa fa-calendar"></i></button> -->
+                                <i class="material-icons">date</i>
                             </div>
                         </div>
                         <label class="small" v-show="ShowScale">scale:</label>
@@ -67,7 +69,7 @@
                         <!-- </div> -->
                     </form>
                     <div class="col-6 timepicker-relative-section">
-                        <h3 class="section-heading">时段范围</h3>
+                        <label class="big">时段范围</label>
                         <div class="card-group">
                             <ul v-for="(data,index) in rangeselectlist" :key="index" class="card list-group list-group-flush">
                                 <li v-for="(item,index) in data" :key="index" class="list-group-item h6" :class="item.day===activeitem?'active':''" @click="licktimeselectrange(item)">{{item.day}}</li>
@@ -78,7 +80,7 @@
                         </div> -->
                     </div>
                     <div class="col-2">
-                        <h3 class="section-heading">其他选项</h3>
+                        <label class="big">其他选项</label>
                         <!-- <label class="small" v-show="showPageSize">Pagesize:</label> -->
                         <!-- <div class="input-group input-group-sm" v-show="showPageSize" >
                             <a-select defaultValue="20">

@@ -244,16 +244,17 @@ $antdsliderheight: $sliderbaseheight + px;
     border-right: 15px solid white;
     border-bottom: 7px solid transparent;
 }
-#chart-top .highcharts-tooltip{
+#chart-top .highcharts-tooltip,#chart-heatmap .highcharts-tooltip{
     pointer-events: auto !important;
 }
-#chart-top .highcharts-tooltip:hover{
-    pointer-events: none !important;
+#chart-top .highcharts-tooltip:hover,#chart-heatmap .highcharts-tooltip:hover{
+    // pointer-events: none !important;
+    display: block;
 }
-#chart-top .highcharts-tooltip span:hover{
-    pointer-events: none !important;
-}
-#chart-top .highcharts-tooltip span a, #chart-top .highcharts-tooltip span b{
+// #chart-top .highcharts-tooltip span:hover,#chart-heatmap .highcharts-tooltip span:hover{
+//     pointer-events: none !important;
+// }
+#chart-top .highcharts-tooltip span a, #chart-top .highcharts-tooltip span b,#chart-heatmap .highcharts-tooltip span a, #chart-heatmap .highcharts-tooltip span b{
     pointer-events: auto !important;
 }
 #bar{

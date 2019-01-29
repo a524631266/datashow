@@ -96,6 +96,8 @@ function getTheFirstTS(timelist: number[],time: number): number {
     );
     return time1;
 }
+// let heatmapmovefunction: any;
+// let heatmaprefreshfunction: any;
 export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, redrawEntityFunc: any, openInfo: (entity: string, name: string,clientX: number,clientY: number,target: DOMRect)=>void,limiter: HeatMapLimiter) => {// redrawEntityFunc(entityid)
     // var title = "用电"
     // var listdata= [{x:123456,y:0,value:200},{x:123456,y:1,value:200},{x:123456,y:3,value:200},{x:1222356,y:23,value:200},{x:1234567,y:3,value:200}]
@@ -170,7 +172,7 @@ export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, r
                     const xAxis = (this as any).yAxis[0];
                     const chart = (this as any);
                     // console.log("1");
-                    // console.log("xAxis",xAxis);
+                    console.log("xAxis",xAxis,this);
                     // console.log("11111111",xAxis.labelGroup)
                     // tslint:disable-next-line:only-arrow-functions
                     const overlabel2showinfo = ()=> {Highcharts.addEvent(xAxis.labelGroup.element, 'mouseover',(e) => {
@@ -229,6 +231,12 @@ export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, r
                         // console.log("leave");
                         PubSub.publish("hidetooltip","none");
                     });};
+                    const clickShowTooltip = () => {
+                        Highcharts.addEvent(chart.series[0].canvas,"click",(e)=> {
+                            console.log("eee",e);
+                        });
+                    };
+                    clickShowTooltip();
                     if(xAxis.visible) {
                         overlabel2showinfo();
                         overlabel2hideinfo();
@@ -236,6 +244,9 @@ export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, r
                         // setTimeout(overlabel2hideinfo,20);
                     }
                 },
+                // click(event: any) {
+                //     console.log("event",event, namemap , xlist ,timelist);
+                // }
             }
         },
         title: {
@@ -361,20 +372,23 @@ export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, r
             gridLineWidth: 0,
         },
         tooltip: {
+            // shared: false,
             headerFormat: null,
+            useHTML: true,
             pointFormatter(): string {
                 // console.log((this as any).options.y,(this as any).options.x);
                 const x = (this as any).options.x; // 1365465600000
                 const y = (this as any).options.y; // 0 1 2 3
                 const value = (this as any).options.value;
-                const entityid = namemap[xlist[y]];
+                const entityname = namemap[xlist[y]];
                 const readlytime = timelist[inittimelist.indexOf(x)];
+                const router = `<br/><a onclick="leafrouter2home('${xlist[y]}','${entityname}')" href="#">图表</a> <a onclick="leafrouter2info('${xlist[y]}','${entityname}')" href="#">用户信息</a>`;
                 if (limiter.scale === fifteenminute) {
-                    return "配电柜 : " + entityid + "<br/> time:" + moment(readlytime).format('YYYY-MM-DD HH:mm') + "<br/>value:" + value;
+                    return "配电柜 : " + entityname + "<br/> time:" + moment(readlytime).format('YYYY-MM-DD HH:mm') + "<br/>value:" + value + router;
                 } else if (limiter.scale === onehour) {
-                    return "配电柜 : " + entityid + "<br/> time:" + moment(readlytime).format('YYYY-MM-DD HH:mm') + "<br/>value:" + value;
+                    return "配电柜 : " + entityname + "<br/> time:" + moment(readlytime).format('YYYY-MM-DD HH:mm') + "<br/>value:" + value + router;
                 } else if (limiter.scale === oneday) {
-                    return "配电柜 : " + entityid + "<br/> time:" + moment(readlytime).format('YYYY-MM-DD MM-DD') + "<br/>value:" + value;
+                    return "配电柜 : " + entityname + "<br/> time:" + moment(readlytime).format('YYYY-MM-DD MM-DD') + "<br/>value:" + value + router;
                 }
                 return "";
             }
@@ -401,7 +415,32 @@ export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, r
         }],
         credits: {
             enabled: false
-        }
+        },
+        plotOptions: {
+            series:{
+              events:{
+                click(event: any) {
+                    // console.log("object",(this as any).chart.tooltip);
+                    if((this as any).chart.tooltip.move) {
+                        (this as any).chart.tooltip.move = undefined;
+                        // tslint:disable-next-line:no-empty
+                        (this as any).chart.tooltip.refresh = () => {
+                            // console.log((this as any).chart.tooltip.isHidden);
+                            // 在开启的情况下仍然显示图例
+                            if(!(this as any).chart.tooltip.isHidden) {
+                                (this as any).chart.tooltip.isHidden = true;
+                            }
+                        };
+                    } else {
+                        (this as any).chart.tooltip.move = (this as any).chart.tooltip.__proto__.move;
+                        (this as any).chart.tooltip.refresh =  (this as any).chart.tooltip.__proto__.refresh;
+                        // console.log("heatmaprefreshfunction2",heatmaprefreshfunction);
+                        // console.log("222");
+                    }
+                }
+              }
+            }
+          },
     };
 };
 

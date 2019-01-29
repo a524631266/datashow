@@ -170,7 +170,7 @@ const genPackedBubble = (datalist: any[],BubbluSize: {minSize: number}) => {
   return {
       chart: {
         type: "packedbubble",
-        backgroundColor: "rgba(0,0,0,0)"
+        backgroundColor: "rgba(0,0,0,0)",
       },
       title: {
         text: ""
@@ -178,7 +178,7 @@ const genPackedBubble = (datalist: any[],BubbluSize: {minSize: number}) => {
       tooltip: {
         useHTML: true,
         headerFormat: null,
-        pointFormat: 	`<b>{point.name}</b> <br/><b>{series.name}:</b>{point.y}<br/><a onclick="leafrouter2home('{point.entity}','{point.name}')">图表</a> <a onclick="leafrouter2info('{point.entity}','{point.name}')">用户信息</a>`
+        pointFormat: 	`<b>{point.name}</b> <br/><b>{series.name}:</b>{point.y}<br/><a href="#" onclick="leafrouter2home('{point.entity}','{point.name}')">图表</a> <a href="#" onclick="leafrouter2info('{point.entity}','{point.name}')">用户信息</a>`
         // pointFormatter(): string {
         //   // console.log(this);
         //   const id = (this as any).options.id;
@@ -198,6 +198,29 @@ const genPackedBubble = (datalist: any[],BubbluSize: {minSize: number}) => {
       plotOptions: {
         packedbubble: {
           ...BubbluSize
+        },
+        series:{
+          events:{
+            click(event: any) {
+              // console.log("object",(this as any).chart.tooltip);
+              if((this as any).chart.tooltip.move) {
+                  (this as any).chart.tooltip.move = undefined;
+                  // tslint:disable-next-line:no-empty
+                  (this as any).chart.tooltip.refresh = () => {
+                      // console.log((this as any).chart.tooltip.isHidden);
+                      // 在开启的情况下仍然显示图例
+                      if(!(this as any).chart.tooltip.isHidden) {
+                          (this as any).chart.tooltip.isHidden = true;
+                      }
+                  };
+              } else {
+                  (this as any).chart.tooltip.move = (this as any).chart.tooltip.__proto__.move;
+                  (this as any).chart.tooltip.refresh =  (this as any).chart.tooltip.__proto__.refresh;
+                  // console.log("heatmaprefreshfunction2",heatmaprefreshfunction);
+                  // console.log("222");
+              }
+            }
+          }
         }
       },
       legend : {
@@ -361,9 +384,13 @@ function getTwoDirectBarOption(positive_id: string[],datalist: TwoNumberList[],n
               PubSub.publish("hidetooltip","none");
             });
         },
+        // click(event: any) {
+        //   console.log("event",event);
+        // },
         render() {
           // infoObject.hiddenInfo()
-        }
+        },
+
       }
     },
     title: {
@@ -437,9 +464,30 @@ function getTwoDirectBarOption(positive_id: string[],datalist: TwoNumberList[],n
       // max: 4000000
     },
     plotOptions: {
-      series: {
-        stacking: 'normal'
-      }
+        series:{
+          stacking: 'normal',
+          events: {
+            click(event: any) {
+                // console.log("object",(this as any).chart.tooltip);
+                if((this as any).chart.tooltip.move) {
+                    (this as any).chart.tooltip.move = undefined;
+                    // tslint:disable-next-line:no-empty
+                    (this as any).chart.tooltip.refresh = () => {
+                        // console.log((this as any).chart.tooltip.isHidden);
+                        // 在开启的情况下仍然显示图例
+                        if(!(this as any).chart.tooltip.isHidden) {
+                            (this as any).chart.tooltip.isHidden = true;
+                        }
+                    };
+                } else {
+                    (this as any).chart.tooltip.move = (this as any).chart.tooltip.__proto__.move;
+                    (this as any).chart.tooltip.refresh =  (this as any).chart.tooltip.__proto__.refresh;
+                    // console.log("heatmaprefreshfunction2",heatmaprefreshfunction);
+                    // console.log("222");
+                }
+            }
+          }
+        }
     },
     tooltip: {
       enabled:false,

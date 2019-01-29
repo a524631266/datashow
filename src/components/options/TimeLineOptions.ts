@@ -1371,7 +1371,7 @@ export const drawActionOptions = (objectlist: TimeLineChartTrans, title: string,
       },
       reversed: false,
       type: 'category',
-      gridLineWidth: 0.5,
+      gridLineWidth: 0.3,
       grid: {
         columns: [
           {
