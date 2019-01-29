@@ -12,7 +12,9 @@
 							</div> -->
 						</div>
 						<!-- <i class="hidden-btn fa fa-compress" aria-hidden="true" onclick="hiddeninfo()" ></i> -->
-						<i class="hidden-btn fa fa-angle-down" aria-hidden="true" @click="hiddeninfo" ></i>
+						<!-- <i class="hidden-btn fa fa-angle-down" aria-hidden="true" @click="hiddeninfo" ></i> -->
+                        <!-- <i class="hidden-btn fa fa-angle-down" aria-hidden="true" @click="hiddeninfo" ></i> -->
+                        <i class="hidden-btn material-icons"  @click="hiddeninfo">close</i>
 				</header>
 				<div class="tableinfo" >
 					<form id="fillForm">
@@ -124,7 +126,7 @@
                         </div>
 					</form>
 				</div>
-                <div class="" style="display:block;margin:0 auto;">
+                <div class="savegroup" style="display:flex;margin:0 auto;">
 							<button id="box-submit" class="btn btn-default" @click.prevent="submit">保存</button>
 							<button id="box-add" class="btn btn-info" @click.prevent="addBlackInfo">添加记录</button>
 				</div>
@@ -326,7 +328,7 @@ header {
 	line-height: 50px;
 	border-left: 1px solid #ccc;
 	position: relative;
-	left: 50px;
+	left: -1px;
 	top:0px;
 	padding-left: 20px;
 	font-weight: blod;
@@ -364,7 +366,8 @@ header {
 	left: 0px;
 }
 h6 {
-	text-align: left
+	text-align: left;
+    color: white;
 }
 .fa-angle-down:hover {
 	cursor: pointer;
@@ -375,5 +378,23 @@ h6 {
 .footer {
     bottom: 0px;
     position: relative;
+}
+.savegroup {
+    display: flex;
+    justify-content: center;
+}
+
+#info-dynamic::-webkit-scrollbar{
+    width: 10px;     /*高宽分别对应横竖滚动条的尺寸*/
+    height: 10px;
+}
+#info-dynamic::-webkit-scrollbar-thumb {/*滚动条里面小方块*/
+    border-radius: 5px;
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    background: rgba(240, 212, 212, 0.8);
+}
+// https://www.lyblog.net/detail/314.html 滚动轮样式查看地址
+#info-dynamic::-webkit-scrollbar-corner{
+    background:#82AFFF;
 }
 </style>

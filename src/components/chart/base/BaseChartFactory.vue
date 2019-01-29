@@ -256,7 +256,7 @@ export default class BaseChartFactory extends Vue {
                     } else {
                         option.toolbox[0].show = false;
                     }
-                    console.log("this",option);
+                    // console.log("this",option);
                     (this.chartInstance as any).setOption(option);
                 }
                 (this.chartInstance as any).resize();
