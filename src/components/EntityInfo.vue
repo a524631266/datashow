@@ -279,6 +279,14 @@ export default class EntityInfo extends Vue {
             (err) => {
                 this.$message.error(JSON.stringify(err.response.statusText + ":url"),3);
                 this.showinfo = true;
+                this.infodata.deviceinfo = [
+                                {
+                                    dename: "",
+                                    devolt: "",
+                                    denum: "",
+                                    deinfo: ""
+                                }
+                            ];
             }
         );
     }
@@ -342,6 +350,7 @@ header {
 	line-height: 50px;
 	float: right;
 	height: 50px;
+    cursor: pointer;
 }
 .tableinfo {
 	position: relative;
