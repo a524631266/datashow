@@ -129,7 +129,7 @@ export default class HeatMapHighChart extends Vue implements AxiosSourceManage {
       // this.pagedata.entitynums = data.totalpages * (this.pagedata.pagesize as number);
       this.urlparas.entitynums = data.entitynums;
       // test
-      this.urlparas.entitynums = 98;
+      // this.urlparas.entitynums = 98;
       // this.pagedata.pagesize =
       return result;
     }
