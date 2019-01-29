@@ -3,7 +3,7 @@
   <div :class="positionClass" :draggable="candraggable" @dblclick="handledoubleclick">
         <LittleBar :showPageSize="true" :date="date" @initWebSocket="start" :positionClass="positionClass" @toggledrag="toggledrag" :titlename="titlename" :show="positionClass === 'center'?false:true" v-model="postparms">
             <BaseChartFactory :positionClass="positionClass" :urlparas="urlparas" :id="id" :option="option" @updateData="way2UpdateData" :chartLibrary="chartLibrary" slot="chart"/>
-            <page-button @prepage="prepage" @nextpage="nextpage" v-show="positionClass==='center'" class="rightbottom" slot="page" v-model="pagedata"></page-button>
+            <page-button @prepage="prepage" @nextpage="nextpage" v-show="positionClass==='center'" class="rightbottom" slot="page" v-model="urlparas"></page-button>
         </LittleBar>
   </div>
 </template>
@@ -46,11 +46,11 @@ export default class HeatMapHighChart extends Vue implements AxiosSourceManage {
     private titlename = TitleName.HeatMap;
     private candraggable = false;
     private date: Moment = moment();
-    private pagedata = {
-      pageid: 1,
-      entitynums: this.urlparas.entitynums,
-      pagesize: this.urlparas.pagesize
-    };
+    // private pagedata = {
+    //   pageid: 1,
+    //   entitynums: this.urlparas.entitynums,
+    //   pagesize: this.urlparas.pagesize
+    // };
     private limiter: HeatMapLimiter = {
       scale: this.postparms.scale,
     };
@@ -103,10 +103,11 @@ export default class HeatMapHighChart extends Vue implements AxiosSourceManage {
     }
     @Emit()
     private updateEntityNums() {
-      this.pagedata.entitynums = this.urlparas.entitynums;
+      // this.pagedata.entitynums = this.urlparas.entitynums;
     }
     private resetPageInfo() {
-      this.pagedata.pageid = 1;
+      // this.pagedata.pageid = 1;
+      this.urlparas.pageid = 1;
     }
     /**
      * 一旦更新entity就要重置page
@@ -125,7 +126,10 @@ export default class HeatMapHighChart extends Vue implements AxiosSourceManage {
     private dealData(data: HeatmapChart): HeatmapChartTrans {
       let result: HeatmapChartTrans = [];
       result = data.table;
-      this.pagedata.entitynums = data.totalpages * (this.pagedata.pagesize as number);
+      // this.pagedata.entitynums = data.totalpages * (this.pagedata.pagesize as number);
+      this.urlparas.entitynums = data.entitynums;
+      // test
+      this.urlparas.entitynums = 98;
       // this.pagedata.pagesize =
       return result;
     }
@@ -156,7 +160,7 @@ export default class HeatMapHighChart extends Vue implements AxiosSourceManage {
     @Emit()
     private start() {
       // 重新画图
-      this.pagedata.pagesize = this.urlparas.pagesize;
+      // this.pagedata.pagesize = this.urlparas.pagesize;
       this.redraw(this.postparms.entity);
     }
 }

@@ -193,6 +193,7 @@ interface HeatmapData {
 interface HeatmapChart {
     table: HeatmapData[];
     totalpages: number;
+    entitynums: number;
 }
 
 interface HeatmapDataTrans {

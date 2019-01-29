@@ -44,9 +44,10 @@ export const drawBoxOptions = (listdata: object[], xAxisList: string[], title: s
     }
   } else if (datalenth === 4 * 24 ) {
     for(let i = 0; i < datalenth; i++) {
-      const hour = i % 4;
-      const mins = (i - (i % 4) * 4) * 15;
-      xlist.push(`${hour}`.padStart(2,"0")+`:${mins}`);
+      // tslint:disable-next-line:no-bitwise
+      const hour = i / 4 | 0;// 整除
+      const mins = i % 4 * 15;
+      xlist.push(`${hour}`.padStart(2,"0")+":"+`${mins}`.padStart(2,"0"));
     }
   }
   // console.log("listdata",listdata,xlist,datalenth);

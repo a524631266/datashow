@@ -231,12 +231,13 @@ export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, r
                         // console.log("leave");
                         PubSub.publish("hidetooltip","none");
                     });};
-                    const clickShowTooltip = () => {
-                        Highcharts.addEvent(chart.series[0].canvas,"click",(e)=> {
-                            console.log("eee",e);
-                        });
-                    };
-                    clickShowTooltip();
+                    // const clickShowTooltip = () => {
+                    //     console.log("chart",chart);
+                    //     Highcharts.addEvent(chart.tooltip.label.element,"mouseleave",(e)=> {
+                    //         console.log("eee",e,this);
+                    //     });
+                    // };
+                    // clickShowTooltip();
                     if(xAxis.visible) {
                         overlabel2showinfo();
                         overlabel2hideinfo();
@@ -391,7 +392,9 @@ export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, r
                     return "配电柜 : " + entityname + "<br/> time:" + moment(readlytime).format('YYYY-MM-DD MM-DD') + "<br/>value:" + value + router;
                 }
                 return "";
-            }
+            },
+            enabled: true,
+            isHidden: false,
         },
         colorAxis: {
             stops: [
@@ -421,22 +424,53 @@ export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, r
               events:{
                 click(event: any) {
                     // console.log("object",(this as any).chart.tooltip);
-                    if((this as any).chart.tooltip.move) {
-                        (this as any).chart.tooltip.move = undefined;
+                    const tooltipInstance = (this as any).chart.tooltip;
+                    if(tooltipInstance.move) {
+                        tooltipInstance.move = undefined;
                         // tslint:disable-next-line:no-empty
-                        (this as any).chart.tooltip.refresh = () => {
-                            // console.log((this as any).chart.tooltip.isHidden);
+                        tooltipInstance.refresh = () => {
+                            // console.log(tooltipInstance.isHidden);
                             // 在开启的情况下仍然显示图例
-                            if(!(this as any).chart.tooltip.isHidden) {
-                                (this as any).chart.tooltip.isHidden = true;
+                            if(!tooltipInstance.isHidden) {
+                                tooltipInstance.isHidden = true;
                             }
                         };
                     } else {
-                        (this as any).chart.tooltip.move = (this as any).chart.tooltip.__proto__.move;
-                        (this as any).chart.tooltip.refresh =  (this as any).chart.tooltip.__proto__.refresh;
+                        tooltipInstance.move = tooltipInstance.__proto__.move;
+                        tooltipInstance.refresh =  tooltipInstance.__proto__.refresh;
                         // console.log("heatmaprefreshfunction2",heatmaprefreshfunction);
                         // console.log("222");
                     }
+                    // console.log("tooltipInstance",tooltipInstance.label);
+                    // Highcharts.addEvent(tooltipInstance.label.div,"mouseleave",(e)=> {
+                    //     // console.log("eee",e,this);
+                    //     tooltipInstance.move = tooltipInstance.__proto__.move;
+                    //     tooltipInstance.refresh =  tooltipInstance.__proto__.refresh;
+                    // });
+                    // if (tooltipInstance.label.div.onmouseleave === undefined) {
+                    let timeid =0;
+                    tooltipInstance.label.div.onmouseleave = (e: any)=> {
+                        // console.log("eee",e,this);
+                        timeid = setTimeout(
+                            ()=> {
+                                tooltipInstance.move = tooltipInstance.__proto__.move;
+                                tooltipInstance.refresh =  tooltipInstance.__proto__.refresh;
+                            },500);
+                    };
+                    tooltipInstance.label.div.onmouseenter = (e: any)=> {
+                        // console.log("eee",e,this);
+                        clearTimeout(timeid);
+                        tooltipInstance.move = undefined;
+                        // tslint:disable-next-line:no-empty
+                        tooltipInstance.refresh = () => {
+                            // console.log(tooltipInstance.isHidden);
+                            // 在开启的情况下仍然显示图例
+                            if(!tooltipInstance.isHidden) {
+                                tooltipInstance.isHidden = true;
+                            }
+                        };
+                    };
+                    // }
                 }
               }
             }
