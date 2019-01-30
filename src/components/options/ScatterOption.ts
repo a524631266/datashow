@@ -344,7 +344,7 @@ export const getEchartOption = (data2: ScatterChartTrans,iscenter: boolean) => {
             },
             blendMode: 'lighter',
             large: true,
-            largeThreshold: 100
+            largeThreshold: 500
         }]
     };
 };
