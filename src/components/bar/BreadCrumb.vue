@@ -8,13 +8,11 @@
         </i>
     </a-breadcrumb-item>
     <a-breadcrumb-item v-for="(data,index) in routes" :key="index" v-show="(index>=(routes.length-3)) && (showMaxLength<0 || index < showMaxLength)">
-        <span @click.stop.prevent="onClick(index)">{{data.name.substr(0,5)}}</span>
+        <span @click.stop.prevent="onClick(index)" class="fiveword">{{data.name}}</span>
     </a-breadcrumb-item>
-
   </a-breadcrumb>
 </div>
 </template>
-
 <script lang='ts'>
 import { Component, Vue, Prop, Emit, Watch } from 'vue-property-decorator';
 import Antd from "ant-design-vue";
@@ -49,7 +47,8 @@ export default class BreadCrumb extends Vue {
     private showMaxLength = -1;
     private mounted() {
         PubSub.subscribe("updateBread",(msg: any,data: BreadValue[])=> {
-            this.routes = data;
+            // console.log("data",data);
+            this.routes = [...data];
         });
         // 在下钻地图的时候添加
         PubSub.subscribe("appendBread",(msg: any,data: BreadValue)=> {
@@ -94,6 +93,10 @@ export default class BreadCrumb extends Vue {
     // font-size: 14px;
     font-size: 1.16rem;
     white-space: nowrap;
+    display: flex;
+}
+:global(.ant-breadcrumb span){
+    display: flex;
 }
 
 :global(.ant-breadcrumb > span:last-child){
@@ -111,5 +114,15 @@ export default class BreadCrumb extends Vue {
 .breadrighticon {
     border: 1
 }
+.fiveword {
+    white-space: nowrap;
+    width: 5em;
+    overflow: hidden;
+    display: inline-flex;
+    &:hover {
+        width: auto;
+    }
+}
+
 
 </style>

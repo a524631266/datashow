@@ -93,7 +93,7 @@
                                 <a-col :span="24">
                                     <!-- <span class="badge badge-secondary">限制</span> -->
                                     <label class="small" >Pagesize:</label>
-                                    <a-slider :step="20"  :tipFormatter="topsizeformatter" :marks="topsizeslidermarks"  v-model="postparms.pagesize" />
+                                    <a-slider :step="20"  :tipFormatter="topsizeformatter" :marks="topsizeslidermarks"  v-model="littleBarDataPool.pagesize" />
                                 </a-col>
                             </a-row>
                         <a-row  v-show="ShowTopSize">
@@ -284,6 +284,9 @@ export default class LittleBar extends Vue {
           },
           label: "5s",
         }
+    };
+    private littleBarDataPool = {
+        pagesize: 20,
     };
     get showrange() {
         return this.showrange2;
@@ -544,6 +547,32 @@ export default class LittleBar extends Vue {
                 setTimeout(()=>this.showcontroler(false,nothing),0);
             }
         });
+        this.littleBarDataPool.pagesize = this.postparms.pagesize as any;
+    }
+    @Watch("littleBarDataPool.pagesize")
+    private validationPageSize(newvalue: number,oldvalue: number) {
+        const {pagesize,pageid,entitynums} = this.postparms;
+        // console.log("newvalue",newvalue,pagesize,pageid);
+        if(newvalue === 0) {
+            setTimeout(()=> {
+                if(oldvalue === 0) {
+                    oldvalue = 20;
+                }
+                this.littleBarDataPool.pagesize = oldvalue;
+            },500);
+            this.$message.error("不能为0");
+        }
+        if(( (pageid as any) - 1) * newvalue > entitynums) {
+            if(( (pageid as any) - 1) * oldvalue > entitynums) {
+                const value = entitynums /  (pageid as any) - 1;
+                // tslint:disable-next-line:no-bitwise
+                oldvalue = value | 0;
+            }
+            setTimeout(()=> {
+                this.littleBarDataPool.pagesize = oldvalue;
+            },500);
+            this.$message.error("当前页超标");
+        }
     }
     private destroyed() {
         // console.log((this as any).some);
@@ -557,6 +586,7 @@ export default class LittleBar extends Vue {
     @Emit()
     private queryInitWebSocket(value: any) {
         // this.$emit("changepostparams", this.data);
+        this.postparms.pagesize = this.littleBarDataPool.pagesize;
         this.$emit("initWebSocket");
         this.showrange2 = false;
     }

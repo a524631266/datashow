@@ -1,5 +1,6 @@
 import moment from 'moment';
 import { ScatterChartTrans } from '@/types/postreturnform';
+import { HTMLDOMElement } from 'highcharts';
 // // Prepare the data
 // const data: any = [];
 // // const n = 1000000;
@@ -68,7 +69,7 @@ export const getOption = (data2: any,title: string) => {
             borderRadius: 0,
         },
         series: [{
-            name:"çľé",
+            // name:"çľé",
             type: 'scatter',
             color: 'white',
             data: data2,
@@ -96,7 +97,7 @@ export const getOption = (data2: any,title: string) => {
 //     );
 // }
 // console.log("rawdata",rawdata);
-export const getEchartOption = (data2: ScatterChartTrans,ifcenter: boolean) => {
+export const getEchartOption = (data2: ScatterChartTrans,iscenter: boolean) => {
     // const
     // const newdata = Array.from(data2.).map(
     //     (data: [number,number number]) => {
@@ -122,13 +123,62 @@ export const getEchartOption = (data2: ScatterChartTrans,ifcenter: boolean) => {
             }
         },
         tooltip: {
+            trigger:'item',
+            showDelay:0,
+            triggerOn:'mousemove|click',
+            enterable:true,
+            hideDelay:200,
+            position(point: number[],params: any,dom: HTMLDOMElement,rect: any,size: any) {
+                // point [0,0] 点相对于容器0,0 的位置
+                // console.log("point",point);
+                // console.log("point parnms",params);
+                // console.log("point dom",dom);
+                // console.log("point rect",rect);
+                // console.log("point size",size);
+                const {contentSize: [tooltipwidth,tooltipheight],viewSize: [containerwidth,containerheight]} = size;
+                const [pointx, pointy] = point;
+                // dom.style.display="block";
+                let scalex = 1;
+                let scaley = 1;
+                // 当tooltip提示框小于容器的0.5倍大小
+                if(tooltipwidth > containerwidth * 0.4) {
+                    // scalex = containerwidth / tooltipwidth;
+                    scalex = 0.8;
+                    scaley = 0.8;
+                }
+                if(tooltipheight > containerheight * 0.4) {
+                    // scaley = containerheight / tooltipheight;
+                    scalex = 0.8;
+                    scaley = 0.8;// * containerheight / containerwidth;
+                }
+                let translatex = 0;
+                let translatey = 0;
+                if((pointx + tooltipwidth) > containerwidth) {
+                    // translatex = (pointx - containerwidth) * scalex;
+                    translatex = - tooltipwidth;
+                }
+                if((pointy + tooltipheight)> containerheight) {
+                    // translatey = (pointy - containerheight) * scaley;
+                    translatey = - tooltipheight;
+                }
+                // 偏移dom
+                dom.style.transform = `scaleX(${scalex}) scaleY(${scaley}) translateX(${translatex}px) translateY(${translatey}px)`;
+                // 以0,0 位置作为偏移中心
+                dom.style.transformOrigin = "0px 0px";
+                return point;
+            },
+            // alwaysShowContent:true,
             formatter(params: any, ticket: string, callback: (ticket: string, html: string) => string) {
-                // console.log("params",params,ticket);
-                return moment(params.data[0]).format("YYYY-MM-DD HH:mm:ss") + "<br/>" + "name:" +entitylist[params.data[2]].name + "<br/>" + "value:" +  params.data[1] ;
+                // console.log("params",params,callback);
+                // console.log("params",this);
+                const name = entitylist[params.data[2]].name;
+                const id = entitylist[params.data[2]].id;
+                const router = `<br/><a onclick="leafrouter2home('${id}','${name}')" href="#">图表</a> <a onclick="leafrouter2info('${id}','${name}')" href="#">用户信息</a>`;
+                return moment(params.data[0]).format("YYYY-MM-DD HH:mm:ss") + "<br/>" + "name: " + name + "<br/>" + "value: " +  params.data[1] + router;
             }
         },
         toolbox: {
-            show: ifcenter,
+            show: iscenter,
             right: 20,
             iconStyle: {
                 borderColor: '#eee'
@@ -287,7 +337,7 @@ export const getEchartOption = (data2: ScatterChartTrans,ifcenter: boolean) => {
             type: 'scatter',
             data: newdata,
             dimensions: ['x', 'y', 'id'],
-            symbolSize: 4,
+            symbolSize: 6,
             itemStyle: {
                 color: 'yellow',
                 opacity: 0.5

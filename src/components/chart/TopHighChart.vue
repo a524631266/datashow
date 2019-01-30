@@ -88,8 +88,9 @@ export default class TopHighChart extends Vue implements AxiosSourceManage {
       PubSub.publish("showtooltip",{entity,name,isLeaf:true,level,clientX,clientY,target});
     }
     private mounted() {
-      const {entity, pid, pidlevel: level} = orginitconfig;
-      const datapromise = insertInitData(pid, entity, level, this);
+      // const {entity, pid, pidlevel: level} = orginitconfig;
+      // const datapromise = insertInitData(pid, entity, level, this);
+      this.redraw(this.postparms.entity);
     }
     private destroyed() {
       // console.log("destory (this as any).intervalid", (this as any).intervalid);

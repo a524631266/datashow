@@ -53,7 +53,7 @@ export default class BaseChartFactory extends Vue {
     // @Inject("option") public option!: object;
     @Prop() public option!: object;
     @Prop() public urlparas!: PostParams;
-    @Prop() public handleclick!: (elementdata: any)=>void;
+    @Prop() public handleclick!: (elementdata: any,chartInstance: any)=>void;
     @Prop() public getData!: ()=> void;
     private clickTimouId = 0;
     private clicknum = 0;
@@ -167,13 +167,6 @@ export default class BaseChartFactory extends Vue {
                     // console.timeEnd(this.id);
                     // console.log("this.opton2",this.option);
                     this.chartInstance = mychart as any;
-                    // (window as any).echart = mychart as any;
-                    // 窗口变动自动变换数据
-                    window.addEventListener("resize",()=> {
-                        this.adjustSubHeight();
-                        (this.chartInstance as any).resize();
-                        // console.log("resize.........");
-                    });
                     // chartspool.push(this.chartInstance);
                     // console.log("echart",this.id);
                     // console.log("geochartoption",this.option);
@@ -182,18 +175,33 @@ export default class BaseChartFactory extends Vue {
                     }
                     const that = this;
                     // 修正双击事件影响向下捕获单击事件的处理了
-                    mychart.on("click",(args: any)=> {
-                        if(that.clicknum === 0 ) {
-                            that.clicknum = 1;
-                            clearTimeout(that.clickTimouId);
-                            that.clickTimouId = setTimeout(()=> {
-                                that.handleclick(args);
+                    setTimeout(
+                       () => {
+                        (this.chartInstance as any).on("click",(args: any)=> {
+                            if(that.clicknum === 0 ) {
+                                that.clicknum = 1;
+                                clearTimeout(that.clickTimouId);
+                                that.clickTimouId = setTimeout(()=> {
+                                    // that.handleclick(args,mychart);
+                                    that.$emit("handleclick",args,mychart);
+                                    that.clicknum = 0;
+                                    },200);
+                            } else { // 第二次
+                                clearTimeout(that.clickTimouId);
                                 that.clicknum = 0;
-                                },200);
-                        } else { // 第二次
-                            clearTimeout(that.clickTimouId);
-                            that.clicknum = 0;
-                        }
+                            }
+                            // console.log("11111111");
+                        });
+                        // console.log((this.chartInstance as any));
+                       },20
+                    );
+                    // console.log(this.id);
+                    // (window as any).echart = mychart as any;
+                    // 窗口变动自动变换数据
+                    window.addEventListener("resize",()=> {
+                        this.adjustSubHeight();
+                        (this.chartInstance as any).resize();
+                        // console.log("resize.........");
                     });
                 }
         }
@@ -241,7 +249,7 @@ export default class BaseChartFactory extends Vue {
                 // } else {
                 // 防止由于热力图数据太大重复渲染导致卡顿现象
                 this.toggleHighChartLegend();
-                if (this.id === "chart-heatmap") {
+                if (this.id === "chart-heatmap" || this.id === "chart-single-action") {
                     this.toggleHighChartAxis();
                 }
                 (this.chartInstance as any).reflow();

@@ -84,13 +84,14 @@ export default class TrendHighChart extends Vue implements AxiosSourceManage {
       return result;
     }
     private mounted() {
-      if(this.postparms.isLeaf) {
-        const {entity, pid, level} = entityinitconfig;
-        const datapromise = insertInitData(pid, entity, level, this);
-      } else {
-        const {entity, pid, pidlevel: level} = orginitconfig;
-        const datapromise = insertInitData(pid, entity, level, this);
-      }
+      // if(this.postparms.isLeaf) {
+      //   const {entity, pid, level} = entityinitconfig;
+      //   const datapromise = insertInitData(pid, entity, level, this);
+      // } else {
+      //   const {entity, pid, pidlevel: level} = orginitconfig;
+      //   const datapromise = insertInitData(pid, entity, level, this);
+      // }
+      this.redraw(this.postparms.entity);
     }
     private destroyed() {
       // console.log("destory (this as any).intervalid", (this as any).intervalid);

@@ -1,7 +1,7 @@
 <template>
   <div :class="positionClass" :draggable="candraggable" @click.native="()=>{}" @dblclick.capture.stop="handledoubleclick">
        <LittleBar :play="play" @pause="pause" @toggledrag="toggledrag" @initWebSocket="start" :positionClass="positionClass" :date="date" @querydate="querydate" @restarttodraw="restarttodraw" :appendtimelist="appendtimelist" :titlename="titlename" :show="positionClass === 'center'?false:true" v-model="postparms">
-            <BaseChartFactory :urlparas="urlparas" :positionClass="positionClass" :id="id" :option="option" :chartLibrary="chartLibrary" :handleclick="handleclick" @updateData="way2UpdateData" slot="chart"/>
+            <BaseChartFactory :urlparas="urlparas" :positionClass="positionClass" :id="id" :option="option" :chartLibrary="chartLibrary" @handleclick="handleclick" @updateData="way2UpdateData" slot="chart"/>
         </LittleBar>
         <!-- <div v-text="nowtime" style="position:absolute;bottom:0;right:0;">
         </div> -->
@@ -343,8 +343,10 @@ export default class GeoMapEchart extends Vue {
     private mounted() {
         // console.log("geo 加载");
         this.initData();
-        const {entity, pid, pidlevel: level} = orginitconfig;
-        const datapromise = insertInitData(pid, entity, level, this);
+        // const {entity, pid, pidlevel: level} = orginitconfig;
+        // const datapromise = insertInitData(pid, entity, level, this);
+        // this.redraw(this.postparms.entity);
+        this.start(true);
     }
     /**
      * data : 返回的option数据
@@ -567,7 +569,7 @@ export default class GeoMapEchart extends Vue {
     private wsonmessage(evt: MessageEvent) {
         const data: ReturnGeoData =  JSON.parse(evt.data) as ReturnGeoData;
         const {level} = this.postparms;
-        // console.log("websocket 收到的新数据",this.websockecount,data,this.redrawcount);
+        console.log("websocket 收到的新数据",this.websockecount,data,this.redrawcount);
         if ( this.websockecount === 0 ) { // 初始化的时候导入头文件
             this.geoheaddata = data;
         } else {//  在之后的数据是放进body中

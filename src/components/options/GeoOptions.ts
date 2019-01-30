@@ -495,7 +495,7 @@ class TestTimer {
         return this.pretotal + this.step;
     }
     public getTable() {
-        console.log("table",this.table);
+        // console.log("table",this.table);
         return this.table;
     }
 }

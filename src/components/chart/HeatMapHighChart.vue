@@ -98,8 +98,9 @@ export default class HeatMapHighChart extends Vue implements AxiosSourceManage {
     }
 
     private mounted() {
-      const {entity, pid, pidlevel: level} = orginitconfig;
-      const datapromise = insertInitData(pid, entity, level, this);
+      // const {entity, pid, pidlevel: level} = orginitconfig;
+      // const datapromise = insertInitData(pid, entity, level, this);
+      this.redraw(this.postparms.entity);
     }
     @Emit()
     private updateEntityNums() {
@@ -113,6 +114,16 @@ export default class HeatMapHighChart extends Vue implements AxiosSourceManage {
      * 一旦更新entity就要重置page
      */
     @Watch("urlparas.entity",  {deep : true})
+    private entitychange(entity: string) {
+      // this.updateEntityNums();
+      this.resetPageInfo();
+      this.cancelAxios();
+      // this.option = drawHeatmapOptions([{x: "0",name: "",y: 0,value: 0}], "HeatMap","" ,this.showTooltiop) as any;
+      this.option = highchartEmptyOption(entity) as any;
+      // console.log("上层图表 HeatMapHighCHart",this.postparms,this.id);
+      this.getData();
+      // 在这里开始做长轮询 定时从后台传数据
+    }
     private redraw(entity: string) {
       // this.updateEntityNums();
       // this.resetPageInfo();

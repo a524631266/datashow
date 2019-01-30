@@ -66,7 +66,7 @@ export default class TimeLineHighChart extends Vue implements AxiosSourceManage 
         (data: string | TimeLineChartTrans) => {
           if ( typeof data !== "string") {
             const change = (this.option as any).change;
-            const option2 = drawActionOptions(data, "异常",this.thresholdlimiter,this.postparms);
+            const option2 = drawActionOptions(data, this.positionClass === PositionClass.Center? true: false,this.thresholdlimiter,this.postparms);
             // const option2 = drawActionOptions(inout, "异常",this.thresholdlimiter);
             // const newdata = this._TimeLine2Heatmap(data);
             // const option2 = drawHeatmapOptions(newdata, "异常","" ,"" as any);
@@ -126,8 +126,9 @@ export default class TimeLineHighChart extends Vue implements AxiosSourceManage 
       this.redraw(this.postparms.entity);
     }
     private mounted() {
-      const {entity, pid, level} = entityinitconfig;
-      const datapromise = insertInitData(pid, entity, level, this);
+      // const {entity, pid, level} = entityinitconfig;
+      // const datapromise = insertInitData(pid, entity, level, this);
+      this.redraw(this.postparms.entity);
     }
 }
 </script>

@@ -2,7 +2,7 @@
 <template>
   <div :class="positionClass" :draggable="candraggable" @dblclick="handledoubleclick">
         <LittleBar :date="date" :positionClass="positionClass" @initWebSocket="start" @toggledrag="toggledrag" :titlename="titlename" :show="positionClass === 'center'?false:true" v-model="postparms">
-            <BaseChartFactory @updateData="way2UpdateData" :positionClass="positionClass" :id="id" :option="option" :urlparas="urlparas" :chartLibrary="chartLibrary" slot="chart"/>
+            <BaseChartFactory @updateData="way2UpdateData" @handleclick="handleclick" :positionClass="positionClass" :id="id" :option="option" :urlparas="urlparas" :chartLibrary="chartLibrary" slot="chart"/>
         </LittleBar>
   </div>
 </template>
@@ -29,17 +29,21 @@ import TimeSlicing from "@/util/TimeSlicing.ts";
 // const n = 5000000;
 // const n = 1000;
 // // const rawdata: [{x: number,y: number,id: string}] = [] as any;
-// const rawdata: [[number,number,number]] = [] as any;
+// const rawdata: Array<[number,number,number]> = [] as any;
 // for (let i = 0; i < n; i += 1) {
 //     rawdata.push(
 //        [
 //         // tslint:disable-next-line:radix
 //         1548141286000 + parseInt(Math.random() * 10 * 24 * 60 *60 * 1000+ ""),
 //         Math.random() * 10,
-//         i
+//         0
 //         ]
 //     );
 // }
+// const rawdata2: ScatterChartTrans = {
+//   entitylist:[{name: "aaa",id: 1234}],
+//   valuelist: rawdata
+// };
 @Component({
     components: {
         BaseChartFactory,
@@ -75,7 +79,8 @@ export default class ScatterHighChart extends Vue implements AxiosSourceManage {
           if ( typeof data !== "string") {
             const change = (this.option as any).change;
             // const option2 = getOption(data, "趋势图");
-            const option2 = getEchartOption(data,this.positionClass === PositionClass.Center? true: false);// {} as any ;//
+            const option2 = getEchartOption(data,this.positionClass === PositionClass.Center? true: false);
+            // const option2 = getEchartOption(rawdata2,this.positionClass === PositionClass.Center? true: false);
             // console.log("optin",rawdata,this.localStorageKey);
             (option2 as any).change = updatestate.success;
             // (window as any).loooo = this.localStorageKey;
@@ -105,13 +110,14 @@ export default class ScatterHighChart extends Vue implements AxiosSourceManage {
       return result;
     }
     private mounted() {
-      if(this.postparms.isLeaf) {
-        const {entity, pid, level} = entityinitconfig;
-        const datapromise = insertInitData(pid, entity, level, this);
-      } else {
-        const {entity, pid, pidlevel: level} = orginitconfig;
-        const datapromise = insertInitData(pid, entity, level, this);
-      }
+      // if(this.postparms.isLeaf) {
+      //   const {entity, pid, level} = this.urlparas;
+      //   const datapromise = insertInitData(pid, entity, level, this);
+      // } else {
+      //   const {entity, pid, pidlevel: level} = orginitconfig;
+      //   const datapromise = insertInitData(pid, entity, level, this);
+      // }
+      this.redraw(this.postparms.entity);
     }
     private destroyed() {
       // console.log("destory (this as any).intervalid", (this as any).intervalid);
@@ -173,6 +179,15 @@ export default class ScatterHighChart extends Vue implements AxiosSourceManage {
                 }
             }
         );
+    }
+    @Emit()
+    private handleclick(params: any,chart: any) {
+      console.log("scatett",params,chart);
+      // chart.dispatchAction({
+      //   type: 'showTip',
+      //   seriesIndex: 0,
+      //   dataIndex:params.dataIndex
+      // });
     }
     @Emit()
     private handledoubleclick() {

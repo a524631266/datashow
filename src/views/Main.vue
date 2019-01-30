@@ -74,22 +74,7 @@ const geo = Object.assign({},InitGeomapUrlProps);
   },
 })
 export default class Main extends Vue {
-    private datalist =  [
-         {id: "chart-top", urlparas: orgtop,
-            option: {xAxis: "1"}, positionClass: PositionClass.RightBottom,chartName:"TopHighChart"},
-        {id: "chart-single-boxchart", urlparas: entbox,
-          option: {xAxis: "2"}, positionClass: PositionClass.LeftTop,chartName:"BoxSingleHighChart"},
-        {id: "chart-single-action", urlparas: enttl,
-          option: {xAxis: "1"}, positionClass: PositionClass.LeftBottom,chartName:"TimeLineHighChart"},
-        {id: "chart-single-linechart", urlparas: enttrend,
-          option: {xAxis: "2"}, positionClass: PositionClass.LeftMiddle,chartName:"TrendHighChart"},
-        {id: "chart-region-linechart", urlparas: orgtrend,
-          option: {xAxis: "4"}, positionClass: PositionClass.RightMiddle,chartName:"ScatterHighChart"},
-          {id: "chart-heatmap", urlparas: orghp,
-        option: {xAxis: "4"}, positionClass: PositionClass.Center,chartName:"HeatMapHighChart"},
-        {id: "chart-geomap", urlparas: geo,
-        option: {xAxis: "1"}, positionClass: PositionClass.RightTop,chartName:"GeoMapEchart"},
-    ];
+    private datalist: Array<{id: string,urlparas: PostParams, option: {xAxis: string},positionClass: PositionClass,chartName: string}> =  [];
     private centerid = "chart-heatmap";
     private drawerlist = [
         {id: "chart-region-boxchart", urlparas: orgbox,
@@ -127,6 +112,7 @@ export default class Main extends Vue {
                         this.datalist[index].urlparas.name = this.$route.query.name as any;
                         this.datalist[index].urlparas.level = this.$route.query.level as any;
                         this.datalist[index].urlparas.coord = this.$route.query.coord as any;
+                        // this.datalist[index].urlparas.pageid = 1;
                         // this.datalist[index].urlparas.entitynums = this.$route.query.entitynums as any;
                     }
                 }
@@ -142,6 +128,7 @@ export default class Main extends Vue {
                     this.datalist[index].urlparas.name = isLeaf?entity.name: org.name;
                     this.datalist[index].urlparas.level = isLeaf?entity.level: org.pidlevel + 1;
                     this.datalist[index].urlparas.coord = [0,0];
+                    // this.datalist[index].urlparas.pageid = 1;
                 }
             );
             PubSub.publish("updaterightbarname",entity.name);
@@ -152,6 +139,80 @@ export default class Main extends Vue {
         } else {
             PubSub.publish("updateleftbarname",this.$route.query.name);
         }
+    }
+    private created() {
+        const initdata: Array<{id: string,urlparas: PostParams, option: {xAxis: string},positionClass: PositionClass,chartName: string}> = [
+            {id: "chart-top", urlparas: orgtop,
+                option: {xAxis: "1"}, positionClass: PositionClass.RightBottom,chartName:"TopHighChart"},
+            {id: "chart-single-boxchart", urlparas: entbox,
+            option: {xAxis: "2"}, positionClass: PositionClass.LeftTop,chartName:"BoxSingleHighChart"},
+            {id: "chart-single-action", urlparas: enttl,
+            option: {xAxis: "1"}, positionClass: PositionClass.LeftBottom,chartName:"TimeLineHighChart"},
+            {id: "chart-single-linechart", urlparas: enttrend,
+            option: {xAxis: "2"}, positionClass: PositionClass.LeftMiddle,chartName:"TrendHighChart"},
+            {id: "chart-region-linechart", urlparas: orgtrend,
+            option: {xAxis: "4"}, positionClass: PositionClass.RightMiddle,chartName:"ScatterHighChart"},
+            {id: "chart-heatmap", urlparas: orghp,
+            option: {xAxis: "4"}, positionClass: PositionClass.Center,chartName:"HeatMapHighChart"},
+            {id: "chart-geomap", urlparas: geo,
+            option: {xAxis: "1"}, positionClass: PositionClass.RightTop,chartName:"GeoMapEchart"},
+        ];
+        // query
+        //     :
+        //     coord
+        //     :
+        //     (2) ["81.156013", "40.349444"]
+        //     entity
+        //     :
+        //     "99956028"
+        //     entitynums
+        //     :
+        //     "1503"
+        //     isLeaf
+        //     :
+        //     "false"
+        //     level
+        //     :
+        //     "3"
+        //     name
+        //     :
+        //     "阿克苏"
+        // const bool =  (this.$route.query.isLeaf === "false" || !this.$route.query.isLeaf)?false:true;
+        // 在初始化的时候路由有参数就用带参数的地址作为一个连接
+        if(this.$route.query.entity) {
+            initdata.forEach(
+                (value ,index)=> {
+                    const {coord, entity, isLeaf, level, name} = this.$route.query;
+                    if( value.urlparas.isLeaf === false) {
+                        initdata[index].urlparas.coord = coord as any;
+                        initdata[index].urlparas.entity = entity as any;
+                        initdata[index].urlparas.isLeaf = isLeaf as any;
+                        initdata[index].urlparas.level = level as any;
+                        initdata[index].urlparas.name = name as any;
+                    }
+                }
+            );
+        } else { // home.html/情况下
+            initdata.forEach(
+                (value ,index)=> {
+                    const {coord, entity, isLeaf, level, name} = this.$route.query;
+                    if( value.urlparas.isLeaf === false) {
+                        initdata[index].urlparas.coord = [0 ,0 ];
+                        initdata[index].urlparas.entity = orginitconfig.entity;
+                        initdata[index].urlparas.level = orginitconfig.pidlevel + 1;
+                        initdata[index].urlparas.name = orginitconfig.name;
+                    } else {
+                        initdata[index].urlparas.coord = [0,0];
+                        initdata[index].urlparas.entity = entityinitconfig.entity;
+                        initdata[index].urlparas.isLeaf = true;
+                        initdata[index].urlparas.level = entityinitconfig.level;
+                        initdata[index].urlparas.name = entityinitconfig.name;
+                    }
+                }
+            );
+        }
+        // console.log("this router",this.$route);
+        this.datalist = initdata;
     }
     private mounted() {
         const that = this;

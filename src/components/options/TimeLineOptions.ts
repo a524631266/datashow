@@ -1229,7 +1229,7 @@ const getInterData2 = (inlist: inlist[]) => {
   ];
 };
 
-export const drawActionOptions = (objectlist: TimeLineChartTrans, title: string, limiter: ThresholdLimiter,postparmas: PostParams) => {
+export const drawActionOptions = (objectlist: TimeLineChartTrans,iscenter: boolean, limiter: ThresholdLimiter,postparmas: PostParams) => {
   // console.log("height",((window.innerHeight / 3.1) / (window.innerWidth * 0.2 )) * 100 + '%');
   // tslint:disable-next-line:radix
   const whscale = parseInt((window.innerHeight / 3.2) / (window.innerWidth * 0.2 ) * 100 + "") ;
@@ -1355,6 +1355,7 @@ export const drawActionOptions = (objectlist: TimeLineChartTrans, title: string,
       max: 24 * 60 * 60 * 1000 - 8 * 60 * 60 * 1000,
     }],
     yAxis: {
+      visible: iscenter,
       labels: {
         style: {
           fontSize: '11px',

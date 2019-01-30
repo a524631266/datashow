@@ -155,8 +155,9 @@ export default class BoxSingleHighChart extends Vue implements AxiosSourceManage
       return result;
     }
     private mounted() {
-      const {entity, pid, level} = entityinitconfig;
-      const datapromise = insertInitData(pid, entity, level, this);
+      // const {entity, pid, level} = entityinitconfig;
+      // const datapromise = insertInitData(pid, entity, level, this);
+      this.redraw(this.postparms.entity);
     }
     private destroyed() {
       // console.log("destory (this as any).intervalid", (this as any).intervalid);

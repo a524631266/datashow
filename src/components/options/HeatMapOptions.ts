@@ -405,8 +405,8 @@ export const drawHeatmapOptions = (listdata: HeatmapChartTrans, title: string, r
             // min:-1,
             // max:1,
             // min: -5,
-            min: -3,
-            max: 3,
+            // min: -1,
+            // max: 3,
             className: "heatmaplegend"
         },
         series: [{
