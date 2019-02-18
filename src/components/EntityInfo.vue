@@ -260,7 +260,7 @@ export default class EntityInfo extends Vue {
             this.$message.success("保存成功",5);
         }).catch(
             (err) => {
-                this.$message.error(JSON.stringify(err.response.statusText),5);
+                this.$message.error(JSON.stringify(err.response.statusText) + "请稍后再重试",5);
             }
         );
     }
@@ -271,7 +271,7 @@ export default class EntityInfo extends Vue {
     private loadingdata(entity: string) {
         // 预留一个接口用来保存数据
         // http://localhost:8080/tree/case/entity?id=99998999
-        Axios.get(urljson.loadurl+"/"+ entity).then((data)=> {
+        Axios.get(urljson.geturl+"/"+ entity).then((data)=> {
             this.$message.success("加载记录成功",3);
             this.showinfo = true;
             // console.log("data",data);

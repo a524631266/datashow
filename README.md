@@ -104,3 +104,6 @@ try to link https://cli.vuejs.org/zh/config/#devserver-proxy
 	  ],
 		"description": "Log output to console"
 	  }
+# 登录网址
+/anomaly/index.html
+/anomaly/home.html
