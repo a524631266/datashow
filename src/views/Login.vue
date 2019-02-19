@@ -72,6 +72,7 @@ export default class Login extends Vue {
                     }
                 //    this.innerWidth = window.innerWidth;
                 });
+        console.log(this.$cookies,"cookies");
     }
 }
 </script>

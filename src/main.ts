@@ -11,6 +11,7 @@ import 'moment/locale/zh-cn';
 import 'material-design-lite/material.min.css';
 import 'material-design-lite/material.min.js';
 import 'material-design-icons/iconfont/material-icons.css';
+
 moment.locale('zh-cn');
 console.log("是否为本地",process.env.NODE_ENV);
 Vue.config.productionTip = false;
