@@ -15,6 +15,10 @@
                 <!-- <tr><td><input type="text" required="required" style="width: 180px;display:inline;" placeholder="验证码" name="code"></input></td><td><img id="codevalidate" required="required" style="display:inline;" onclick="changeUrl()" /></td></tr> -->
                 <tr><td colspan="2"><button class="but btn btn-info " type="submit">登录</button></td></tr>
                 </table>
+                <div class="form-group  input-group savegroup" style="display:flex;margin:0 auto;width: 20%;min-width: 150px;">
+				    <input name="vocode" type="text" class="form-control" id="inputvocode" placeholder="输入验证码" v-model="infodata.vocode"/>
+                    <img :src="volidateimg" @click.prevent="reloadingVolidateCode" alt="验证码" style="min-width: 150px;"/>
+				</div>
             </form>  
         </div>
     </div>
@@ -22,7 +26,7 @@
 
 <script lang='ts'>
 import { Component, Vue, Prop, Emit, Watch } from 'vue-property-decorator';
-import {projectname} from '@/actions/axiosProxy.ts';
+import {projectname,getVolidateImg} from '@/api/axiosProxy.ts';
 @Component({
     components: {
     },
@@ -36,6 +40,7 @@ export default class Login extends Vue {
     private innerWidth = window.innerWidth;
     private subtitleleft = 140;
     private baseUrl = projectname;
+    private volidateimg = "";
     // get subtitleleft() {
     //     return this.innerWidth > 1366? 140: 140;
     // }
@@ -50,6 +55,22 @@ export default class Login extends Vue {
     // @Watch('some', { deep: true })
     // private watchsomeaction(beforevalue: any, nowvalue: any) {
     // };
+    // vocode 验证码
+    @Emit()
+    private reloadingVolidateCode() {
+        getVolidateImg("111").then(
+            (result)=> {
+                // 设置开始地址
+                console.log(result.data);
+                this.volidateimg = result.data;
+            }
+        ).catch(
+            (err) => {
+                this.volidateimg = "http://img3.imgtn.bdimg.com/it/u=2739505509,237691169&fm=27&gp=0.jpg";
+                console.log("err:" + err);
+            }
+        );
+    }
     private mounted() {
         if (window.innerWidth > 1366) {
             this.scale = 0.85;
@@ -72,7 +93,7 @@ export default class Login extends Vue {
                     }
                 //    this.innerWidth = window.innerWidth;
                 });
-        console.log(this.$cookies,"cookies");
+        // console.log(this.$cookies,"cookies");
     }
 }
 </script>

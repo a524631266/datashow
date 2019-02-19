@@ -15,7 +15,7 @@ import LittleBar from "@/components/chart/LittleBar.vue";
 import { Options } from 'highcharts';
 import echarts,{ ECharts } from "echarts";
 import {getOption,getEchartOption} from "@/components/options/ScatterOption.ts";
-import { getDataPromise, PostPath , insertInitData} from "@/actions/axiosProxy.ts";
+import { getDataPromise, PostPath , insertInitData} from "@/api/axiosProxy.ts";
 import PubSub from 'pubsub-js';
 import {ScatterChart,ScatterChartTrans} from '@/types/postreturnform';
 import {highchartEmptyOption} from "@/components/options/EmptyChart.ts";

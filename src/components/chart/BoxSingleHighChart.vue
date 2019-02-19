@@ -14,7 +14,7 @@ import BaseChartFactory from "@/components/chart/base/BaseChartFactory.vue";
 import LittleBar from "@/components/chart/LittleBar.vue";
 import Highcharts, { Options } from 'highcharts';
 import {boxchart3, xAxis3,drawBoxOptions} from "@/components/options/BoxOptions.ts";
-import { getDataPromise, PostPath, insertInitData } from "@/actions/axiosProxy.ts";
+import { getDataPromise, PostPath, insertInitData } from "@/api/axiosProxy.ts";
 import PubSub from 'pubsub-js';
 import { RegionBoxChart, SingleBoxChart, BoxChartTrans } from '@/types/postreturnform';
 import echarts from "echarts";

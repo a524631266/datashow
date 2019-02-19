@@ -127,9 +127,10 @@
 					</form>
 				</div>
                 <div class="savegroup" style="display:flex;margin:0 auto;">
-							<button id="box-submit" class="btn btn-default" @click.prevent="submit">保存</button>
-							<button id="box-add" class="btn btn-info" @click.prevent="addBlackInfo">添加记录</button>
+                    <button id="box-submit" class="btn btn-default" @click.prevent="submit">保存</button>
+                    <button id="box-add" class="btn btn-info" @click.prevent="addBlackInfo">添加记录</button>
 				</div>
+
                 <!-- <div class="form-group col-sm-offset-5 col-sm-6">
 						
 				</div> -->
@@ -141,6 +142,10 @@
 import { Component, Vue, Prop, Emit, Watch } from 'vue-property-decorator';
 import PubSub from 'pubsub-js';
 import Axios from "axios";
+import qs from 'qs';
+// tslint:disable-next-line:no-var-requires
+// const qs = require("qs");
+import {getVolidateImg} from '@/api/axiosProxy.ts';
 // tslint:disable-next-line:no-var-requires
 const urljson = require("@/config/userinfo.json");
 @Component({
@@ -154,6 +159,7 @@ export default class EntityInfo extends Vue {
     private entityid: string = "";
     private entityname: string = "";
     private showinfo: boolean = false;
+    private volidateimg: string = "";
     private infodata = {
         entityid: "",
         pname: "",
@@ -172,7 +178,28 @@ export default class EntityInfo extends Vue {
         ],
         vocode: ""
     };
+    @Watch("entityid",{deep: true})
+    private routerchange_reloading_pict(val: any) {
+        // 路由变化就更新树
+        this.reloadingVolidateCode();
+        console.log("reloading_pic",val);
+    }
     // vocode 验证码
+    @Emit()
+    private reloadingVolidateCode() {
+        getVolidateImg("111").then(
+            (result)=> {
+                // 设置开始地址
+                console.log(result.data);
+                this.volidateimg = result.data;
+            }
+        ).catch(
+            (err) => {
+                this.volidateimg = "http://img3.imgtn.bdimg.com/it/u=2739505509,237691169&fm=27&gp=0.jpg";
+                console.log("err:" + err);
+            }
+        );
+    }
     // 计算属性一旦值变化就更新值
     get totolvolt() {
         const {deviceinfo} = (this as any).infodata;
@@ -206,6 +233,8 @@ export default class EntityInfo extends Vue {
             this.loadingdata(this.entityid);
             // this.showinfo = true;
         });
+        // 加载之后获取图片图像
+        this.reloadingVolidateCode();
         // 初始化数据
         this.entityid = this.entity;
         this.entityname = this.name;
@@ -258,7 +287,9 @@ export default class EntityInfo extends Vue {
     @Emit()
     private submit() {
         // 预留一个接口用来保存数据
-        Axios.post(urljson.puturl + "/" + this.infodata.entityid,this.infodata).then(()=> {
+        const infodata = {...this.infodata};
+        infodata.deviceinfo = JSON.stringify(this.infodata.deviceinfo) as any;
+        Axios.post(urljson.puturl + "/" + this.infodata.entityid,qs.stringify(infodata)).then(()=> {
             this.$message.success("保存成功",5);
         }).catch(
             (err) => {

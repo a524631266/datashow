@@ -91,6 +91,23 @@ export function getTreeNode(entity: string) {
     return axiospromise;
 }
 
+// 获取访问地址的信息
+export function getVolidateImg(entity: string) {
+    const posturl = `${prev2}/image/entity?id=${entity}`;
+    const axiospromise = Axios(
+        {
+        baseURL: baseUrl,
+        method:"get",
+        url:posturl,
+        }
+    ).then(
+        (result) => {
+            return result;
+        }
+    );
+    return axiospromise;
+}
+
 
 
 interface InitChart {

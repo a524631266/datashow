@@ -1,5 +1,5 @@
 import { PostParams } from "@/types";
-import { PostPath } from '@/actions/axiosProxy';
+import { PostPath } from '@/api/axiosProxy';
 const storageSpareData: any = {};
 // tslint:disable-next-line:no-var-requires
 class Volidater {

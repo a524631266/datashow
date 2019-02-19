@@ -15,7 +15,7 @@ import BaseChartFactory from "@/components/chart/base/BaseChartFactory.vue";
 import LittleBar from "@/components/chart/LittleBar.vue";
 import { Options } from 'highcharts';
 import {listdata, drawLineOptions } from "@/components/options/TrendOptions.ts";
-import { getDataPromise, PostPath , insertInitData} from "@/actions/axiosProxy.ts";
+import { getDataPromise, PostPath , insertInitData} from "@/api/axiosProxy.ts";
 import PubSub from 'pubsub-js';
 import { SingleTrendChart, RegionTrendChart,TrendChartTrans } from '@/types/postreturnform';
 import {highchartEmptyOption} from "@/components/options/EmptyChart.ts";

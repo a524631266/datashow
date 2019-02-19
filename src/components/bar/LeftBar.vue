@@ -66,7 +66,7 @@ import Antd from "ant-design-vue";
 import Axios from "axios";
 import { entity,name,level } from "@/config/initOptions.ts";
 import PubSub from 'pubsub-js';
-import {getTreeNode} from '@/actions/axiosProxy.ts';
+import {getTreeNode} from '@/api/axiosProxy.ts';
 export interface ChildrenValue {
     id: string ;
     pId: number;

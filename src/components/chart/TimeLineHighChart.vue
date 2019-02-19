@@ -14,7 +14,7 @@ import BaseChartFactory from "@/components/chart/base/BaseChartFactory.vue";
 import LittleBar from "@/components/chart/LittleBar.vue";
 import { Options } from 'highcharts';
 import { inout, drawActionOptions} from "@/components/options/TimeLineOptions.ts";
-import { getDataPromise, PostPath , insertInitData} from "@/actions/axiosProxy.ts";
+import { getDataPromise, PostPath , insertInitData} from "@/api/axiosProxy.ts";
 import { TimeLineChart,TimeLineChartTrans, HeatmapChartTrans, TimeLineDataTrans } from "@/types/postreturnform.ts";
 import {listdata, drawHeatmapOptions } from "@/components/options/HeatMapOptions.ts";
 import {highchartEmptyOption} from "@/components/options/EmptyChart.ts";

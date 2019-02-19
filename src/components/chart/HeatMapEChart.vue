@@ -15,7 +15,7 @@ import BaseChartFactory from "@/components/chart/base/BaseChartFactory.vue";
 import LittleBar from "@/components/chart/LittleBar.vue";
 import { Options } from 'highcharts';
 import {listdata, drawHeatmapOptions,HeatMapLimiter } from "@/components/options/HeatMapOptions.ts";
-import { getDataPromise, PostPath } from "@/actions/axiosProxy.ts";
+import { getDataPromise, PostPath } from "@/api/axiosProxy.ts";
 import PubSub from 'pubsub-js';
 import { HeatmapChart, HeatmapChartTrans } from '@/types/postreturnform';
 import {highchartEmptyOption} from "@/components/options/EmptyChart.ts";

@@ -18,7 +18,7 @@ import echarts,{ ECharts, EChartOption, EChartsOptionConfig } from "echarts";
 import { provincedata} from '@/components/options/ProvinceOptions.ts';
 import Axios,{AxiosPromise} from "axios";
 import PubSub from 'pubsub-js';
-import { getDataPromise, PostPath, insertInitData, websocketurlhost } from "@/actions/axiosProxy.ts";
+import { getDataPromise, PostPath, insertInitData, websocketurlhost } from "@/api/axiosProxy.ts";
 import { updatestate } from "@/types/updateState.ts";
 import moment,{ Moment } from "moment";
 import { AxiosSourceManage } from "@/implements/AxiosSourceManage";

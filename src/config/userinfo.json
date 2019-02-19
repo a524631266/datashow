@@ -1,4 +1,4 @@
 {
-    "geturl": "/anomaly/elecnum/user",
-    "puturl": "/anomaly/elecnum/user"
+    "geturl": "/anomaly/elecnum/getuser",
+    "puturl": "/anomaly/elecnum/adduser"
 }
