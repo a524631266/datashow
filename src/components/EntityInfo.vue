@@ -169,8 +169,10 @@ export default class EntityInfo extends Vue {
                 denum: "",
                 deinfo: ""
             }
-        ]
+        ],
+        vocode: ""
     };
+    // vocode 验证码
     // 计算属性一旦值变化就更新值
     get totolvolt() {
         const {deviceinfo} = (this as any).infodata;
@@ -256,7 +258,7 @@ export default class EntityInfo extends Vue {
     @Emit()
     private submit() {
         // 预留一个接口用来保存数据
-        Axios.post(urljson.puturl,this.infodata).then(()=> {
+        Axios.post(urljson.puturl + "/" + this.infodata.entityid,this.infodata).then(()=> {
             this.$message.success("保存成功",5);
         }).catch(
             (err) => {
