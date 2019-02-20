@@ -33,11 +33,12 @@ const user = {
 
   actions: {
     // 登录
-    Login(context: {commit: any}, userInfo: {username: string,password: string}) {
+    Login(context: {commit: any}, userInfo: {username: string,password: string,vacode: string}) {
       const username = userInfo.username.trim();
       return new Promise((resolve, reject) => {
-        login(username, userInfo.password).then((response: any) => {
+        login(username, userInfo.password,userInfo.vacode).then((response: any) => {
           const data = response.data;
+          // 设置token值
           setToken(data.token);
           context.commit('SET_TOKEN', data.token);
           resolve();
@@ -46,7 +47,10 @@ const user = {
         });
       });
     },
-
+    setnametest(context: {commit: any ,state: UserState }) {
+      // context.commit('SET_NAME', "1212121212");
+      setToken("1111111111111111");
+    },
     // 获取用户信息
     GetInfo( context: {commit: any ,state: UserState }) {
       return new Promise((resolve, reject) => {

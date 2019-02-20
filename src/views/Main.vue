@@ -49,6 +49,7 @@ import { PositionClass , PostParams , Dimension } from "@/types/index.ts";
 
 import { InitBoxUrlProps,InitHeatMapUrlProps,InitTimeLineUrlProps,
         InitTopUrlProps,InitTrendUrlProps,InitGeomapUrlProps, orginitconfig, entityinitconfig } from "@/config/initOptions.ts";
+import { getToken } from '@/util/authcookie';
 const orgbox = Object.assign({},InitBoxUrlProps);
 const entbox = Object.assign({},InitBoxUrlProps,{isLeaf:true});
 const enttrend = Object.assign({},InitTrendUrlProps,{isLeaf:true});
@@ -82,6 +83,11 @@ export default class Main extends Vue {
     ];
     public beforeCreate() {
     // console.log("Home", PositionClass.LeftTop);
+      console.log("token" , getToken());
+      // tslint:disable-next-line:no-empty
+      if(getToken()) {} else {
+        window.location.href="./index.html";
+      }
     }
     // @Emit()
     // public ajaxFunc(paras: PostParams) {

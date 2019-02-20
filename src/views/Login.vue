@@ -8,27 +8,38 @@
             </div>
         </div> 
         <div class="login" :style="{transform: `scaleX(${loadingscale})`}">
-            <form :action="`/${baseUrl}/login`" method="post">
+            <!-- :action="`/${baseUrl}/login`" method="post" -->
+            <form >
                 <table>
-                <tr><td colspan="2"><input class="bar" type="text" required="required" placeholder="用户名" name="username"/></td></tr>
-                <tr><td colspan="2"><input class="bar" type="password" required="required" placeholder="密码" name="password"/></td></tr>
+                <tr><td colspan="2"><input v-model="userInfo.username" class="bar" type="text" required="required" placeholder="用户名" name="username"/></td></tr>
+                <tr><td colspan="2"><input class="bar" v-model="userInfo.password" type="password" required="required" placeholder="密码" name="password"/></td></tr>
+                <tr><td colspan="2">
+                    <input class="leftbar" type="vocode" v-model="userInfo.vacode" required="required" placeholder="验证码" name="vocode"/>
+                    <img :src="volidateimg" @click.prevent="reloadingVolidateCode" alt="验证码" style="width:79px;height:40px;"/>
+                </td></tr>
                 <!-- <tr><td><input type="text" required="required" style="width: 180px;display:inline;" placeholder="验证码" name="code"></input></td><td><img id="codevalidate" required="required" style="display:inline;" onclick="changeUrl()" /></td></tr> -->
-                <tr><td colspan="2"><button class="but btn btn-info " type="submit">登录</button></td></tr>
+                <tr><td colspan="2"><button class="but btn btn-info " @click.prevent="login" >登录</button></td></tr>
                 </table>
-                <div class="form-group  input-group savegroup" style="display:flex;margin:0 auto;width: 20%;min-width: 150px;">
-				    <input name="vocode" type="text" class="form-control" id="inputvocode" placeholder="输入验证码" v-model="infodata.vocode"/>
-                    <img :src="volidateimg" @click.prevent="reloadingVolidateCode" alt="验证码" style="min-width: 150px;"/>
-				</div>
-            </form>  
+            </form>
         </div>
+        <!-- <button @click="reloadingVolidateCode">测试验证cookie</button> -->
+        <a-spin class="loading" :tip="loadingtext" v-show="showLoading" :style="{position:'absolute',top: '50%',left: '50%',transform: 'translateY(-50%) translateX(-50%)' }">
+            <!-- <div class="spin-content">
+                {{""}}
+            </div> -->
+        </a-spin>
+
     </div>
 </template>
 
 <script lang='ts'>
 import { Component, Vue, Prop, Emit, Watch } from 'vue-property-decorator';
 import {projectname,getVolidateImg} from '@/api/axiosProxy.ts';
+import Antd from "ant-design-vue";
+const validateurl = `/check/code`;
 @Component({
     components: {
+        ASpin: Antd.Spin,
     },
 })
 export default class Login extends Vue {
@@ -40,7 +51,16 @@ export default class Login extends Vue {
     private innerWidth = window.innerWidth;
     private subtitleleft = 140;
     private baseUrl = projectname;
-    private volidateimg = "";
+    private volidateimg = validateurl;
+    private loadingtext = "Loading...";
+    private userInfo = {
+        password: "",
+        username: "",
+        vacode:""
+    };
+    private showLoading = false;
+    // private volidateimg = `http://192.168.40.148:8080/anomaly/check/code`;
+    // private volidateimg = `/check/code`;
     // get subtitleleft() {
     //     return this.innerWidth > 1366? 140: 140;
     // }
@@ -56,20 +76,35 @@ export default class Login extends Vue {
     // private watchsomeaction(beforevalue: any, nowvalue: any) {
     // };
     // vocode 验证码
-    @Emit()
+    // @Emit()
+    // @Emit()
+    private login() {
+        // this.login
+        this.showLoading = true;
+        this.$store.dispatch("Login",this.userInfo).then(() => {
+            this.showLoading = false;
+            this.$router.push({ path: '/home.html' });
+            window.location.href="./home.html";
+          }).catch(() => {
+            this.showLoading = false;
+            // this.$router.push({ path: '/home.html' });
+            // window.location.href="./home.html";
+          });
+    }
     private reloadingVolidateCode() {
-        getVolidateImg("111").then(
-            (result)=> {
-                // 设置开始地址
-                console.log(result.data);
-                this.volidateimg = result.data;
-            }
-        ).catch(
-            (err) => {
-                this.volidateimg = "http://img3.imgtn.bdimg.com/it/u=2739505509,237691169&fm=27&gp=0.jpg";
-                console.log("err:" + err);
-            }
-        );
+        // getVolidateImg("111").then(
+        //     (result: any)=> {
+        //         // 设置开始地址
+        //         console.log("resultddddddddddd",result);
+        //         // this.volidateimg = result.data;
+        //     }
+        // ).catch(
+        //     (err) => {
+        //         this.volidateimg = "http://192.168.40.148:8080/anomaly/check/code";
+        //         console.log("err:" + err);
+        //     }
+        // );
+        this.volidateimg = validateurl + "?" + new Date().getTime();
     }
     private mounted() {
         if (window.innerWidth > 1366) {
@@ -81,6 +116,7 @@ export default class Login extends Vue {
             this.subtitleleft = 140;
             // this.loadingscale = 0.8;
         }
+        // this.reloadingVolidateCode();
         window.addEventListener("resize",()=> {
                    if (window.innerWidth > 1366) {
                         this.scale = 0.85;
@@ -218,6 +254,22 @@ input[class="bar"]{
     border-radius: 4px;
     background-color: #2D2D3F;
 }
+input[class="leftbar"]{
+    width: 198px;
+    height: 40px;
+    margin-bottom: 10px;
+    outline: none;
+    padding: 10px;
+    font-size: 13px;
+    color: #fff;
+    text-shadow: 1px 1px 1px;
+    border-top: 1px solid #312E3D;
+    border-left: 1px solid #312E3D;
+    border-right: 1px solid #312E3D;
+    border-bottom: 1px solid #56536A;
+    border-radius: 4px;
+    background-color: #2D2D3F;
+}
 .but{
     width: 278px;
 }
@@ -256,6 +308,8 @@ input[class="bar"]{
     display: flex;
     justify-content: center;
 }
-
+.loading {
+    pointer-events: none;
+}
 
 </style>

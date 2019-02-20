@@ -29,7 +29,7 @@
 									<div for="inputname" class="input-group-addon input-group-prepend">
 										<span class="input-group-text">姓名:</span> 
 									</div>
-									<input name="pname" type="text" class="form-control" id="inputname" placeholder="张三" v-model="infodata.pname"/>
+									<input name="name" type="text" class="form-control" id="inputname" placeholder="张三" v-model="infodata.name"/>
 								</div>
 							</div>
 							<div class="col-xs-4 col-md-4">
@@ -148,6 +148,24 @@ import qs from 'qs';
 import {getVolidateImg} from '@/api/axiosProxy.ts';
 // tslint:disable-next-line:no-var-requires
 const urljson = require("@/config/userinfo.json");
+const initdata = {
+                    entityid: "",
+                    name: "",
+                    sex: "male",
+                    phone: "",
+                    address: "",
+                    other: "",
+                    ndevolt: "0",
+                    deviceinfo: [
+                        {
+                            dename: "",
+                            devolt: "",
+                            denum: "",
+                            deinfo: ""
+                        }
+                    ],
+                    vocode: ""
+                };
 @Component({
     components:{
     }
@@ -160,46 +178,39 @@ export default class EntityInfo extends Vue {
     private entityname: string = "";
     private showinfo: boolean = false;
     private volidateimg: string = "";
-    private infodata = {
-        entityid: "",
-        pname: "",
-        sex: "male",
-        phone: "",
-        address: "",
-        other: "",
-        ndevolt: "0",
-        deviceinfo: [
-            {
-                dename: "",
-                devolt: "",
-                denum: "",
-                deinfo: ""
-            }
-        ],
-        vocode: ""
-    };
-    @Watch("entityid",{deep: true})
-    private routerchange_reloading_pict(val: any) {
-        // 路由变化就更新树
-        this.reloadingVolidateCode();
-        console.log("reloading_pic",val);
-    }
+    private firstloading = true;// 用来处理 页面首次加载的时候不加载用户信息
+    private infodata = {...initdata};
+    // @Watch("entityid",{deep: true})
+    // private routerchange_reloading_pict(val: any) {
+    //     // 路由变化就更新树
+    //     this.reloadingVolidateCode();
+    //     console.log("reloading_pic",val);
+    // }
+    // @Watch("entityid",{deep: true})
+    // private entityChangeReloadingData(newEntityid: string) {
+    //     console.log("eeeeeeeeeeeeee",newEntityid);
+    //     if(newEntityid !== undefined && !this.firstloading) {
+    //         this.loadingdata(newEntityid);
+    //     } else {
+    //         this.firstloading = false;
+    //     }
+    // }
     // vocode 验证码
-    @Emit()
-    private reloadingVolidateCode() {
-        getVolidateImg("111").then(
-            (result)=> {
-                // 设置开始地址
-                console.log(result.data);
-                this.volidateimg = result.data;
-            }
-        ).catch(
-            (err) => {
-                this.volidateimg = "http://img3.imgtn.bdimg.com/it/u=2739505509,237691169&fm=27&gp=0.jpg";
-                console.log("err:" + err);
-            }
-        );
-    }
+    // @Emit()
+    // private reloadingVolidateCode() {
+    //     getVolidateImg("111").then(
+    //         (result)=> {
+    //             // 设置开始地址
+    //             console.log(result.data);
+    //             this.volidateimg = result.data;
+    //         }
+    //     ).catch(
+    //         (err) => {
+    //             this.volidateimg = "http://img3.imgtn.bdimg.com/it/u=2739505509,237691169&fm=27&gp=0.jpg";
+    //             console.log("err:" + err);
+    //         }
+    //     );
+    // }
     // 计算属性一旦值变化就更新值
     get totolvolt() {
         const {deviceinfo} = (this as any).infodata;
@@ -234,7 +245,7 @@ export default class EntityInfo extends Vue {
             // this.showinfo = true;
         });
         // 加载之后获取图片图像
-        this.reloadingVolidateCode();
+        // this.reloadingVolidateCode();
         // 初始化数据
         this.entityid = this.entity;
         this.entityname = this.name;
@@ -307,19 +318,17 @@ export default class EntityInfo extends Vue {
         Axios.get(urljson.geturl+"/"+ entity).then((data)=> {
             this.$message.success("加载记录成功",3);
             this.showinfo = true;
+            this.infodata = {...data.data};
             // console.log("data",data);
         }).catch(
             (err) => {
                 this.$message.error(JSON.stringify(err.response.statusText + ":url"),3);
                 this.showinfo = true;
-                this.infodata.deviceinfo = [
-                                {
-                                    dename: "",
-                                    devolt: "",
-                                    denum: "",
-                                    deinfo: ""
-                                }
-                            ];
+                // 控制流程 上次用户
+                if(entity === this.infodata.entityid) { // 如果当前的entity与之前的entity一致的话，什么都不操作
+                } else {
+                    this.infodata = {...initdata};
+                }
             }
         );
     }

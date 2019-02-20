@@ -2,6 +2,7 @@ import { PostParams } from '@/types';
 import Axios,{AxiosPromise, CancelTokenSource} from "axios";
 import { Component, Vue } from 'vue-property-decorator';
 import Volidater from '@/controller/sessionStorageController';
+import service from '@/util/axioscontext';
 // 新疆接口
 export const projectname = "anomaly";
 const prev = process.env.NODE_ENV === "development"? "/xinjiang": "/" + projectname;
@@ -91,18 +92,20 @@ export function getTreeNode(entity: string) {
     return axiospromise;
 }
 
-// 获取访问地址的信息
+// 获取验证码地址
 export function getVolidateImg(entity: string) {
-    const posturl = `${prev2}/image/entity?id=${entity}`;
-    const axiospromise = Axios(
+    // const posturl = `${prev2}/image/entity?id=${entity}`;
+    const posturl = `http://192.168.40.148:8080/anomaly/check/code`;
+    const axiospromise = service(
         {
-        baseURL: baseUrl,
+        // baseURL: baseUrl,
         method:"get",
         url:posturl,
         }
     ).then(
         (result) => {
-            return result;
+            return posturl;
+            // return result;
         }
     );
     return axiospromise;

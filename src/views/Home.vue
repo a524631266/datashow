@@ -72,7 +72,6 @@ export default class Home extends Vue {
     private toggleCollapsed() {
       this.collapsed = !this.collapsed;
     }
-
 }
 </script>
 

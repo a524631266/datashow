@@ -10,14 +10,14 @@ moment.locale('zh-cn');
 import Vue from 'vue';
 import '@/app/index.ts'; // 导入并动态载入antd中的message
 import router from '@/router/homerouter';
-// import store from '@/store';
+import store from '@/store';
 import App from '@/App.vue';
 console.log("是否为本地",process.env.NODE_ENV);
 Vue.config.productionTip = false;
 
 export const appVue = new Vue({
   router,
-  // store,
+  store,
   render: (h) => h(App),
 }).$mount('#app');
 

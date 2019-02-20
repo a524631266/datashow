@@ -1,12 +1,14 @@
 import request from '@/util/axioscontext';
+import { projectname } from './axiosProxy';
 
-export function login(username: string, password: string) {
+export function login(username: string, password: string,vacode: string) {
   return request({
-    url: '/login',
+    url: `${projectname}/login`,
     method: 'POST',
     data: {
       username,
-      password
+      password,
+      vacode
     }
   });
 }
