@@ -3,7 +3,7 @@ import { projectname } from './axiosProxy';
 
 export function login(username: string, password: string,vacode: string) {
   return request({
-    url: `login`,
+    url: `${process.env.BASE_URL}login`,
     method: 'POST',
     data: {
       username,
