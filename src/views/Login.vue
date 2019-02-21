@@ -36,7 +36,9 @@
 import { Component, Vue, Prop, Emit, Watch } from 'vue-property-decorator';
 import {projectname,getVolidateImg, baseUrl} from '@/api/axiosProxy.ts';
 import Antd from "ant-design-vue";
-
+import {LoginResult} from "@/views/LoginInterface.ts";
+import { LoginStatus } from '@/util/LoginStatus';
+import { setToken } from '@/util/authcookie';
 let validateurl = `check/code`;
 if(!window.location.href.includes("index.html")) {
     validateurl = process.env.BASE_URL + validateurl;
@@ -89,11 +91,39 @@ export default class Login extends Vue {
     private login() {
         // this.login
         this.showLoading = true;
-        this.$store.dispatch("Login",this.userInfo).then(() => {
+        this.$store.dispatch("Login",this.userInfo).then((data: LoginResult) => {
+            // if(data.status === LoginStatus.SUCCESS) {
+            //     window.location.href="./home.html";
+            // } else if(data.status === LoginStatus.USERPWDINCORRECT) {
+            //     alert("密码错误重新输入");
+            // } else if({
+
+            // }
+            switch (data.status) {
+                case LoginStatus.SUCCESS:
+                    window.location.href="./home.html";
+                    break;
+                case LoginStatus.USERPWDINCORRECT:
+                    // alert("密码错误重新输入");
+                    this.$message.error("密码错误,请重新输入");
+                    if(data.token) {
+                        setToken(data.token);
+                        // 同时验证逻辑
+                        this.userInfo.password = "";
+                    }
+                    break;
+                case LoginStatus.CODEINCORRECT:
+                    // alert("code有问题");
+                    this.$message.error("验证码错误，请重新输入");
+                    this.reloadingVolidateCode();
+                    break;
+                default:
+                    break;
+            }
             this.showLoading = false;
-            this.$router.push({ path: '/home.html' });
-            window.location.href="./home.html";
           }).catch(() => {
+            console.log("this",this);
+            this.$message.error("服务器异常");
             this.showLoading = false;
             // this.$router.push({ path: '/home.html' });
             // window.location.href="./home.html";

@@ -1,15 +1,15 @@
 import request from '@/util/axioscontext';
 import { projectname } from './axiosProxy';
-
+import qs from 'qs';
 export function login(username: string, password: string,vacode: string) {
   return request({
     url: `${process.env.BASE_URL}login`,
     method: 'POST',
-    data: {
+    data: qs.stringify({
       username,
       password,
       vacode
-    }
+    })
   });
 }
 

@@ -6,6 +6,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 // import "bootstrap/dist/js/bootstrap.min.js";
 // import "font-awesome/css/font-awesome.min.css";
 import App from '@/App.vue';
+import '@/app/index.ts'; // 导入并动态载入antd中的message
 // import moment from 'moment';
 // import 'moment/locale/zh-cn';
 // import 'material-design-lite/material.min.css';

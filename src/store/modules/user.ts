@@ -41,7 +41,7 @@ const user = {
           // 设置token值
           setToken(data.token);
           context.commit('SET_TOKEN', data.token);
-          resolve();
+          resolve(data);
         }).catch((error: any) => {
           reject(error);
         });

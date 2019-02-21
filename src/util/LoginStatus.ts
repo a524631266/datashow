@@ -1,0 +1,3 @@
+export enum LoginStatus {
+    SUCCESS,USERPWDINCORRECT,CODEINCORRECT
+}
