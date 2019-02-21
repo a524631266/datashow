@@ -17,7 +17,7 @@ console.log("是否为本地",process.env.NODE_ENV);
 Vue.config.productionTip = false;
 
 export const appVue = new Vue({
-  router,
+  // router,
   store,
   render: (h) => h(App),
 }).$mount('#app');

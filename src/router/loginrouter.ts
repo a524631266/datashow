@@ -12,6 +12,13 @@ export default new Router({
       name: 'login',
       component: () => import(/* webpackChunkName: "group-login" */ '@/views/Login.vue'),
       // component: (resolve) => require(['@/views/Login.vue'],resolve),
+      // redirect: "login"
     },
+    // {
+    //   path: '/index.html',
+    //   name: 'login',
+    //   component: () => import(/* webpackChunkName: "group-login" */ '@/views/Login.vue'),
+    //   // component: (resolve) => require(['@/views/Login.vue'],resolve),
+    // },
   ],
 });

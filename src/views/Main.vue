@@ -81,9 +81,13 @@ export default class Main extends Vue {
         {id: "chart-region-boxchart", urlparas: orgbox,
           option: {xAxis: "1"}, positionClass: PositionClass.Drawer,chartName:"BoxHighChart"},
     ];
+    public beforeEnter(to: string, from: string, next: string) {
+        // ...
+        console.log("to:",to,"--form",from,"next", next);
+    }
     public beforeCreate() {
     // console.log("Home", PositionClass.LeftTop);
-      console.log("token" , getToken());
+      console.log("token main......");
       // tslint:disable-next-line:no-empty
       if(getToken()) {} else {
         window.location.href="./index.html";

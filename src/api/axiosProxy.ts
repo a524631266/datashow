@@ -43,7 +43,7 @@ export function getDataPromise<R,T>(urlparas: PostParams,postpath: PostPath,canc
         } else {
             posturl = `${prev}/elecnum/${postpath}?entity=${entity}&start=${starttime}&end=${endtime}&scale=${scale}&winlen=${winlen}&neger=${range[0]}&poser=${range[1]}`;
         }
-        promise = Axios({
+        promise = service({
             baseURL: baseUrl,
             method: "get",
             url: posturl,
@@ -78,7 +78,7 @@ export function getDataPromise<R,T>(urlparas: PostParams,postpath: PostPath,canc
 
 export function getTreeNode(entity: string) {
     const posturl = `${prev2}/case/entity?id=${entity}`;
-    const axiospromise = Axios(
+    const axiospromise = service(
         {
         baseURL: baseUrl,
         method:"get",

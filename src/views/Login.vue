@@ -34,9 +34,13 @@
 
 <script lang='ts'>
 import { Component, Vue, Prop, Emit, Watch } from 'vue-property-decorator';
-import {projectname,getVolidateImg} from '@/api/axiosProxy.ts';
+import {projectname,getVolidateImg, baseUrl} from '@/api/axiosProxy.ts';
 import Antd from "ant-design-vue";
-const validateurl = `/check/code`;
+
+let validateurl = `check/code`;
+if(!window.location.href.includes("index.html")) {
+    validateurl = process.env.BASE_URL + validateurl;
+}
 @Component({
     components: {
         ASpin: Antd.Spin,
@@ -59,6 +63,10 @@ export default class Login extends Vue {
         vacode:""
     };
     private showLoading = false;
+    // 看看是否包含index.html,没有的话就添加baseurl
+    // private beforeCreate() {
+    //     console.log("window.location.href",window.location.href);
+    // }
     // private volidateimg = `http://192.168.40.148:8080/anomaly/check/code`;
     // private volidateimg = `/check/code`;
     // get subtitleleft() {
@@ -104,7 +112,7 @@ export default class Login extends Vue {
         //         console.log("err:" + err);
         //     }
         // );
-        this.volidateimg = validateurl + "?" + new Date().getTime();
+        this.volidateimg = this.volidateimg + "?" + new Date().getTime();
     }
     private mounted() {
         if (window.innerWidth > 1366) {

@@ -49,7 +49,7 @@ const user = {
     },
     setnametest(context: {commit: any ,state: UserState }) {
       // context.commit('SET_NAME', "1212121212");
-      setToken("1111111111111111");
+      // setToken("1111111111111111");
     },
     // 获取用户信息
     GetInfo( context: {commit: any ,state: UserState }) {
