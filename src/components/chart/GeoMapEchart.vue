@@ -574,6 +574,7 @@ export default class GeoMapEchart extends Vue {
             this.geoheaddata = data;
         } else {//  在之后的数据是放进body中
             this.geoBodydata[data.geomap.point.starttime] = data;
+            // console.log("starttime",this.appendtimelist);
             this.appendtimelist.push(data.geomap.point.starttime);
         }
         this.websockecount += 1;

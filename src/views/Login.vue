@@ -102,8 +102,8 @@ export default class Login extends Vue {
                 case LoginStatus.SUCCESS:
                     if(data.token) {
                         setToken(data.token);
-                        // 跳转页面
-                        window.location.href= window.location.host + "/" + process.env.BASE_URL + "/home.html";
+                        // 跳转页面 origin 代表主路径
+                        window.location.href= window.location.origin + process.env.BASE_URL + "home.html";
                     }
                     break;
                 case LoginStatus.USERPWDINCORRECT:
@@ -123,6 +123,7 @@ export default class Login extends Vue {
             this.showLoading = false;
           }).catch(() => {
             console.log("this",this);
+            // window.location.href= window.location.origin + process.env.BASE_URL + "home.html";
             this.$message.error("服务器异常");
             this.showLoading = false;
             this.userInfo.password = "";

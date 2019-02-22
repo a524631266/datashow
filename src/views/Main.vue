@@ -86,8 +86,6 @@ export default class Main extends Vue {
     //     console.log("to:",to,"--form",from,"next", next);
     // }
     public beforeCreate() {
-    // console.log("Home", PositionClass.LeftTop);
-    //   console.log("token main......");
       // tslint:disable-next-line:no-empty
       if(getToken()) {} else {
         window.location.href="./index.html";

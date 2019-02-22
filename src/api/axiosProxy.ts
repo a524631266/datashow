@@ -8,7 +8,7 @@ export const projectname = "anomaly";
 const prev = process.env.NODE_ENV === "development"? "/xinjiang": "/" + projectname;
 const prev2 = process.env.NODE_ENV === "development"? "/tree": "/" + projectname;
 export const baseUrl = "";
-export const websocketurlhost = process.env.NODE_ENV === "development"? `${window.location.host}/`: `${window.location.host}/anomaly`;
+export const websocketurlhost = process.env.NODE_ENV === "development"? `192.168.10.63:8098/anomaly`: `${window.location.host}/anomaly`;
 export enum PostPath {
     singleLineChart = "singleLineChart",
     singleBoxChart = "singleBoxChart",

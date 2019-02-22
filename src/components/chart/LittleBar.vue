@@ -139,7 +139,7 @@
             <slot name="chart">无数据</slot>
         </div>
 
-        <a-progress v-if="showloader" :format="progressformat" strokeLinecap="square" :percent="percent" />
+        <a-progress v-show="showloader" :format="progressformat" strokeLinecap="square" :percent="percent" />
         <!--  -->
         <div v-show="showtopbar" v-if="showcalendar"  :style="{position: 'absolute',bottom:0,right: '180px', border: '0px solid #d9d9d9', borderRadius: '2px' }">
             
@@ -213,13 +213,6 @@ import TitleName from '@/types/elecchartname.ts';
         ASelectOption: Antd.Select.Option
     },
     computed:{
-        percent(): number {
-            // return 75;
-            // tslint:disable-next-line:radix
-            return parseInt(((this as any).appendtimelist?(this as any).appendtimelist.length:0)/(this as any).totaltimelen+"")*100;
-            // tslint:disable-next-line:radix
-            // return parseInt(0.5 +"") * 100;
-        },
         showcontroller(): boolean {
             // console.log("showcontroller",(this as any).percent);
             // return (this as any).appendtimelist!==undefined?(this as any).percent===100?false:true:false;
@@ -288,6 +281,15 @@ export default class LittleBar extends Vue {
     private littleBarDataPool = {
         pagesize: 20,
     };
+    get percent() {
+            // tslint:disable-next-line:radix
+            console.log("(this as any).appendtimelist",parseInt(((this as any).appendtimelist?(this as any).appendtimelist.length:0)),(this as any).totaltimelen);
+            // return 75;
+            // tslint:disable-next-line:radix
+            return parseFloat((this.appendtimelist?this.appendtimelist.length:0)/this.totaltimelen+"") * 100;
+            // tslint:disable-next-line:radix
+            // return parseInt(0.5 +"") * 100;
+    }
     get showrange() {
         return this.showrange2;
     }
