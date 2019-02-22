@@ -97,13 +97,13 @@ export default class Login extends Vue {
             // } else if(data.status === LoginStatus.USERPWDINCORRECT) {
             //     alert("密码错误重新输入");
             // } else if({
-
             // }
             switch (data.status) {
                 case LoginStatus.SUCCESS:
-                    window.location.href="./home.html";
                     if(data.token) {
                         setToken(data.token);
+                        // 跳转页面
+                        window.location.href= window.location.host + "/" + process.env.BASE_URL + "/home.html";
                     }
                     break;
                 case LoginStatus.USERPWDINCORRECT:
