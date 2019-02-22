@@ -71,6 +71,7 @@ export default class BaseChartFactory extends Vue {
         // if( this.id === "chart-heatmap") {
         //     this.highchartHeatMapWarp(Highcharts);
         // }
+        this.showLoading = true;
     }
     /**
      * 监控entity变化的时候，也就是当entityid真正变化的时候，就要更新视图

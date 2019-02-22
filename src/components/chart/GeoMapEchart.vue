@@ -569,7 +569,7 @@ export default class GeoMapEchart extends Vue {
     private wsonmessage(evt: MessageEvent) {
         const data: ReturnGeoData =  JSON.parse(evt.data) as ReturnGeoData;
         const {level} = this.postparms;
-        console.log("websocket 收到的新数据",this.websockecount,data,this.redrawcount);
+        // console.log("websocket 收到的新数据",this.websockecount,data,this.redrawcount);
         if ( this.websockecount === 0 ) { // 初始化的时候导入头文件
             this.geoheaddata = data;
         } else {//  在之后的数据是放进body中

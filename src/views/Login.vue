@@ -102,15 +102,15 @@ export default class Login extends Vue {
             switch (data.status) {
                 case LoginStatus.SUCCESS:
                     window.location.href="./home.html";
+                    if(data.token) {
+                        setToken(data.token);
+                    }
                     break;
                 case LoginStatus.USERPWDINCORRECT:
                     // alert("密码错误重新输入");
                     this.$message.error("密码错误,请重新输入");
-                    if(data.token) {
-                        setToken(data.token);
-                        // 同时验证逻辑
-                        this.userInfo.password = "";
-                    }
+                    // 同时重置密码
+                    this.userInfo.password = "";
                     break;
                 case LoginStatus.CODEINCORRECT:
                     // alert("code有问题");
@@ -125,6 +125,7 @@ export default class Login extends Vue {
             console.log("this",this);
             this.$message.error("服务器异常");
             this.showLoading = false;
+            this.userInfo.password = "";
             // this.$router.push({ path: '/home.html' });
             // window.location.href="./home.html";
           });
@@ -142,7 +143,7 @@ export default class Login extends Vue {
         //         console.log("err:" + err);
         //     }
         // );
-        this.volidateimg = this.volidateimg + "?" + new Date().getTime();
+        this.volidateimg = validateurl + "?" + new Date().getTime();
     }
     private mounted() {
         if (window.innerWidth > 1366) {

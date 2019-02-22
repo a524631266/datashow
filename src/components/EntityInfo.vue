@@ -146,6 +146,7 @@ import qs from 'qs';
 // tslint:disable-next-line:no-var-requires
 // const qs = require("qs");
 import {getVolidateImg} from '@/api/axiosProxy.ts';
+import service from '@/util/axioscontext';
 // tslint:disable-next-line:no-var-requires
 const urljson = require("@/config/userinfo.json");
 const initdata = {
@@ -213,14 +214,17 @@ export default class EntityInfo extends Vue {
     // }
     // 计算属性一旦值变化就更新值
     get totolvolt() {
-        const {deviceinfo} = (this as any).infodata;
-        const num = deviceinfo.reduce(
+        const {deviceinfo} = this.infodata;
+        let num = 0;
+        if(deviceinfo) {
+            num = deviceinfo.reduce(
             (before: number,data: {devolt: string,denum: string}): number => {
                     const devolt = data.devolt === ""? "0" : data.devolt;
                     const denum = data.denum === ""? "0" : data.denum;
                     return before + parseFloat(devolt) * parseFloat(denum);
-                }
+            }
         , 0);
+        }
         // 必须添加否则无法存数据进去
         this.setInfodata(num);
         return num;
@@ -300,7 +304,7 @@ export default class EntityInfo extends Vue {
         // 预留一个接口用来保存数据
         const infodata = {...this.infodata};
         infodata.deviceinfo = JSON.stringify(this.infodata.deviceinfo) as any;
-        Axios.post(urljson.puturl + "/" + this.infodata.entityid,qs.stringify(infodata)).then(()=> {
+        service.post(urljson.puturl + "/" + this.infodata.entityid,qs.stringify(infodata)).then(()=> {
             this.$message.success("保存成功",5);
         }).catch(
             (err) => {
@@ -315,10 +319,16 @@ export default class EntityInfo extends Vue {
     private loadingdata(entity: string) {
         // 预留一个接口用来保存数据
         // http://localhost:8080/tree/case/entity?id=99998999
-        Axios.get(urljson.geturl+"/"+ entity).then((data)=> {
+        service.get(urljson.geturl+"/"+ entity).then((result)=> {
             this.$message.success("加载记录成功",3);
             this.showinfo = true;
-            this.infodata = {...data.data};
+            if(result.data.deviceinfo) {
+                this.infodata = {...result.data};
+            } else {
+                const infodata = {...result.data};
+                infodata.deviceinfo = [];
+                this.infodata = {...infodata};
+            }
             // console.log("data",data);
         }).catch(
             (err) => {

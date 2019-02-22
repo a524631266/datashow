@@ -6,8 +6,9 @@ import { getToken } from '@/util/authcookie';
 // 1. 创建axios实例
 const service = axios.create({
   baseURL: process.env.BASE_API, // api 的 base_url
-  timeout: 5000 // 请求超时时间
+  // timeout: 50000 // 请求超时时间
 });
+// 设置默认带上cookie
 service.defaults.withCredentials = true;
 
 // 2. request拦截器

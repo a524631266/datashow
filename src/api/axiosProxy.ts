@@ -53,6 +53,7 @@ export function getDataPromise<R,T>(urlparas: PostParams,postpath: PostPath,canc
                 // return data;
                 // validater.s()
                 new Volidater(window.localStorage).storeData(urlparas,postpath,result.data);
+                // console.log("1111");
                 const data: T = callback(result.data);
                 return data;
             }
