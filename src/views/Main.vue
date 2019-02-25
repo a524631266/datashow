@@ -87,7 +87,7 @@ export default class Main extends Vue {
     // }
     public beforeCreate() {
       // tslint:disable-next-line:no-empty
-      if(getToken()) {} else {
+      if(getToken() || process.env.NODE_ENV==="development") {} else {
         window.location.href="./index.html";
       }
     }

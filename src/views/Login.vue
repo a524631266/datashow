@@ -13,9 +13,9 @@
                 <table>
                 <tr><td colspan="2"><input v-model="userInfo.username" class="bar" type="text" required="required" placeholder="用户名" name="username"/></td></tr>
                 <tr><td colspan="2"><input class="bar" v-model="userInfo.password" type="password" required="required" placeholder="密码" name="password"/></td></tr>
-                <tr><td colspan="2">
+                <tr v-if="errorcount>2"><td colspan="2">
                     <input class="leftbar" type="vocode" v-model="userInfo.vacode" required="required" placeholder="验证码" name="vocode"/>
-                    <img :src="volidateimg" @click.prevent="reloadingVolidateCode" alt="验证码" style="width:79px;height:40px;"/>
+                    <img :src="volidateimg" @click.prevent="reloadingVolidateCode" alt="验证码" style="width:36%;height:76%;"/>
                 </td></tr>
                 <!-- <tr><td><input type="text" required="required" style="width: 180px;display:inline;" placeholder="验证码" name="code"></input></td><td><img id="codevalidate" required="required" style="display:inline;" onclick="changeUrl()" /></td></tr> -->
                 <tr><td colspan="2"><button class="but btn btn-info " @click.prevent="login" >登录</button></td></tr>
@@ -64,6 +64,7 @@ export default class Login extends Vue {
         username: "",
         vacode:""
     };
+    private errorcount = 0;
     private showLoading = false;
     // 看看是否包含index.html,没有的话就添加baseurl
     // private beforeCreate() {
@@ -127,6 +128,7 @@ export default class Login extends Vue {
             this.$message.error("服务器异常");
             this.showLoading = false;
             this.userInfo.password = "";
+            this.errorcount ++;
             // this.$router.push({ path: '/home.html' });
             // window.location.href="./home.html";
           });
@@ -279,8 +281,10 @@ ul li{
     list-style-type: none;
 }
 input[class="bar"]{
-    width: 278px;
-    height: 40px;
+    // width: 278px;
+    width: 76%;
+    // height: 40px;
+    height: 76%;
     margin-bottom: 10px;
     outline: none;
     padding: 10px;
@@ -295,8 +299,10 @@ input[class="bar"]{
     background-color: #2D2D3F;
 }
 input[class="leftbar"]{
-    width: 198px;
-    height: 40px;
+    // width: 198px;
+    width: 40%;
+    // height: 40px;
+    height: 76%;
     margin-bottom: 10px;
     outline: none;
     padding: 10px;
@@ -311,7 +317,8 @@ input[class="leftbar"]{
     background-color: #2D2D3F;
 }
 .but{
-    width: 278px;
+    // width: 278px;
+    width: 76%;
 }
 .word {
     position: absolute;

@@ -283,7 +283,7 @@ export default class LittleBar extends Vue {
     };
     get percent() {
             // tslint:disable-next-line:radix
-            console.log("(this as any).appendtimelist",parseInt(((this as any).appendtimelist?(this as any).appendtimelist.length:0)),(this as any).totaltimelen);
+            // console.log("(this as any).appendtimelist",parseInt(((this as any).appendtimelist?(this as any).appendtimelist.length:0)),(this as any).totaltimelen);
             // return 75;
             // tslint:disable-next-line:radix
             return parseFloat((this.appendtimelist?this.appendtimelist.length:0)/this.totaltimelen+"") * 100;

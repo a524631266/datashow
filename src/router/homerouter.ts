@@ -26,5 +26,15 @@ export default new Router({
         },
       }]
     },
+    // {
+    //   path: "/entityinfo/entity",
+    //   name: "useinfo",
+    //   component: () => import(/* webpackChunkName: "group-inof" */ '@/components/EntityInfo.vue'),
+    // }
+    {
+      path: "/input/entity",
+      name: "input",
+      component: () => import(/* webpackChunkName: "group-inof" */ '@/testDynamic/TestInput.vue'),
+    }
   ],
 });

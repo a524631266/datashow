@@ -83,6 +83,7 @@
 											<th>数量</th>
 											<th>描述</th>
 											<th style="width: 6em">操作</th>
+                                            <th style="width: 6em">图片</th>
 											</tr>
 									</thead>
 									<tbody id="ul-content">
@@ -107,6 +108,7 @@
                                                 <td><input type="text" oninput="onInputChange(event)" class="listen_kw form-control" name="devolt" placeholder="0" v-model="deviceone.devolt"/></td>
                                                 <td><input type="text" oninput="onInputChange(event)" class="listen_n form-control" name="denum" placeholder="0" v-model="deviceone.denum"/></td>
                                                 <td><input type="text" class="form-control" name="deinfo" placeholder="这个电视是" v-model="deviceone.deinfo"/></td>
+                                                <td><input type="file" class="form-control" name="pic" placeholder="+" @change="addPhoto($event,index)"/></td>
                                                 <td><button  :id="`fillindex-${index+1}`"  class="btn btn-danger" readonly="true" value="-" style="border:0px" @click.prevent="removeSelf(index)">del</button></td>
 											</tr>
 										</tbody>
@@ -162,7 +164,8 @@ const initdata = {
                             dename: "",
                             devolt: "",
                             denum: "",
-                            deinfo: ""
+                            deinfo: "",
+                            file:""
                         }
                     ],
                     vocode: ""
@@ -282,7 +285,8 @@ export default class EntityInfo extends Vue {
                 dename: "",
                 devolt: "",
                 denum: "",
-                deinfo: ""
+                deinfo: "",
+                file:"",
             });
         const container: Element = this.$el.querySelector('#info-dynamic') as Element;
         // tslint:disable-next-line:no-unused-expression
@@ -346,6 +350,31 @@ export default class EntityInfo extends Vue {
     private settotol(val: any ) {
         // console.log("val",val);
         this.infodata.ndevolt = val.target.value;
+    }
+    @Emit()
+    private addPhoto(event: any,index: number) {
+        const file = event.target.files[0];
+        const type = file.type.split("/")[0];
+        if(type === "image") {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onloadend = () => {
+                const dataURI = reader.result;
+                const blob = this.dataURI2Blob(dataURI);
+                this.infodata.deviceinfo[index].file = blob as any;
+            };
+        }
+    }
+    private dataURI2Blob(dataURI: any) {
+        const byteString = window.atob(dataURI.split(",")[1]);
+        const mimeString = dataURI.split(",")[0].split(":")[1].split(";")[0];
+        const T = mimeString.split("/")[1];
+        const ab = new ArrayBuffer(byteString.length);
+        const ia = new Uint8Array(ab);
+        for(let i = 0; i< byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+        }
+        return new Blob([ab],{type: mimeString});
     }
 }
 </script>
