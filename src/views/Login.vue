@@ -108,15 +108,21 @@ export default class Login extends Vue {
                     }
                     break;
                 case LoginStatus.USERPWDINCORRECT:
-                    // alert("密码错误重新输入");
-                    this.$message.error("密码错误,请重新输入");
+                    // alert("用户名密码");
+                    this.$message.error("用户名密码,请重新输入");
                     // 同时重置密码
                     this.userInfo.password = "";
+                    // 用户登录操作大于3的时候
+                    if(this.errorcount>2) {
+                        this.reloadingVolidateCode();
+                    }
+                    this.errorcount ++;
                     break;
                 case LoginStatus.CODEINCORRECT:
                     // alert("code有问题");
                     this.$message.error("验证码错误，请重新输入");
                     this.reloadingVolidateCode();
+                    this.errorcount ++;
                     break;
                 default:
                     break;
@@ -147,6 +153,8 @@ export default class Login extends Vue {
         //     }
         // );
         this.volidateimg = validateurl + "?" + new Date().getTime();
+        // this.userInfo = {...this.userInfo,vacode:""};
+        this.userInfo.vacode = "";
     }
     private mounted() {
         if (window.innerWidth > 1366) {
