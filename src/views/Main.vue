@@ -375,6 +375,17 @@ $antdsliderheight: $sliderbaseheight + px;
 :global(.ant-fullcalendar-next-month-btn-day .ant-fullcalendar-value){
     color: white;
 } */
+:global(.upload-list-inline .ant-upload-list-item){
+  float: left;
+  max-width: 100px;
+  margin-right: 8px;
+}
+:global(.upload-list-inline .ant-upload-animate-enter){
+  animation-name: uploadAnimateInlineIn;
+}
+:global(.upload-list-inline .ant-upload-animate-leave){
+  animation-name: uploadAnimateInlineOut;
+}
 
 :global(.ant-fullcalendar-value) {
     color: white;

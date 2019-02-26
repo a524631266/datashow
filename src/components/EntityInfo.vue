@@ -82,8 +82,8 @@
 											<th>功率(w)</th>
 											<th>数量</th>
 											<th>描述</th>
-											<th style="width: 6em">操作</th>
                                             <th style="width: 6em">图片</th>
+											<th style="width: 6em">操作</th>
 											</tr>
 									</thead>
 									<tbody id="ul-content">
@@ -108,7 +108,14 @@
                                                 <td><input type="text" oninput="onInputChange(event)" class="listen_kw form-control" name="devolt" placeholder="0" v-model="deviceone.devolt"/></td>
                                                 <td><input type="text" oninput="onInputChange(event)" class="listen_n form-control" name="denum" placeholder="0" v-model="deviceone.denum"/></td>
                                                 <td><input type="text" class="form-control" name="deinfo" placeholder="这个电视是" v-model="deviceone.deinfo"/></td>
-                                                <td><input type="file" class="form-control" name="pic" placeholder="+" @change="addPhoto($event,index)"/></td>
+                                                <td @mouseenter="showpict(index)" @mouseleave="hidepict(index)">
+                                                    <!-- <input type="file" class="form-control" name="pic" placeholder="+" @change="addPhoto($event,index)"/> -->
+                                                    <Upload  className='upload-list-inline' listType='picture' :showUploadList="showlistindex" multiple :beforeUpload="(file, fileList)=>addPhoto(file,fileList,index)" :remove="(file)=>reMovePhoto(file,index)">
+                                                        <Button>
+                                                            <Icon type="upload" /> 上传
+                                                        </Button>
+                                                    </Upload>
+                                                    </td>
                                                 <td><button  :id="`fillindex-${index+1}`"  class="btn btn-danger" readonly="true" value="-" style="border:0px" @click.prevent="removeSelf(index)">del</button></td>
 											</tr>
 										</tbody>
@@ -145,10 +152,10 @@ import { Component, Vue, Prop, Emit, Watch } from 'vue-property-decorator';
 import PubSub from 'pubsub-js';
 import Axios from "axios";
 import qs from 'qs';
-// tslint:disable-next-line:no-var-requires
-// const qs = require("qs");
+import Antd from "ant-design-vue";
 import {getVolidateImg} from '@/api/axiosProxy.ts';
 import service from '@/util/axioscontext';
+import { addPhoto } from "@/api/components/EntityInfo";
 // tslint:disable-next-line:no-var-requires
 const urljson = require("@/config/userinfo.json");
 const initdata = {
@@ -165,13 +172,16 @@ const initdata = {
                             devolt: "",
                             denum: "",
                             deinfo: "",
-                            file:""
+                            filenames: []
                         }
                     ],
                     vocode: ""
                 };
 @Component({
     components:{
+        Upload: Antd.Upload,
+        Button: Antd.Button,
+        Icon: Antd.Icon,
     }
 })
 export default class EntityInfo extends Vue {
@@ -184,37 +194,9 @@ export default class EntityInfo extends Vue {
     private volidateimg: string = "";
     private firstloading = true;// 用来处理 页面首次加载的时候不加载用户信息
     private infodata = {...initdata};
-    // @Watch("entityid",{deep: true})
-    // private routerchange_reloading_pict(val: any) {
-    //     // 路由变化就更新树
-    //     this.reloadingVolidateCode();
-    //     console.log("reloading_pic",val);
-    // }
-    // @Watch("entityid",{deep: true})
-    // private entityChangeReloadingData(newEntityid: string) {
-    //     console.log("eeeeeeeeeeeeee",newEntityid);
-    //     if(newEntityid !== undefined && !this.firstloading) {
-    //         this.loadingdata(newEntityid);
-    //     } else {
-    //         this.firstloading = false;
-    //     }
-    // }
-    // vocode 验证码
-    // @Emit()
-    // private reloadingVolidateCode() {
-    //     getVolidateImg("111").then(
-    //         (result)=> {
-    //             // 设置开始地址
-    //             console.log(result.data);
-    //             this.volidateimg = result.data;
-    //         }
-    //     ).catch(
-    //         (err) => {
-    //             this.volidateimg = "http://img3.imgtn.bdimg.com/it/u=2739505509,237691169&fm=27&gp=0.jpg";
-    //             console.log("err:" + err);
-    //         }
-    //     );
-    // }
+    private picpools: Blob[] = [];
+    private showlistindex = false;
+    private fileuidmap: any = {};
     // 计算属性一旦值变化就更新值
     get totolvolt() {
         const {deviceinfo} = this.infodata;
@@ -257,20 +239,6 @@ export default class EntityInfo extends Vue {
         this.entityid = this.entity;
         this.entityname = this.name;
     }
-    // @Watch('$route.params', { deep: true })
-    // private watchRouteParams(newvalue: any, oldvalue: any) {
-    //     console.log("entiyinfo",newvalue,oldvalue);
-    //     console.log("entiyinfo $route.params)",this.$route.params);
-    // }
-    // @Watch('$route.query', { deep: true })
-    // private watchRouteQuery(newvalue: any, oldvalue: any) {
-    //     console.log("entiyinfo",newvalue,oldvalue);
-    //     console.log("entiyinfo $route.query)",this.$route.query);
-    //     const { entity , name } = this.$route.query;
-    //     this.entityid = entity as string;
-    //     this.entityname = name as string;
-    //     // this.showinfo = true;
-    // }
     @Emit()
     private hiddeninfo() {
         this.showinfo = false;
@@ -286,7 +254,7 @@ export default class EntityInfo extends Vue {
                 devolt: "",
                 denum: "",
                 deinfo: "",
-                file:"",
+                filenames:[],
             });
         const container: Element = this.$el.querySelector('#info-dynamic') as Element;
         // tslint:disable-next-line:no-unused-expression
@@ -351,30 +319,46 @@ export default class EntityInfo extends Vue {
         // console.log("val",val);
         this.infodata.ndevolt = val.target.value;
     }
-    @Emit()
-    private addPhoto(event: any,index: number) {
-        const file = event.target.files[0];
-        const type = file.type.split("/")[0];
-        if(type === "image") {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onloadend = () => {
-                const dataURI = reader.result;
-                const blob = this.dataURI2Blob(dataURI);
-                this.infodata.deviceinfo[index].file = blob as any;
-            };
-        }
+    // 添加图片 图片名
+    private setPicName(name: string,deviceIndex: number) {
+        // file.prex = name;
+        this.infodata.deviceinfo[deviceIndex].filenames.push(name as never);
     }
-    private dataURI2Blob(dataURI: any) {
-        const byteString = window.atob(dataURI.split(",")[1]);
-        const mimeString = dataURI.split(",")[0].split(":")[1].split(";")[0];
-        const T = mimeString.split("/")[1];
-        const ab = new ArrayBuffer(byteString.length);
-        const ia = new Uint8Array(ab);
-        for(let i = 0; i< byteString.length; i++) {
-            ia[i] = byteString.charCodeAt(i);
-        }
-        return new Blob([ab],{type: mimeString});
+    // 添加图片 图片名
+    private removePicName(name: string,deviceIndex: number) {
+        // file.prex = name;
+        const filenames = this.infodata.deviceinfo[deviceIndex].filenames;
+        const ind = filenames.indexOf(name as never);
+        filenames.splice(ind,1);
+    }
+    @Emit()
+    private addPhoto(file: any,fileList: any,deviceIndex: number) {
+        const name = addPhoto(file,fileList,deviceIndex,this.infodata.entityid);
+        // console.log("上传文件名",name);
+        // 存储文件名映射关系，删除数据的时候方便提取
+        const uid: string = file.uid;
+        this.fileuidmap[uid] = name as any;
+        this.setPicName(name,deviceIndex);
+        // 不上传
+        return false;
+    }
+    // 点击删除的时候删除指定的blob对象
+    @Emit()
+    private reMovePhoto(file: any,deviceIndex: number) {
+        console.log("file",file,deviceIndex);
+        const name = this.fileuidmap[file.uid];
+        this.removePicName(name, deviceIndex);
+        return true;
+    }
+    @Emit()
+    private showpict(index: number) {
+        console.log("showpict",index);
+        this.showlistindex = true;
+    }
+    @Emit()
+    private hidepict(index: number) {
+        console.log("hidepict",index);
+        this.showlistindex = false;
     }
 }
 </script>
@@ -487,4 +471,16 @@ h6 {
 #info-dynamic::-webkit-scrollbar-corner{
     background:#82AFFF;
 }
+
+// .upload-list-inline .ant-upload-list-item {
+//   float: left;
+//   max-width: 100px;
+//   margin-right: 8px;
+// }
+// .upload-list-inline .ant-upload-animate-enter {
+//   animation-name: uploadAnimateInlineIn;
+// }
+// .upload-list-inline .ant-upload-animate-leave {
+//   animation-name: uploadAnimateInlineOut;
+// }
 </style>
