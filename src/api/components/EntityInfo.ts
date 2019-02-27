@@ -13,10 +13,12 @@ function postOneFile(data: Blob,filename: string) {
     }).then(
         (res) => {
             console.log("file",res);
+            alert("上传成功");
         }
     ).catch(
         (err) => {
-            console.log("err");
+            console.log("err",err);
+            alert("上传失败");
         }
     );
 }

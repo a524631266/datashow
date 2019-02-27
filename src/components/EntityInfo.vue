@@ -110,7 +110,7 @@
                                                 <td><input type="text" class="form-control" name="deinfo" placeholder="这个电视是" v-model="deviceone.deinfo"/></td>
                                                 <td @mouseenter="showpict(index)" @mouseleave="hidepict(index)">
                                                     <!-- <input type="file" class="form-control" name="pic" placeholder="+" @change="addPhoto($event,index)"/> -->
-                                                    <Upload  :customRequest="customRequest" className='upload-list-inline' listType='picture' :showUploadList="showlistindex" multiple :beforeUpload="(file, fileList)=>addPhoto2(file,fileList,index)" :remove="(file)=>reMovePhoto(file,index)">
+                                                    <Upload  :customRequest="customRequest" class='upload-list-inline' listType='picture' :showUploadList="showlistindex" multiple :beforeUpload="(file, fileList)=>addPhoto2(file,fileList,index)" :remove="(file)=>reMovePhoto(file,index)">
                                                         <Button>
                                                             <Icon type="upload" /> 上传
                                                         </Button>
@@ -480,18 +480,5 @@ h6 {
     background:#82AFFF;
 }
 
-// .upload-list-inline .ant-upload-list-item {
-//   float: left;
-//   max-width: 100px;
-//   margin-right: 8px;
-// }
-// .upload-list-inline .ant-upload-animate-enter {
-//   animation-name: uploadAnimateInlineIn;
-// }
-// .upload-list-inline .ant-upload-animate-leave {
-//   animation-name: uploadAnimateInlineOut;
-// }
-.upload-list-inline >>> .ant-upload-list-item >>> .ant-upload-list-item-name {
-    color:"white";
-  }
+
 </style>
