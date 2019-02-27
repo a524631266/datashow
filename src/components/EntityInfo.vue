@@ -112,18 +112,17 @@
                                                     </a-select> -->
                                                     <a-select
                                                             v-model="deviceone.dename" defaultValue="" style="min-width: 5rem;background:white;border-radius:5px;"
-                                                            :dropdownRender="dropdownRender"
-                                                        >
-                                                        <a-select-option value="电冰箱" class="optionwhite">电冰箱</a-select-option>
-                                                        <a-select-option value="电视" class="optionwhite">电视</a-select-option>
-                                                        <a-select-option value="照明灯" class="optionwhite">照明灯</a-select-option>
+                                                        >                                                        
                                                         <div slot="dropdownRender" slot-scope="menu">
                                                             <v-nodes :vnodes="menu"/>
                                                             <a-divider style="margin: 4px 0;" />
                                                             <div style="padding: 8px; cursor: pointer;">
-                                                                <Icon type="plus" /> 添加项目
+                                                                <Icon type="plus" /> 添加
                                                             </div>
                                                         </div>
+                                                        <a-select-option value="电冰箱" class="optionwhite">电冰箱</a-select-option>
+                                                        <a-select-option value="电视" class="optionwhite">电视</a-select-option>
+                                                        <a-select-option value="照明灯" class="optionwhite">照明灯</a-select-option>
                                                     </a-select>
                                                     </td>
                                                 <td><input type="text" oninput="onInputChange(event)" class="listen_kw form-control" name="devolt" placeholder="0" v-model="deviceone.devolt"/></td>
@@ -210,6 +209,7 @@ const initdata = {
             functional: true,
             render: (h: any, ctx: any) => {
                 console.log(h,"hh",ctx,"ctx");
+                h('h1', 'hello world');
                 return ctx.props.vnodes;
             }
         },
