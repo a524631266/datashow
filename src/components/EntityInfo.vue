@@ -87,7 +87,7 @@
 											</tr>
 									</thead>
 									<tbody id="ul-content">
-											<tr v-for="(deviceone,index) in infodata.deviceinfo" :key="index">
+											<tr v-for="(deviceone,index) in infodata.deviceinfo" :key="deviceone.key">
                                                 <th scope="row" class="deviceid">{{index+1}}</th>
                                                 <td>
                                                     <div class="btn-group" style="width: 100%">
@@ -110,7 +110,7 @@
                                                 <td><input type="text" class="form-control" name="deinfo" placeholder="这个电视是" v-model="deviceone.deinfo"/></td>
                                                 <td @mouseenter="showpict(index)" @mouseleave="hidepict(index)">
                                                     <!-- <input type="file" class="form-control" name="pic" placeholder="+" @change="addPhoto($event,index)"/> -->
-                                                    <Upload  className='upload-list-inline' listType='picture' :showUploadList="showlistindex" multiple :beforeUpload="(file, fileList)=>addPhoto(file,fileList,index)" :remove="(file)=>reMovePhoto(file,index)">
+                                                    <Upload  :customRequest="customRequest" className='upload-list-inline' listType='picture' :showUploadList="showlistindex" multiple :beforeUpload="(file, fileList)=>addPhoto2(file,fileList,index)" :remove="(file)=>reMovePhoto(file,index)">
                                                         <Button>
                                                             <Icon type="upload" /> 上传
                                                         </Button>
@@ -168,6 +168,7 @@ const initdata = {
                     ndevolt: "0",
                     deviceinfo: [
                         {
+                            key: 0,
                             dename: "",
                             devolt: "",
                             denum: "",
@@ -195,6 +196,7 @@ export default class EntityInfo extends Vue {
     private firstloading = true;// 用来处理 页面首次加载的时候不加载用户信息
     private infodata = {...initdata};
     private picpools: Blob[] = [];
+    private devicenum: number = 0;
     private showlistindex = false;
     private fileuidmap: any = {};
     // 计算属性一旦值变化就更新值
@@ -255,6 +257,7 @@ export default class EntityInfo extends Vue {
                 denum: "",
                 deinfo: "",
                 filenames:[],
+                key:this.devicenum++,
             });
         const container: Element = this.$el.querySelector('#info-dynamic') as Element;
         // tslint:disable-next-line:no-unused-expression
@@ -332,14 +335,14 @@ export default class EntityInfo extends Vue {
         filenames.splice(ind,1);
     }
     @Emit()
-    private addPhoto(file: any,fileList: any,deviceIndex: number) {
+    private addPhoto2(file: any,fileList: any,deviceIndex: number) {
         const name = addPhoto(file,fileList,deviceIndex,this.infodata.entityid);
         // console.log("上传文件名",name);
         // 存储文件名映射关系，删除数据的时候方便提取
         const uid: string = file.uid;
         this.fileuidmap[uid] = name as any;
         this.setPicName(name,deviceIndex);
-        // 不上传
+        // 不上传消除自身不上传
         return false;
     }
     // 点击删除的时候删除指定的blob对象
@@ -352,13 +355,18 @@ export default class EntityInfo extends Vue {
     }
     @Emit()
     private showpict(index: number) {
-        console.log("showpict",index);
+        // console.log("showpict",index);
         this.showlistindex = true;
     }
     @Emit()
     private hidepict(index: number) {
-        console.log("hidepict",index);
+        // console.log("hidepict",index);
         this.showlistindex = false;
+    }
+    @Emit()
+    private customRequest(a: any,b: any) {
+        // pass
+        console.log("a:",a,"\nb:",b);
     }
 }
 </script>
@@ -483,4 +491,7 @@ h6 {
 // .upload-list-inline .ant-upload-animate-leave {
 //   animation-name: uploadAnimateInlineOut;
 // }
+.upload-list-inline >>> .ant-upload-list-item >>> .ant-upload-list-item-name {
+    color:"white";
+  }
 </style>

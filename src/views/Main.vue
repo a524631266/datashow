@@ -380,8 +380,14 @@ $antdsliderheight: $sliderbaseheight + px;
   max-width: 100px;
   margin-right: 8px;
 }
+:global(.upload-list-inline .ant-upload-list-item span){
+  color: white!important;
+}
 :global(.upload-list-inline .ant-upload-animate-enter){
   animation-name: uploadAnimateInlineIn;
+}
+:global(.upload-list-inline .ant-upload-animate-leave){
+  animation-name: uploadAnimateInlineOut;
 }
 :global(.upload-list-inline .ant-upload-animate-leave){
   animation-name: uploadAnimateInlineOut;
