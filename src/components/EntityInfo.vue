@@ -90,7 +90,7 @@
 											<tr v-for="(deviceone,index) in infodata.deviceinfo" :key="deviceone.key">
                                                 <th scope="row" class="deviceid">{{index+1}}</th>
                                                 <td>
-                                                    <div class="btn-group" style="width: 100%">
+                                                    <!-- <div class="btn-group" style="width: 100%">
                                                         <input name="dename" class=" dropdown-toggle glyphicon glyphicon-triangle-bottom form-control" v-model="deviceone.dename"
                                                             data-toggle="dropdown" aria-haspopup="true"
                                                             aria-expanded="false" 
@@ -103,7 +103,28 @@
                                                             <li role="separator" class="divider"></li>
                                                             <li>其他手动输入</li>
                                                         </ul>
-                                                    </div>
+                                                    </div> -->
+                                                    <!-- <a-select defaultValue="lucy" style="width: 100%" @change="handleChange">
+                                                        <a-select-option value="">电视</a-select-option>
+                                                        <a-select-option value="电冰箱">电冰箱</a-select-option>
+                                                        <a-select-option value="disabled" disabled>Disabled</a-select-option>
+                                                        <a-select-option value="Yiminghe">yiminghe</a-select-option>
+                                                    </a-select> -->
+                                                    <a-select
+                                                            v-model="deviceone.dename" defaultValue="" style="min-width: 5rem;background:white;border-radius:5px;"
+                                                            :dropdownRender="dropdownRender"
+                                                        >
+                                                        <a-select-option value="电冰箱" class="optionwhite">电冰箱</a-select-option>
+                                                        <a-select-option value="电视" class="optionwhite">电视</a-select-option>
+                                                        <a-select-option value="照明灯" class="optionwhite">照明灯</a-select-option>
+                                                        <div slot="dropdownRender" slot-scope="menu">
+                                                            <v-nodes :vnodes="menu"/>
+                                                            <a-divider style="margin: 4px 0;" />
+                                                            <div style="padding: 8px; cursor: pointer;">
+                                                                <Icon type="plus" /> 添加项目
+                                                            </div>
+                                                        </div>
+                                                    </a-select>
                                                     </td>
                                                 <td><input type="text" oninput="onInputChange(event)" class="listen_kw form-control" name="devolt" placeholder="0" v-model="deviceone.devolt"/></td>
                                                 <td><input type="text" oninput="onInputChange(event)" class="listen_n form-control" name="denum" placeholder="0" v-model="deviceone.denum"/></td>
@@ -183,6 +204,16 @@ const initdata = {
         Upload: Antd.Upload,
         Button: Antd.Button,
         Icon: Antd.Icon,
+        ASelect: Antd.Select,
+        ASelectOption: Antd.Select.Option,
+        VNodes: {
+            functional: true,
+            render: (h: any, ctx: any) => {
+                console.log(h,"hh",ctx,"ctx");
+                return ctx.props.vnodes;
+            }
+        },
+        ADivider:Antd.Divider
     }
 })
 export default class EntityInfo extends Vue {
@@ -249,7 +280,7 @@ export default class EntityInfo extends Vue {
     private removeSelf(index: number) {
         this.infodata.deviceinfo.splice(index,1);
     }
-    // @Emit()
+    @Emit()
     private addBlackInfo() {
         this.infodata.deviceinfo.push({
                 dename: "",
@@ -257,7 +288,7 @@ export default class EntityInfo extends Vue {
                 denum: "",
                 deinfo: "",
                 filenames:[],
-                key:this.devicenum++,
+                key:++this.devicenum,
             });
         const container: Element = this.$el.querySelector('#info-dynamic') as Element;
         // tslint:disable-next-line:no-unused-expression
@@ -367,6 +398,10 @@ export default class EntityInfo extends Vue {
     private customRequest(a: any,b: any) {
         // pass
         console.log("a:",a,"\nb:",b);
+    }
+    @Emit()
+    private dropdownRender(h: any,atx: any) {
+        console.log("h",h,"atx",atx);
     }
 }
 </script>
@@ -480,5 +515,7 @@ h6 {
     background:#82AFFF;
 }
 
-
+.optionwhite {
+    color: black;
+}
 </style>

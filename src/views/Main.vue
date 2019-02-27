@@ -383,6 +383,9 @@ $antdsliderheight: $sliderbaseheight + px;
 :global(.upload-list-inline .ant-upload-list-item span){
   color: white;
 }
+:global(.ant-select-selection .ant-select-selection-selected-value){
+  color: #495057;
+}
 :global(.upload-list-inline .anticon-cross){
   color: white;
 }
