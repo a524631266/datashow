@@ -348,3 +348,150 @@ export const getEchartOption = (data2: ScatterChartTrans,iscenter: boolean) => {
         }]
     };
 };
+
+
+
+
+export const getSingleScatterEchartOption = (data2: ScatterChartTrans,iscenter: boolean) => {
+    const newdata = data2.valuelist;
+    const entitylist = data2.entitylist;
+    // console.log("data2",data2);
+    return {
+        backgroundColor: 'rgba(0,0,0,0)',
+        title: {
+            show: false,
+            left: 'center',
+            text: ' Points',
+            subtext: 'Fake data',
+            textStyle: {
+                color: '#eee'
+            },
+            subtextStyle: {
+                color: '#999'
+            }
+        },
+        tooltip: {
+            trigger:'item',
+            showDelay:0,
+            triggerOn:'mousemove|click',
+            enterable:true,
+            hideDelay:200,
+            position(point: number[],params: any,dom: HTMLDOMElement,rect: any,size: any) {
+                const {contentSize: [tooltipwidth,tooltipheight],viewSize: [containerwidth,containerheight]} = size;
+                const [pointx, pointy] = point;
+                // dom.style.display="block";
+                let scalex = 1;
+                let scaley = 1;
+                // 当tooltip提示框小于容器的0.5倍大小
+                if(tooltipwidth > containerwidth * 0.4) {
+                    scalex = 0.8;
+                    scaley = 0.8;
+                }
+                if(tooltipheight > containerheight * 0.4) {
+                    scalex = 0.8;
+                    scaley = 0.8;// * containerheight / containerwidth;
+                }
+                let translatex = 0;
+                let translatey = 0;
+                if((pointx + tooltipwidth) > containerwidth) {
+                    // translatex = (pointx - containerwidth) * scalex;
+                    translatex = - tooltipwidth;
+                }
+                if((pointy + tooltipheight)> containerheight) {
+                    // translatey = (pointy - containerheight) * scaley;
+                    translatey = - tooltipheight;
+                }
+                // 偏移dom
+                dom.style.transform = `scaleX(${scalex}) scaleY(${scaley}) translateX(${translatex}px) translateY(${translatey}px)`;
+                // 以0,0 位置作为偏移中心
+                dom.style.transformOrigin = "0px 0px";
+                return point;
+            },
+            // alwaysShowContent:true,
+            formatter(params: any, ticket: string, callback: (ticket: string, html: string) => string) {
+                // console.log("params",params,callback);
+                // console.log("params",params);
+                const name = entitylist[params.data[2]].name;
+                const id = entitylist[params.data[2]].id;
+                // const router = `<br/><a onclick="leafrouter2home('${id}','${name}')" href="#">图表</a> <a onclick="leafrouter2info('${id}','${name}')" href="#">用户信息</a>`;
+                return "时间: " + name +" " + moment(params.data[0]).format("HH:mm:ss") + "<br/>" + "异常值: " +  params.data[1] ;
+            }
+        },
+        toolbox: {
+            show: iscenter,
+            right: 20,
+            iconStyle: {
+                borderColor: '#eee'
+            },
+            feature: {
+                dataZoom: [                                      // 区域缩放
+                ]
+            }
+        },
+        dataZoom: [                                      // 区域缩放
+            {
+                type: 'inside',
+                show: true,
+                xAxisIndex: [0],
+                // start:
+            },
+            {
+                type: 'inside',
+                show: true,
+                yAxisIndex: [0],
+                // start:
+            },
+        ],
+        grid: {
+            right: 30,
+            bottom: 40,
+            left:30,
+            top:10,
+        },
+        xAxis: [{
+            type: "time",
+            // min:1548141286000,
+            // max: 1548141286000 + 10 * 24 * 60 *60 * 1000,
+            scalse: false,
+            axisLabel: {
+                color: '#ccc',
+                fontSize: 12,
+                formatter(params: any) {
+                    return moment(params).format("HH:mm");
+                }
+            },
+            splitLine: {
+                lineStyle: {
+                    color: '#555'
+                }
+            }
+        }],
+        yAxis: [{
+            scalse: false,
+            axisLabel: {
+                color: '#ccc',
+                fontSize: 12
+            },
+            splitLine: {
+                lineStyle: {
+                    color: '#555'
+                }
+            },
+            // max: 10,
+        }],
+        animation: true,
+        series : [{
+            type: 'scatter',
+            data: newdata,
+            dimensions: ['x', 'y', 'id'],
+            symbolSize: 6,
+            itemStyle: {
+                color: 'yellow',
+                opacity: 0.5
+            },
+            blendMode: 'lighter',
+            large: true,
+            largeThreshold: 500
+        }]
+    };
+};

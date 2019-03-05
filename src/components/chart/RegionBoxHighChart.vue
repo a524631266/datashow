@@ -88,7 +88,7 @@ export default class RegionBoxHighChart extends Vue implements AxiosSourceManage
     }
     private dealData(data: RegionBoxChart2): BoxChartTrans {
       const result: BoxChartTrans = {xAxis:[],boxchart:[]} as any;
-      console.log("regionnnnnnnnnnnnnnnnn",data);
+      // console.log("regionnnnnnnnnnnnnnnnn",data);
       const data2 = [
         {
           name: "电量",

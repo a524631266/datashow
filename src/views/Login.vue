@@ -129,7 +129,7 @@ export default class Login extends Vue {
             }
             this.showLoading = false;
           }).catch(() => {
-            console.log("this",this);
+            // console.log("this",this);
             // window.location.href= window.location.origin + process.env.BASE_URL + "home.html";
             this.$message.error("服务器异常");
             this.showLoading = false;

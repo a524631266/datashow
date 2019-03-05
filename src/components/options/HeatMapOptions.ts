@@ -54,7 +54,7 @@ function transminute(n: number): string {
     return ylabelname;
 }
 
-function getSortedList(listdata: HeatmapChartTrans): { timelist: number[],inittimelist: number[]} {
+export function getSortedList(listdata: HeatmapChartTrans): { timelist: number[],inittimelist: number[]} {
     const timelist: number[] = [];
     const inittimelist: number[] = [];
     // tslint:disable-next-line:forin
@@ -78,7 +78,7 @@ function getSortedList(listdata: HeatmapChartTrans): { timelist: number[],initti
     // console.log("inittimelist",inittimelist);
     return {timelist,inittimelist};
 }
-function getTheFirstTS(timelist: number[],time: number): number {
+export function getTheFirstTS(timelist: number[],time: number): number {
     let time1 = 0;
     timelist.forEach(
         (value: number, index: number) => {

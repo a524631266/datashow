@@ -7,5 +7,6 @@ enum TitleName {
     HeatMap = "热力图",
     Scatter = "区域散点",
     ReginStatic = "区域统计",
+    SingleScatter = "散点",
 }
 export default TitleName;

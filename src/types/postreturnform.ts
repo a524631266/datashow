@@ -276,5 +276,5 @@ interface TopChartTrans {
 export {
     SingleBoxChart,RegionBoxChart,SingleTrendChart,RegionTrendChart,TimeLineChart,HeatmapChart,TopChart,
     TimeLineChartTrans,TopChartTrans,HeatmapChartTrans,BoxChartTrans,TrendChartTrans,ScatterChart,ScatterChartTrans,
-    RegionBoxChart2,RegionBoxChartTrans2
+    RegionBoxChart2,RegionBoxChartTrans2,EntityValue
 };

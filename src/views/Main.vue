@@ -43,6 +43,7 @@ import TopHighChart from "@/components/chart/TopHighChart.vue";
 import GeoMapEchart from "@/components/chart/GeoMapEchart.vue";
 import BoxSingleHighChart from "@/components/chart/BoxSingleHighChart.vue";
 import EntityInfo from "@/components/EntityInfo.vue";
+import SingleScatterEChart from "@/components/chart/SingleScatterEChart.vue";
 // import FloatBotton from "@/components/bar/FloatBotton.vue";
 import PubSub from 'pubsub-js';
 
@@ -72,7 +73,8 @@ const geo = Object.assign({},InitGeomapUrlProps);
     BoxSingleHighChart,
     EntityInfo,
     ScatterHighChart,
-    RegionBoxHighChart
+    RegionBoxHighChart,
+    SingleScatterEChart
     // FloatBotton
   },
 })
@@ -154,8 +156,10 @@ export default class Main extends Vue {
         const initdata: Array<{id: string,urlparas: PostParams, option: {xAxis: string},positionClass: PositionClass,chartName: string}> = [
             {id: "chart-top", urlparas: orgtop,
                 option: {xAxis: "1"}, positionClass: PositionClass.RightBottom,chartName:"TopHighChart"},
+            // {id: "chart-single-boxchart", urlparas: entbox,
+            // option: {xAxis: "2"}, positionClass: PositionClass.LeftTop,chartName:"BoxSingleHighChart"},
             {id: "chart-single-boxchart", urlparas: entbox,
-            option: {xAxis: "2"}, positionClass: PositionClass.LeftTop,chartName:"BoxSingleHighChart"},
+            option: {xAxis: "2"}, positionClass: PositionClass.LeftTop,chartName:"SingleScatterEChart"},
             {id: "chart-single-action", urlparas: enttl,
             option: {xAxis: "1"}, positionClass: PositionClass.LeftBottom,chartName:"TimeLineHighChart"},
             {id: "chart-single-linechart", urlparas: enttrend,
