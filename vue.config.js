@@ -14,7 +14,7 @@ module.exports = {
                 }
             },
             '/xinjiang': {
-                target: 'http://192.168.10.63:8098/anomaly',
+                target:  process.env.NODE_ENV === 'production'?'http://192.168.10.63:8098/anomaly':'http://192.168.40.148:8080/anomaly',
                 secure:false,
                 changeOrigin: true,
                 pathRewrite: {

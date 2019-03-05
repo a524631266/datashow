@@ -117,6 +117,39 @@ interface ScatterChartTrans {
     entitylist: EntityValue[];
 }
 
+interface RegionBoxChart2 {
+    entitylist: EntityValue[];
+    outliers: Array<[number, number]>;
+    outliersindex: number[];
+    axisData: string[];
+    boxData: Array<[number, number,number, number, number]>;
+}
+
+
+// axisData
+// :
+// ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17",…]
+// boxData
+// :
+// [[-0.0625, -0.025, 0, 0, 0.037500000000000006], [-0.1, -0.04, 0, 0, 0.06], [-0.05, -0.02, 0, 0, 0.03],…]
+// entitylist
+// :
+// [{name: "新时代超市二楼楼梯左边", id: 977955}, {name: "15号", id: 1201635}, {name: "21号", id: 1204045},…]
+// outliers
+// :
+// [[0, -0.38], [0, -0.31], [0, -0.24], [0, -0.22], [0, -0.11], [0, -0.1], [0, -0.09], [0, -0.09],…]
+// outliersindex
+// :
+// [61, 6, 55, 56, 49, 78, 19, 19, 19, 11, 11, 11, 35, 76, 43, 63, 38, 38, 18, 18, 0, 15, 22, 50, 58, 56,…]
+interface RegionBoxChartTrans2 {
+    entitylist: EntityValue[];
+    outliers: Array<[number, number]>;
+    outliersindex: number[];
+    axisData: string[];
+    boxData: Array<[number, number,number, number, number]>;
+}
+
+
 // const data: SingleTrendChart = {
 //     linechart: [
 //     {
@@ -242,5 +275,6 @@ interface TopChartTrans {
 
 export {
     SingleBoxChart,RegionBoxChart,SingleTrendChart,RegionTrendChart,TimeLineChart,HeatmapChart,TopChart,
-    TimeLineChartTrans,TopChartTrans,HeatmapChartTrans,BoxChartTrans,TrendChartTrans,ScatterChart,ScatterChartTrans
+    TimeLineChartTrans,TopChartTrans,HeatmapChartTrans,BoxChartTrans,TrendChartTrans,ScatterChart,ScatterChartTrans,
+    RegionBoxChart2,RegionBoxChartTrans2
 };

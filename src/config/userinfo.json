@@ -1,5 +1,5 @@
 {
     "geturl": "/anomaly/elecnum/getuser",
-    "puturl2": "/anomaly/elecnum/adduser",
-    "puturl": "/anomaly/upload/pic"
+    "puturl": "/anomaly/elecnum/adduser",
+    "puturl2": "/anomaly/upload/pic"
 }

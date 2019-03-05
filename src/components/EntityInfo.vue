@@ -117,7 +117,7 @@
                                                             <v-nodes :vnodes="menu"/>
                                                             <a-divider style="margin: 4px 0;" />
                                                             <div style="padding: 8px; cursor: pointer;">
-                                                                <Icon type="plus" /> 添加
+                                                                <Icon type="plus" /> 新增
                                                             </div>
                                                         </div>
                                                         <a-select-option value="电冰箱" class="optionwhite">电冰箱</a-select-option>
@@ -209,7 +209,11 @@ const initdata = {
             functional: true,
             render: (h: any, ctx: any) => {
                 console.log(h,"hh",ctx,"ctx");
-                h('h1', 'hello world');
+                h("div",[
+                        h('span', 'Hello'),
+                        ' world!'
+                    ]);
+                // h('h1', 'hello world');
                 return ctx.props.vnodes;
             }
         },
@@ -517,5 +521,6 @@ h6 {
 
 .optionwhite {
     color: black;
+    min-width: 10rem;
 }
 </style>

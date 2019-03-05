@@ -38,6 +38,7 @@ import TimeLineHighChart from "@/components/chart/TimeLineHighChart.vue";
 import HeatMapHighChart from "@/components/chart/HeatMapHighChart.vue";
 import TrendHighChart from "@/components/chart/TrendHighChart.vue";
 import ScatterHighChart from "@/components/chart/ScatterHighChart.vue";
+import RegionBoxHighChart from "@/components/chart/RegionBoxHighChart.vue";
 import TopHighChart from "@/components/chart/TopHighChart.vue";
 import GeoMapEchart from "@/components/chart/GeoMapEchart.vue";
 import BoxSingleHighChart from "@/components/chart/BoxSingleHighChart.vue";
@@ -70,7 +71,8 @@ const geo = Object.assign({},InitGeomapUrlProps);
     GeoMapEchart,
     BoxSingleHighChart,
     EntityInfo,
-    ScatterHighChart
+    ScatterHighChart,
+    RegionBoxHighChart
     // FloatBotton
   },
 })
@@ -159,7 +161,9 @@ export default class Main extends Vue {
             {id: "chart-single-linechart", urlparas: enttrend,
             option: {xAxis: "2"}, positionClass: PositionClass.LeftMiddle,chartName:"TrendHighChart"},
             {id: "chart-region-linechart", urlparas: orgtrend,
-            option: {xAxis: "4"}, positionClass: PositionClass.RightMiddle,chartName:"ScatterHighChart"},
+            option: {xAxis: "4"}, positionClass: PositionClass.RightMiddle,chartName:"RegionBoxHighChart"},
+            //  {id: "chart-region-linechart", urlparas: orgtrend,
+            // option: {xAxis: "4"}, positionClass: PositionClass.RightMiddle,chartName:"ScatterHighChart"},
             {id: "chart-heatmap", urlparas: orghp,
             option: {xAxis: "4"}, positionClass: PositionClass.Center,chartName:"HeatMapHighChart"},
             {id: "chart-geomap", urlparas: geo,
@@ -313,13 +317,10 @@ $antdsliderheight: $sliderbaseheight + px;
     border-right: 15px solid white;
     border-bottom: 7px solid transparent;
 }
-#chart-top .highcharts-tooltip,#chart-heatmap .highcharts-tooltip{
+#chart-top .highcharts-tooltip,#chart-heatmap .highcharts-tooltip,#chart-region-linechart .highcharts-tooltip{
     pointer-events: auto !important;
 }
-#chart-top .highcharts-tooltip:hover,#chart-heatmap .highcharts-tooltip:hover{
-    // pointer-events: none !important;
-    display: block;
-}
+
 // #chart-top .highcharts-tooltip span:hover,#chart-heatmap .highcharts-tooltip span:hover{
 //     pointer-events: none !important;
 // }
@@ -383,11 +384,20 @@ $antdsliderheight: $sliderbaseheight + px;
 :global(.upload-list-inline .ant-upload-list-item span){
   color: white;
 }
+:global(.upload-list-inline .ant-upload-list-item button){
+    display: flex;
+    align-items: center;
+}
 :global(.ant-select-selection .ant-select-selection-selected-value){
   color: #495057;
 }
 :global(.upload-list-inline .anticon-cross){
   color: white;
+}
+:global(.ant-select-dropdown-content) {
+    min-width:10rem;
+    background: white;
+    border-radius: 5px;
 }
 :global(.upload-list-inline .ant-upload-animate-enter){
   animation-name: uploadAnimateInlineIn;

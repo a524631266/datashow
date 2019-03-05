@@ -28,6 +28,7 @@ interface Timeindex {
 
 export const drawBoxOptions = (listdata: object[], xAxisList: string[], title: string) => {
   const showLegend = false ;
+  console.log("listdata", listdata);
   // let controlxAias = true ;
   // const timedict: TimeDict = {};
   // tslint:disable-next-line:forin

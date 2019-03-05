@@ -13,6 +13,7 @@ export enum PostPath {
     singleLineChart = "singleLineChart",
     singleBoxChart = "singleBoxChart",
     regionBoxChart = "regionBoxChart",
+    regionBoxChart3 = "regionboxchart3",
     regionLineChart = "regionLineChart2",
     exceptionOutput = "exceptionOutput",
     heatmap = "heatmap",
