@@ -90,7 +90,7 @@ export const drawBoxOptions = (data: BoxChartTrans, xAxisList: string[], title: 
                 color: "white"
               }
             },
-            min:0,
+            // min:0,
             gridLineWidth: 0
         },
         plotOptions: {
