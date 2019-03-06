@@ -3,6 +3,8 @@ module.exports = {
         ? 'dist'
         : 'dist',//默认为dist
     baseUrl: "/anomaly/",// 设置tomcat中的根目录即顶级项目不如eap/popudist项目下
+    // publicPath: "/anomaly/",// 设置tomcat中的根目录即顶级项目不如eap/popudist项目下
+    // autoOpenBrowser: true,
     devServer: {
         proxy: {
             '/tree': {
