@@ -260,10 +260,21 @@ export default class BaseChartFactory extends Vue {
             if (this.chartInstance && this.chartLibrary === ChartLibrary.echart) {
                 if(this.id === "chart-region-linechart") {
                     const option = (this.chartInstance as any).getOption();
-                    if(newVal === PositionClass.Center) {
-                        option.toolbox[0].show = true;
-                    } else {
-                        option.toolbox[0].show = false;
+                    if(option.toolbox) {
+                        if(newVal === PositionClass.Center) {
+                            option.toolbox[0].show = true;
+                        } else {
+                            option.toolbox[0].show = false;
+                        }
+                    }
+                    console.log("option", option);
+                    // 切换图表的时候显示图例
+                    if(option.legend) {
+                        if( newVal === PositionClass.Center) {
+                            option.legend.show = true;
+                        } else {
+                            option.legend.show = false;
+                        }
                     }
                     // console.log("this",option);
                     (this.chartInstance as any).setOption(option);

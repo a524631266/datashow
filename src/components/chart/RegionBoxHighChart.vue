@@ -63,7 +63,7 @@ export default class RegionBoxHighChart extends Vue implements AxiosSourceManage
       const promise = getDataPromise<RegionBoxChart2 ,BoxChartTrans>(this.urlparas,PostPath.regionBoxChart3,this.axiosSource,this.dealData);
       promise.then(
         (data: string | BoxChartTrans) => {
-          // console.log("data",data);
+          // console.log("RegionBox",data);
           if ( typeof data !== "string") {
             const change = (this.option as any).change;
             const option2 =  drawBoxOptions(data, data.xAxis , this.id);
@@ -88,7 +88,7 @@ export default class RegionBoxHighChart extends Vue implements AxiosSourceManage
     }
     private dealData(data: RegionBoxChart2): BoxChartTrans {
       const result: BoxChartTrans = {xAxis:[],boxchart:[]} as any;
-      // console.log("regionnnnnnnnnnnnnnnnn",data);
+      console.log("regionnnnnnnnnnnnnnnnn",data);
       const data2 = [
         {
           name: "电量",

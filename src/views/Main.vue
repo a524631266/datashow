@@ -44,6 +44,7 @@ import GeoMapEchart from "@/components/chart/GeoMapEchart.vue";
 import BoxSingleHighChart from "@/components/chart/BoxSingleHighChart.vue";
 import EntityInfo from "@/components/EntityInfo.vue";
 import SingleScatterEChart from "@/components/chart/SingleScatterEChart.vue";
+import RegionStackLineEChart from "@/components/chart/tabletypes/stackline/RegionStackLineEChart.vue";
 import RegionBoxHighChartTestOnline from "@/components/chart/RegionBoxHighChartTestOnline.vue";
 // import FloatBotton from "@/components/bar/FloatBotton.vue";
 import PubSub from 'pubsub-js';
@@ -76,7 +77,8 @@ const geo = Object.assign({},InitGeomapUrlProps);
     ScatterHighChart,
     RegionBoxHighChart,
     SingleScatterEChart,
-    RegionBoxHighChartTestOnline
+    RegionBoxHighChartTestOnline,
+    RegionStackLineEChart
     // FloatBotton
   },
 })
@@ -169,8 +171,10 @@ export default class Main extends Vue {
             option: {xAxis: "1"}, positionClass: PositionClass.LeftBottom,chartName:"TimeLineHighChart"},
             {id: "chart-single-linechart", urlparas: enttrend,
             option: {xAxis: "2"}, positionClass: PositionClass.LeftMiddle,chartName:"TrendHighChart"},
+            // {id: "chart-region-linechart", urlparas: orgtrend,
+            // option: {xAxis: "4"}, positionClass: PositionClass.RightMiddle,chartName:"RegionBoxHighChart"},
             {id: "chart-region-linechart", urlparas: orgtrend,
-            option: {xAxis: "4"}, positionClass: PositionClass.RightMiddle,chartName:"RegionBoxHighChart"},
+            option: {xAxis: "4"}, positionClass: PositionClass.RightMiddle,chartName:"RegionStackLineEChart"},
             //  {id: "chart-region-linechart", urlparas: orgtrend,
             // option: {xAxis: "4"}, positionClass: PositionClass.RightMiddle,chartName:"ScatterHighChart"},
             {id: "chart-heatmap", urlparas: orghp,

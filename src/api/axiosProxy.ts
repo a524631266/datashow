@@ -15,6 +15,7 @@ export enum PostPath {
     regionBoxChart = "regionBoxChart",
     regionBoxChart3 = "regionboxchart3",
     regionLineChart = "regionLineChart2",
+    regionStackLine = 'stackline',
     exceptionOutput = "exceptionOutput",
     heatmap = "heatmap",
     topChart = "topChart",

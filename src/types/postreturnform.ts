@@ -43,6 +43,25 @@ interface BoxChartTrans {
     boxchart: [BoxFirstData,BoxSecondData];
 }
 
+interface RegionStackLine {
+    stack: {
+        time: number[],
+        data: Array<{
+            name: string,
+            data: number[],
+        }>;
+    };
+}
+interface RegionStackLineTrans {
+    stack: {
+        time: number[],
+        data: Array<{
+            name: string,
+            data: number[],
+        }>;
+    };
+}
+
 // const Data2: BoxChartTrans = {
 //     xAxis: ["1","222"],
 //     boxchart: [
@@ -276,5 +295,5 @@ interface TopChartTrans {
 export {
     SingleBoxChart,RegionBoxChart,SingleTrendChart,RegionTrendChart,TimeLineChart,HeatmapChart,TopChart,
     TimeLineChartTrans,TopChartTrans,HeatmapChartTrans,BoxChartTrans,TrendChartTrans,ScatterChart,ScatterChartTrans,
-    RegionBoxChart2,RegionBoxChartTrans2,EntityValue
+    RegionBoxChart2,RegionBoxChartTrans2,EntityValue,RegionStackLine,RegionStackLineTrans
 };

@@ -1,6 +1,7 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 // import "bootstrap/dist/js/bootstrap.min.js";
 // import "font-awesome/css/font-awesome.min.css";
+// import '@/mock';
 import moment from 'moment';
 import 'moment/locale/zh-cn';
 import 'material-design-lite/material.min.css';
